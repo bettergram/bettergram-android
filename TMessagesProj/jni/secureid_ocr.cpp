@@ -15,9 +15,9 @@
 #include "fast-edge.h"
 #include "genann.h"
 
-#ifndef max
-#define max(a, b) (a>b ? a : b)
-#define min(a, b) (a<b ? a : b)
+#ifndef u_max
+#define u_max(a, b) (a>b ? a : b)
+#define u_min(a, b) (a<b ? a : b)
 #endif
 
 
@@ -48,7 +48,7 @@ namespace ocr{
 		int width=img->width;
 		int height=img->height;
 		// Calculate the maximum height the hough array needs to have
-		int houghHeight = (int) (sqrt(2.0) * max(height, width)) / 2;
+		int houghHeight = (int) (sqrt(2.0) * u_max(height, width)) / 2;
 
 		// Double the height of the hough array to cope with negative r values
 		int doubleHeight = 2 * houghHeight;
@@ -445,11 +445,11 @@ extern "C" JNIEXPORT jobjectArray Java_org_telegram_messenger_MrzRecognizer_bina
 			if(outPixels[y*outInfo.stride+x]==0){
 				consecutiveEmptyPixels++;
 			}else{
-				maxEmptyPixels=max(maxEmptyPixels, consecutiveEmptyPixels);
+				maxEmptyPixels=u_max(maxEmptyPixels, consecutiveEmptyPixels);
 				consecutiveEmptyPixels=0;
 			}
 		}
-		maxEmptyPixels=max(maxEmptyPixels, consecutiveEmptyPixels);
+		maxEmptyPixels=u_max(maxEmptyPixels, consecutiveEmptyPixels);
 		if(maxEmptyPixels>width/10*8){
 			consecutiveEmptyRows++;
 		}else if(consecutiveEmptyRows>0){
@@ -479,7 +479,7 @@ extern "C" JNIEXPORT jobjectArray Java_org_telegram_messenger_MrzRecognizer_bina
 					if(outPixels[y*outInfo.stride+x]==0){
 						consecutiveEmptyPixels++;
 					}else{
-						maxEmptyPixels=max(maxEmptyPixels, consecutiveEmptyPixels);
+						maxEmptyPixels=u_max(maxEmptyPixels, consecutiveEmptyPixels);
 						consecutiveEmptyPixels=0;
 						if(y>p->first-3)
 							bottomFilledPixels++;

@@ -35,8 +35,8 @@
 #define PI 3.14159265
 #define HIGH_THRESHOLD_PERCENTAGE 0.10 // percentage of pixels that meet the high threshold - for example 0.15 will ensure that at least 15% of edge pixels are considered to meet the high threshold
 
-#define min(X,Y) ((X) < (Y) ? (X) : (Y))
-#define max(X,Y) ((X) < (Y) ? (Y) : (X))
+#define u_min(X,Y) ((X) < (Y) ? (X) : (Y))
+#define u_max(X,Y) ((X) < (Y) ? (Y) : (X))
 
 namespace ocr{
 /*
@@ -465,7 +465,7 @@ void dilate_1d_h(struct image * img, struct image * img_out) {
 	for (y = 2 * img->width; y < y_max; y += img->width) {
 		for (x = 2; x < img->width - 2; x++) {
 			offset = x + y;
-			img_out->pixel_data[offset] = max(max(max(max(img->pixel_data[offset-2], img->pixel_data[offset-1]), img->pixel_data[offset]), img->pixel_data[offset+1]), img->pixel_data[offset+2]);	
+			img_out->pixel_data[offset] = u_max(u_max(u_max(u_max(img->pixel_data[offset-2], img->pixel_data[offset-1]), img->pixel_data[offset]), img->pixel_data[offset+1]), img->pixel_data[offset+2]);
 		}
 	}
 }
@@ -476,7 +476,7 @@ void dilate_1d_v(struct image * img, struct image * img_out) {
 	for (y = 2 * img->width; y < y_max; y += img->width) {
 		for (x = 2; x < img->width - 2; x++) {
 			offset = x + y;
-			img_out->pixel_data[offset] = max(max(max(max(img->pixel_data[offset-2 * img->width], img->pixel_data[offset-img->width]), img->pixel_data[offset]), img->pixel_data[offset+img->width]), img->pixel_data[offset+2*img->width]);	
+			img_out->pixel_data[offset] = u_max(u_max(u_max(u_max(img->pixel_data[offset-2 * img->width], img->pixel_data[offset-img->width]), img->pixel_data[offset]), img->pixel_data[offset+img->width]), img->pixel_data[offset+2*img->width]);
 		}
 	}
 }
@@ -487,7 +487,7 @@ void erode_1d_h(struct image * img, struct image * img_out) {
 	for (y = 2 * img->width; y < y_max; y += img->width) {
 		for (x = 2; x < img->width - 2; x++) {
 			offset = x + y;
-			img_out->pixel_data[offset] = min(min(min(min(img->pixel_data[offset-2], img->pixel_data[offset-1]), img->pixel_data[offset]), img->pixel_data[offset+1]), img->pixel_data[offset+2]);	
+			img_out->pixel_data[offset] = u_min(u_min(u_min(u_min(img->pixel_data[offset-2], img->pixel_data[offset-1]), img->pixel_data[offset]), img->pixel_data[offset+1]), img->pixel_data[offset+2]);
 		}
 	}
 }
@@ -498,7 +498,7 @@ void erode_1d_v(struct image * img, struct image * img_out) {
 	for (y = 2 * img->width; y < y_max; y += img->width) {
 		for (x = 2; x < img->width - 2; x++) {
 			offset = x + y;
-			img_out->pixel_data[offset] = min(min(min(min(img->pixel_data[offset-2 * img->width], img->pixel_data[offset-img->width]), img->pixel_data[offset]), img->pixel_data[offset+img->width]), img->pixel_data[offset+2*img->width]);	
+			img_out->pixel_data[offset] = u_min(u_min(u_min(u_min(img->pixel_data[offset-2 * img->width], img->pixel_data[offset-img->width]), img->pixel_data[offset]), img->pixel_data[offset+img->width]), img->pixel_data[offset+2*img->width]);
 		}
 	}
 }

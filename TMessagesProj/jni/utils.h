@@ -17,11 +17,11 @@
 #define LOGV(...)
 #endif
 
-#ifndef max
-#define max(x, y) ((x) > (y)) ? (x) : (y)
+#ifndef u_mmax
+#define u_max(x, y) ((x) > (y)) ? (x) : (y)
 #endif
-#ifndef min
-#define min(x, y) ((x) < (y)) ? (x) : (y)
+#ifndef u_min
+#define u_min(x, y) ((x) < (y)) ? (x) : (y)
 #endif
 
 void throwException(JNIEnv *env, char *format, ...);

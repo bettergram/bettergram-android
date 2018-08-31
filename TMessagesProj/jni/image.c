@@ -476,7 +476,7 @@ JNIEXPORT void Java_org_telegram_messenger_Utilities_calcCDT(JNIEnv *env, jclass
 
     uint32_t totalSegments = PGPhotoEnhanceSegments * PGPhotoEnhanceSegments;
     uint32_t tileArea = (uint32_t) (floorf(imageWidth / PGPhotoEnhanceSegments) * floorf(imageHeight / PGPhotoEnhanceSegments));
-    uint32_t clipLimit = (uint32_t) max(1, _clipLimit * tileArea / (float) PGPhotoEnhanceHistogramBins);
+    uint32_t clipLimit = (uint32_t) u_max(1, _clipLimit * tileArea / (float) PGPhotoEnhanceHistogramBins);
     float scale = 255.0f / (float) tileArea;
 
     unsigned char *bytes = (*env)->GetDirectBufferAddress(env, hsvBuffer);
@@ -540,7 +540,7 @@ JNIEXPORT void Java_org_telegram_messenger_Utilities_calcCDT(JNIEnv *env, jclass
         uint32_t cdf = 0;
         for (uint32_t j = hMin; j < PGPhotoEnhanceHistogramBins; ++j) {
             cdf += cdfs[i][j];
-            cdfs[i][j] = (uint8_t) min(255, cdf * scale);
+            cdfs[i][j] = (uint8_t) u_min(255, cdf * scale);
         }
         
         cdfsMin[i] = cdfs[i][hMin];
