@@ -26,7 +26,7 @@ import org.telegram.messenger.MediaController;
 import org.telegram.messenger.MessagesStorage;
 import org.telegram.messenger.NotificationCenter;
 import org.telegram.messenger.ApplicationLoader;
-import org.telegram.messenger.R;
+import io.bettergram.messenger.R;
 import org.telegram.messenger.SendMessagesHelper;
 import org.telegram.messenger.support.widget.LinearLayoutManager;
 import org.telegram.messenger.support.widget.RecyclerView;

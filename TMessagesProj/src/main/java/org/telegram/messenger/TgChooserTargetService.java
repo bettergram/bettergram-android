@@ -37,6 +37,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.CountDownLatch;
 
+import io.bettergram.messenger.R;
+
 @TargetApi(Build.VERSION_CODES.M)
 public class TgChooserTargetService extends ChooserTargetService {
 

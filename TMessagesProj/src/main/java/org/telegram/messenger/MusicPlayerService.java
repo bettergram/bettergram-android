@@ -36,6 +36,8 @@ import com.google.android.exoplayer2.C;
 import org.telegram.messenger.audioinfo.AudioInfo;
 import org.telegram.ui.LaunchActivity;
 
+import io.bettergram.messenger.R;
+
 public class MusicPlayerService extends Service implements NotificationCenter.NotificationCenterDelegate {
 
     public static final String NOTIFY_PREVIOUS = "org.telegram.android.musicplayer.previous";

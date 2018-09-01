@@ -18,12 +18,12 @@ import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
 
 import org.telegram.messenger.AndroidUtilities;
-import org.telegram.messenger.BuildConfig;
+import io.bettergram.messenger.BuildConfig;
 import org.telegram.messenger.FileLoader;
 import org.telegram.messenger.FileLog;
 import org.telegram.messenger.ImageLoader;
 import org.telegram.messenger.LocaleController;
-import org.telegram.messenger.R;
+import io.bettergram.messenger.R;
 import org.telegram.messenger.Utilities;
 import org.telegram.ui.ActionBar.AlertDialog;
 

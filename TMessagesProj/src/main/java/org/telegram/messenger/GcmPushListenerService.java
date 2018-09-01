@@ -25,6 +25,8 @@ import java.util.Arrays;
 import java.util.Locale;
 import java.util.Map;
 
+import io.bettergram.messenger.R;
+
 public class GcmPushListenerService extends FirebaseMessagingService {
 
     public static final int NOTIFICATION_ID = 1;

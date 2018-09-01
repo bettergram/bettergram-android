@@ -42,7 +42,7 @@ import org.telegram.messenger.NotificationCenter;
 import org.telegram.messenger.SharedConfig;
 import org.telegram.messenger.VideoEditedInfo;
 import org.telegram.messenger.ApplicationLoader;
-import org.telegram.messenger.R;
+import io.bettergram.messenger.R;
 import org.telegram.messenger.support.widget.GridLayoutManager;
 import org.telegram.messenger.support.widget.RecyclerView;
 import org.telegram.tgnet.ConnectionsManager;

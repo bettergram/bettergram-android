@@ -85,7 +85,7 @@ import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ApplicationLoader;
-import org.telegram.messenger.BuildConfig;
+import io.bettergram.messenger.BuildConfig;
 import org.telegram.messenger.DownloadController;
 import org.telegram.messenger.Emoji;
 import org.telegram.messenger.FileLoader;
@@ -98,7 +98,7 @@ import org.telegram.messenger.MessageObject;
 import org.telegram.messenger.MessagesController;
 import org.telegram.messenger.MessagesStorage;
 import org.telegram.messenger.NotificationCenter;
-import org.telegram.messenger.R;
+import io.bettergram.messenger.R;
 import org.telegram.messenger.UserConfig;
 import org.telegram.messenger.browser.Browser;
 import org.telegram.messenger.support.widget.GridLayoutManager;

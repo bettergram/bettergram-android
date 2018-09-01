@@ -32,7 +32,7 @@ import org.telegram.messenger.UserConfig;
 import org.telegram.messenger.support.widget.LinearLayoutManager;
 import org.telegram.messenger.support.widget.RecyclerView;
 import org.telegram.messenger.FileLog;
-import org.telegram.messenger.R;
+import io.bettergram.messenger.R;
 import org.telegram.tgnet.ConnectionsManager;
 import org.telegram.tgnet.NativeByteBuffer;
 import org.telegram.tgnet.TLObject;

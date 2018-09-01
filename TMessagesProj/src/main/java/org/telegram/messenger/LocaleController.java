@@ -38,6 +38,8 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import io.bettergram.messenger.R;
+
 public class LocaleController {
 
     static final int QUANTITY_OTHER = 0x0000;

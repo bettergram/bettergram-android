@@ -42,13 +42,13 @@ import android.widget.Toast;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ApplicationLoader;
-import org.telegram.messenger.BuildConfig;
+import io.bettergram.messenger.BuildConfig;
 import org.telegram.messenger.FileLoader;
 import org.telegram.messenger.FileLog;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.MessagesController;
 import org.telegram.messenger.NotificationCenter;
-import org.telegram.messenger.R;
+import io.bettergram.messenger.R;
 import org.telegram.messenger.Utilities;
 import org.telegram.messenger.support.widget.DefaultItemAnimator;
 import org.telegram.messenger.support.widget.LinearLayoutManager;

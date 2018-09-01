@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="AppName">Telegram</string>
-    <string name="AppNameBeta">Telegram Beta</string>
+    <string name="AppName">Bettergram</string>
+    <string name="AppNameBeta">Bettergram Beta</string>
     <string name="LanguageName">English</string>
     <string name="English">English</string>
     <string name="LanguageNameInEnglish">English</string>
@@ -1070,7 +1070,7 @@
     <string name="Emoji">Emoji</string>
     <string name="EmojiBigSize">Draw single big emoji</string>
     <string name="EmojiUseDefault">Use system default emoji</string>
-    <string name="TelegramVersion">Telegram for Android %1$s</string>
+    <string name="TelegramVersion">Bettergram for Android %1$s</string>
     <string name="DebugMenu">Debug Menu</string>
     <string name="DebugSendLogs">Send Logs</string>
     <string name="DebugClearLogs">Clear Logs</string>
@@ -1728,7 +1728,7 @@
     <string name="ActionTakeScreenshootYou">You took a screenshot!</string>
     <string name="ActionTakeScreenshoot">un1 took a screenshot!</string>
     <!--Alert messages-->
-    <string name="UpdateTelegram">Update Telegram</string>
+    <string name="UpdateTelegram">Update Bettergram</string>
     <string name="UpdateAppAlert">Sorry, your Telegram app is out of date and can’t handle this request. Please update Telegram.</string>
     <string name="InvalidPhoneNumber">Invalid phone number</string>
     <string name="PleaseLoginPassport">Please log in to your Telegram account to use Telegram Passport.</string>
@@ -1811,7 +1811,7 @@
     <string name="PermissionDrawAboveOtherApps">Telegram needs access to draw above other apps to play videos in Picture-in-Picture mode.</string>
     <string name="PermissionOpenSettings">SETTINGS</string>
     <!--Intro view-->
-    <string name="Page1Title">Telegram</string>
+    <string name="Page1Title">Bettergram</string>
     <string name="Page2Title">Fast</string>
     <string name="Page3Title">Free</string>
     <string name="Page4Title">Secure</string>
@@ -1837,14 +1837,14 @@
     <string name="VoipFailed">Failed to connect</string>
     <string name="VoipRinging">Ringing</string>
     <string name="VoipBusy">Line busy</string>
-    <string name="VoipInCallBranding">Telegram Call</string>
-    <string name="VoipOutgoingCall">Ongoing Telegram call</string>
+    <string name="VoipInCallBranding">Bettergram Call</string>
+    <string name="VoipOutgoingCall">Ongoing Bettergram call</string>
     <string name="VoipEndCall">End call</string>
     <string name="VoipOngoingAlertTitle">Another call in progress</string>
     <string name="VoipOngoingAlert">You currently have an ongoing call with **%1$s**. Would you like to hang up on that call and start a new one with **%2$s**?</string>
     <string name="VoipNotificationSettings">Voice calls</string>
     <string name="VoipSettingsRingtone">Ringtone</string>
-    <string name="VoipRingtoneInfo">You can customize the ringtone used when this contact calls you on Telegram.</string>
+    <string name="VoipRingtoneInfo">You can customize the ringtone used when this contact calls you on Bettergram.</string>
     <string name="Calls">Calls</string>
     <string name="WhoCanCallMe">Who can call me?</string>
     <string name="WhoCanCallMeInfo">You can restrict who can call you.</string>
@@ -1896,7 +1896,7 @@
     <string name="QuickReplyDefault4">Can\'t talk now. Call me later?</string>
     <string name="QuickReplyCustom">Custom Message...</string>
     <string name="AllowCustomQuickReply">Allow Custom</string>
-    <string name="VoipInCallBrandingWithName">Telegram Call to %s</string>
+    <string name="VoipInCallBrandingWithName">Bettergram Call to %s</string>
     <string name="VoipErrorUnknown">Can\'t place a Telegram call at the moment.</string>
     <!--plural-->
     <string name="Recipient_zero">%1$d recipients</string>

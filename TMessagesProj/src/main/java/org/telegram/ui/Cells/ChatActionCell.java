@@ -25,7 +25,7 @@ import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.MessageObject;
 import org.telegram.messenger.FileLoader;
 import org.telegram.messenger.FileLog;
-import org.telegram.messenger.R;
+import io.bettergram.messenger.R;
 import org.telegram.messenger.browser.Browser;
 import org.telegram.tgnet.TLRPC;
 import org.telegram.messenger.UserConfig;

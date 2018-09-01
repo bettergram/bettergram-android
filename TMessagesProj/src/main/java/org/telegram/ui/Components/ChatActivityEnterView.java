@@ -69,7 +69,7 @@ import org.telegram.messenger.NotificationsController;
 import org.telegram.messenger.SendMessagesHelper;
 import org.telegram.messenger.FileLog;
 import org.telegram.messenger.NotificationCenter;
-import org.telegram.messenger.R;
+import io.bettergram.messenger.R;
 import org.telegram.messenger.SharedConfig;
 import org.telegram.messenger.VideoEditedInfo;
 import org.telegram.messenger.camera.CameraController;

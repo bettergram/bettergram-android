@@ -25,7 +25,7 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.telegram.messenger.AndroidUtilities;
-import org.telegram.messenger.BuildConfig;
+import io.bettergram.messenger.BuildConfig;
 import org.telegram.messenger.BuildVars;
 import org.telegram.messenger.ContactsController;
 import org.telegram.messenger.ApplicationLoader;

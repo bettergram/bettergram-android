@@ -26,7 +26,7 @@ import org.telegram.PhoneFormat.PhoneFormat;
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.FileLog;
-import org.telegram.messenger.R;
+import io.bettergram.messenger.R;
 import org.telegram.tgnet.TLRPC;
 import org.telegram.messenger.UserConfig;
 import org.telegram.ui.ActionBar.ActionBar;

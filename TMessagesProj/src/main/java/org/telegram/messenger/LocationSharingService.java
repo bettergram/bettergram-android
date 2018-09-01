@@ -21,6 +21,8 @@ import org.telegram.ui.LaunchActivity;
 
 import java.util.ArrayList;
 
+import io.bettergram.messenger.R;
+
 public class LocationSharingService extends Service implements NotificationCenter.NotificationCenterDelegate {
 
     private NotificationCompat.Builder builder;

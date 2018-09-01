@@ -34,7 +34,7 @@ import android.widget.ListView;
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.BuildVars;
 import org.telegram.messenger.FileLog;
-import org.telegram.messenger.R;
+import io.bettergram.messenger.R;
 
 public class DrawerLayoutContainer extends FrameLayout {
 

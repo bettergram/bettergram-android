@@ -19,7 +19,7 @@ import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.MrzRecognizer;
 import org.telegram.messenger.NotificationCenter;
-import org.telegram.messenger.R;
+import io.bettergram.messenger.R;
 import org.telegram.messenger.camera.CameraView;
 import org.telegram.messenger.camera.Size;
 import org.telegram.ui.ActionBar.ActionBar;

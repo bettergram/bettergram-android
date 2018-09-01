@@ -18,7 +18,7 @@ import android.view.ViewGroup;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.LocaleController;
-import org.telegram.messenger.R;
+import io.bettergram.messenger.R;
 import org.telegram.messenger.support.widget.RecyclerView;
 import org.telegram.tgnet.TLObject;
 import org.telegram.tgnet.TLRPC;

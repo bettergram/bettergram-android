@@ -64,6 +64,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import io.bettergram.messenger.R;
+
 @SuppressWarnings("unchecked")
 public class DataQuery {
 

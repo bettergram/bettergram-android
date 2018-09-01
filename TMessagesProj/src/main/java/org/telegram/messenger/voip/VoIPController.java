@@ -14,7 +14,7 @@ import android.os.Build;
 import android.os.SystemClock;
 
 import org.telegram.messenger.ApplicationLoader;
-import org.telegram.messenger.BuildConfig;
+import io.bettergram.messenger.BuildConfig;
 import org.telegram.messenger.MessagesController;
 import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.Components.voip.VoIPHelper;

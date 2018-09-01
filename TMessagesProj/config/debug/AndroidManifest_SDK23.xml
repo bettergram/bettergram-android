@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="org.telegram.messenger"
+    package="io.bettergram.messenger"
     android:installLocation="auto">
 
     <uses-feature android:name="android.hardware.location.gps" android:required="false" />
@@ -10,7 +10,7 @@
     <uses-feature android:name="android.hardware.LOCATION" android:required="false" />
 
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
-    <uses-permission android:name="org.telegram.messenger.permission.MAPS_RECEIVE"/>
+    <uses-permission android:name="io.bettergram.messenger.permission.MAPS_RECEIVE"/>
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -19,15 +19,15 @@
     <uses-permission android:name="android.permission.READ_CALL_LOG" />
     <uses-permission android:name="android.permission.WRITE_CALL_LOG" />
 
-    <permission android:name="org.telegram.messenger.permission.MAPS_RECEIVE" android:protectionLevel="signature"/>
+    <permission android:name="io.bettergram.messenger.permission.MAPS_RECEIVE" android:protectionLevel="signature"/>
 
     <application
         android:allowBackup="false"
         android:icon="@drawable/ic_launcher"
         android:roundIcon="@drawable/ic_launcher"
-        android:label="@string/AppNameBeta"
+        android:label="@string/AppName"
         android:theme="@style/Theme.TMessages.Start"
-        android:name=".ApplicationLoader"
+        android:name="org.telegram.messenger.ApplicationLoader"
         android:hardwareAccelerated="@bool/useHardwareAcceleration"
         android:largeHeap="true"
         android:supportsRtl="false"
@@ -36,13 +36,13 @@
         <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyA-t0jLPjUt2FxrA8VPK2EiYHcYcboIR6k" />
 
         <service
-            android:name=".GcmPushListenerService">
+            android:name="org.telegram.messenger.GcmPushListenerService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
         <service
-            android:name=".GcmInstanceIDListenerService">
+            android:name="org.telegram.messenger.GcmInstanceIDListenerService">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>

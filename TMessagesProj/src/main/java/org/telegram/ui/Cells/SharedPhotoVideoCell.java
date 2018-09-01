@@ -27,7 +27,7 @@ import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.MessageObject;
 import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.FileLoader;
-import org.telegram.messenger.R;
+import io.bettergram.messenger.R;
 import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Components.BackupImageView;

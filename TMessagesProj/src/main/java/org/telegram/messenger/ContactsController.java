@@ -39,6 +39,8 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
+import io.bettergram.messenger.R;
+
 public class ContactsController {
 
     private Account systemAccount;

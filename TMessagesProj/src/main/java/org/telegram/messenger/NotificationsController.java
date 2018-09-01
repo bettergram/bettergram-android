@@ -63,6 +63,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import io.bettergram.messenger.BuildConfig;
+import io.bettergram.messenger.R;
+
 public class NotificationsController {
 
     public static final String EXTRA_VOICE_REPLY = "extra_voice_reply";

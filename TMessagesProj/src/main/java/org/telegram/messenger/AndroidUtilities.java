@@ -120,6 +120,9 @@ import java.util.Hashtable;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
+import io.bettergram.messenger.BuildConfig;
+import io.bettergram.messenger.R;
+
 public class AndroidUtilities {
 
     private static final Hashtable<String, Typeface> typefaceCache = new Hashtable<>();

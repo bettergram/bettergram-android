@@ -50,7 +50,7 @@ import org.telegram.messenger.support.widget.RecyclerView;
 import org.telegram.tgnet.TLRPC;
 import org.telegram.messenger.MessagesController;
 import org.telegram.messenger.NotificationCenter;
-import org.telegram.messenger.R;
+import io.bettergram.messenger.R;
 import org.telegram.ui.ActionBar.ActionBarMenu;
 import org.telegram.ui.ActionBar.AlertDialog;
 import org.telegram.ui.ActionBar.Theme;

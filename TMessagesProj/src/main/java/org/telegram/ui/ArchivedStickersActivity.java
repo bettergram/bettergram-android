@@ -18,7 +18,7 @@ import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.DataQuery;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.NotificationCenter;
-import org.telegram.messenger.R;
+import io.bettergram.messenger.R;
 import org.telegram.messenger.support.widget.LinearLayoutManager;
 import org.telegram.messenger.support.widget.RecyclerView;
 import org.telegram.tgnet.ConnectionsManager;

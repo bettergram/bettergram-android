@@ -30,6 +30,8 @@ import java.util.Collections;
 import java.util.Locale;
 import java.util.concurrent.ConcurrentHashMap;
 
+import io.bettergram.messenger.R;
+
 public class SecretChatHelper {
 
     public static class TL_decryptedMessageHolder extends TLObject {

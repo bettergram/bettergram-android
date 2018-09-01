@@ -77,7 +77,7 @@ import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.PhoneFormat.PhoneFormat;
-import org.telegram.messenger.BuildConfig;
+import io.bettergram.messenger.BuildConfig;
 import org.telegram.messenger.BuildVars;
 import org.telegram.messenger.ChatObject;
 import org.telegram.messenger.DataQuery;
@@ -110,7 +110,7 @@ import org.telegram.messenger.FileLog;
 import org.telegram.messenger.MessageObject;
 import org.telegram.messenger.MessagesController;
 import org.telegram.messenger.NotificationCenter;
-import org.telegram.messenger.R;
+import io.bettergram.messenger.R;
 import org.telegram.messenger.UserConfig;
 import org.telegram.ui.ActionBar.ActionBarLayout;
 import org.telegram.ui.ActionBar.AlertDialog;

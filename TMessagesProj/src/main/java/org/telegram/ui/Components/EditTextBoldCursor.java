@@ -31,7 +31,7 @@ import android.widget.TextView;
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.FileLog;
 import org.telegram.messenger.LocaleController;
-import org.telegram.messenger.R;
+import io.bettergram.messenger.R;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;

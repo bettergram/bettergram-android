@@ -25,7 +25,7 @@ import android.view.View;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.FileLog;
-import org.telegram.messenger.R;
+import io.bettergram.messenger.R;
 
 import java.util.ArrayList;
 

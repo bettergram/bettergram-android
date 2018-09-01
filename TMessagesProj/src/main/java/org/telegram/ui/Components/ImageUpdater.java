@@ -21,7 +21,7 @@ import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
 
 import org.telegram.messenger.AndroidUtilities;
-import org.telegram.messenger.BuildConfig;
+import io.bettergram.messenger.BuildConfig;
 import org.telegram.messenger.ImageLoader;
 import org.telegram.messenger.MediaController;
 import org.telegram.messenger.SendMessagesHelper;

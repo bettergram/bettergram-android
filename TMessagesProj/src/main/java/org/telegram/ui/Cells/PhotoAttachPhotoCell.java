@@ -26,7 +26,7 @@ import android.widget.TextView;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.MediaController;
-import org.telegram.messenger.R;
+import io.bettergram.messenger.R;
 import org.telegram.ui.Components.BackupImageView;
 import org.telegram.ui.Components.CheckBox;
 import org.telegram.ui.Components.LayoutHelper;
