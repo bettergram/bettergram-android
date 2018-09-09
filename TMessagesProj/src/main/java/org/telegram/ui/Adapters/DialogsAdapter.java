@@ -41,6 +41,7 @@ import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.RecyclerListView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class DialogsAdapter extends RecyclerListView.SelectionAdapter {
 
@@ -95,7 +96,7 @@ public class DialogsAdapter extends RecyclerListView.SelectionAdapter {
         return current != getItemCount() || current == 1;
     }
 
-    private ArrayList<TLRPC.TL_dialog> getDialogsArray() {
+    public List<TLRPC.TL_dialog> getDialogsArray() {
         if (dialogsType == 0) {
             return MessagesController.getInstance(currentAccount).dialogs;
         } else if (dialogsType == 1) {
@@ -111,7 +112,7 @@ public class DialogsAdapter extends RecyclerListView.SelectionAdapter {
     @Override
     public int getItemCount() {
         showContacts = false;
-        ArrayList<TLRPC.TL_dialog> array = getDialogsArray();
+        List<TLRPC.TL_dialog> array = getDialogsArray();
         int dialogsCount = array.size();
         if (dialogsCount == 0 && MessagesController.getInstance(currentAccount).loadingDialogs) {
             return 0;
@@ -143,7 +144,7 @@ public class DialogsAdapter extends RecyclerListView.SelectionAdapter {
             }
             return MessagesController.getInstance(currentAccount).getUser(ContactsController.getInstance(currentAccount).contacts.get(i).user_id);
         }
-        ArrayList<TLRPC.TL_dialog> arrayList = getDialogsArray();
+        List<TLRPC.TL_dialog> arrayList = getDialogsArray();
         if (hasHints) {
             int count = MessagesController.getInstance(currentAccount).hintDialogs.size();
             if (i < 2 + count) {
@@ -167,7 +168,7 @@ public class DialogsAdapter extends RecyclerListView.SelectionAdapter {
     @Override
     public void onViewAttachedToWindow(RecyclerView.ViewHolder holder) {
         if (holder.itemView instanceof DialogCell) {
-            ((DialogCell) holder.itemView).checkCurrentDialogIndex();
+            ((DialogCell) holder.itemView).checkCurrentDialogIndex(this);
         }
     }
 
@@ -321,5 +322,13 @@ public class DialogsAdapter extends RecyclerListView.SelectionAdapter {
             }
         }
         return 0;
+    }
+
+    protected int getDialogsType() {
+        return dialogsType;
+    }
+
+    protected void setDialogsType(int dialogsType) {
+        this.dialogsType = dialogsType;
     }
 }

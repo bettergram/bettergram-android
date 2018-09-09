@@ -2181,4 +2181,13 @@
     <string name="formatterDay24H">HH:mm</string>
     <string name="formatterDay12H">h:mm a</string>
     <string name="formatDateAtTime">%1$s at %2$s</string>
+
+
+    <!--Better-->
+    <string name="tabsAll">All</string>
+    <string name="tabsDirect">Direct</string>
+    <string name="tabsGroups">Groups</string>
+    <string name="tabsAnnouncements">Announcements</string>
+    <string name="tabsFavorites">Favorites</string>
+    <string name="tabsCrypto">Crypto</string>
 </resources>

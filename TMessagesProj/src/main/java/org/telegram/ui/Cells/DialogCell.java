@@ -37,10 +37,11 @@ import io.bettergram.messenger.R;
 import org.telegram.messenger.UserConfig;
 import org.telegram.messenger.ImageReceiver;
 import org.telegram.ui.ActionBar.Theme;
+import org.telegram.ui.Adapters.DialogsAdapter;
 import org.telegram.ui.Components.AvatarDrawable;
 import org.telegram.ui.Components.GroupCreateCheckBox;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class DialogCell extends BaseCell {
 
@@ -893,22 +894,10 @@ public class DialogCell extends BaseCell {
         isSelected = value;
     }
 
-    private ArrayList<TLRPC.TL_dialog> getDialogsArray() {
-        if (dialogsType == 0) {
-            return MessagesController.getInstance(currentAccount).dialogs;
-        } else if (dialogsType == 1) {
-            return MessagesController.getInstance(currentAccount).dialogsServerOnly;
-        } else if (dialogsType == 2) {
-            return MessagesController.getInstance(currentAccount).dialogsGroupsOnly;
-        } else if (dialogsType == 3) {
-            return MessagesController.getInstance(currentAccount).dialogsForward;
-        }
-        return null;
-    }
-
-    public void checkCurrentDialogIndex() {
-        if (index < getDialogsArray().size()) {
-            TLRPC.TL_dialog dialog = getDialogsArray().get(index);
+    public void checkCurrentDialogIndex(DialogsAdapter dialogsAdapter) {
+        List<TLRPC.TL_dialog> dialogsArray = dialogsAdapter.getDialogsArray();
+        if (index < dialogsArray.size()) {
+            TLRPC.TL_dialog dialog = dialogsArray.get(index);
             TLRPC.DraftMessage newDraftMessage = DataQuery.getInstance(currentAccount).getDraft(currentDialogId);
             MessageObject newMessageObject = MessagesController.getInstance(currentAccount).dialogMessage.get(dialog.id);
             if (currentDialogId != dialog.id ||

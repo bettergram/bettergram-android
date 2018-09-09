@@ -39,6 +39,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.telegram.messenger.AndroidUtilities;
@@ -63,11 +64,12 @@ import org.telegram.messenger.ContactsController;
 import org.telegram.messenger.MessagesController;
 import org.telegram.messenger.NotificationCenter;
 import io.bettergram.messenger.R;
+import io.bettergram.ui.adapters.BetterDialogsAdapter;
+
 import org.telegram.messenger.UserConfig;
 import org.telegram.ui.ActionBar.AlertDialog;
 import org.telegram.ui.ActionBar.BottomSheet;
 import org.telegram.ui.ActionBar.ThemeDescription;
-import org.telegram.ui.Adapters.DialogsAdapter;
 import org.telegram.ui.Adapters.DialogsSearchAdapter;
 import org.telegram.ui.Cells.AccountSelectCell;
 import org.telegram.ui.Cells.DialogsEmptyCell;
@@ -104,14 +106,16 @@ import org.telegram.ui.Components.RecyclerListView;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Components.SizeNotifierFrameLayout;
 import org.telegram.ui.Components.StickersAlert;
+import org.telegram.ui.Components.TabsView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class DialogsActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate {
     
     private RecyclerListView listView;
     private LinearLayoutManager layoutManager;
-    private DialogsAdapter dialogsAdapter;
+    private BetterDialogsAdapter dialogsAdapter;
     private DialogsSearchAdapter dialogsSearchAdapter;
     private EmptyTextProgressView searchEmptyView;
     private RadialProgressView progressView;
@@ -608,7 +612,32 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         listView.setLayoutManager(layoutManager);
         listView.setVerticalScrollbarPosition(LocaleController.isRTL ? RecyclerListView.SCROLLBAR_POSITION_LEFT : RecyclerListView.SCROLLBAR_POSITION_RIGHT);
-        contentView.addView(listView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
+
+        TabsView newTabsView = new TabsView(context)
+            .refershAction(type->{
+                //todo: check for the same type?
+                int firstVisibleItem = layoutManager.findFirstVisibleItemPosition();
+                //change data set
+                if(dialogsAdapter != null) {
+                    dialogsAdapter.setDialogsType(type);
+                }
+                //scroll to top
+                if(firstVisibleItem < 20){
+                    listView.smoothScrollToPosition(0);
+                } else{
+                    listView.scrollToPosition(0);
+                }
+            });
+        LinearLayout tabsContainer = new LinearLayout(context);
+        tabsContainer.setOrientation(LinearLayout.VERTICAL);
+        tabsContainer.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
+
+        tabsContainer.addView(newTabsView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, AndroidUtilities.isTablet() ? 42 : 40, Gravity.TOP));
+        //todo: get back
+//        refreshTabAndListViews(false);
+
+        tabsContainer.addView(listView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
+        contentView.addView(tabsContainer, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
         listView.setOnItemClickListener((view, position) -> {
             if (listView == null || listView.getAdapter() == null || getParentActivity() == null) {
                 return;
@@ -825,7 +854,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                     return false;
                 }
                 final TLRPC.TL_dialog dialog;
-                ArrayList<TLRPC.TL_dialog> dialogs = getDialogsArray();
+                List<TLRPC.TL_dialog> dialogs = dialogsAdapter.getDialogsArray();
                 if (position < 0 || position >= dialogs.size()) {
                     return false;
                 }
@@ -1068,7 +1097,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             if (listView.getAdapter() == dialogsAdapter) {
                 int firstVisibleItem = layoutManager.findFirstVisibleItemPosition();
                 if (firstVisibleItem == 0) {
-                    ArrayList<TLRPC.TL_dialog> array = getDialogsArray();
+                    List<TLRPC.TL_dialog> array = dialogsAdapter.getDialogsArray();
                     for (int a = array.size() - 1; a >= 0; a--) {
                         TLRPC.TL_dialog dialog = array.get(a);
                         if ((dialog.unread_count != 0 || dialog.unread_mark) && !MessagesController.getInstance(currentAccount).isDialogMuted(dialog.id)) {
@@ -1085,7 +1114,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                             if (child.getTop() <= middle && child.getBottom() >= middle) {
                                 RecyclerListView.Holder holder = (RecyclerListView.Holder) listView.findContainingViewHolder(child);
                                 if (holder != null) {
-                                    ArrayList<TLRPC.TL_dialog> array = getDialogsArray();
+                                    List<TLRPC.TL_dialog> array = dialogsAdapter.getDialogsArray();
                                     for (int a = Math.min(holder.getAdapterPosition(), array.size()) - 1; a >= 0; a--) {
                                         TLRPC.TL_dialog dialog = array.get(a);
                                         if ((dialog.unread_count != 0 || dialog.unread_mark) && !MessagesController.getInstance(currentAccount).isDialogMuted(dialog.id)) {
@@ -1190,7 +1219,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                     return;
                 }
                 if (visibleItemCount > 0) {
-                    if (layoutManager.findLastVisibleItemPosition() >= getDialogsArray().size() - 10) {
+                    if (layoutManager.findLastVisibleItemPosition() >= dialogsAdapter.getDialogsArray().size() - 10) {
                         boolean fromCache = !MessagesController.getInstance(currentAccount).dialogsEndReached;
                         if (fromCache || !MessagesController.getInstance(currentAccount).serverDialogsEndReached) {
                             MessagesController.getInstance(currentAccount).loadDialogs(-1, 100, fromCache);
@@ -1226,7 +1255,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         });
 
         if (searchString == null) {
-            dialogsAdapter = new DialogsAdapter(context, dialogsType, onlySelect);
+            dialogsAdapter = new BetterDialogsAdapter(context, dialogsType, onlySelect);
             if (AndroidUtilities.isTablet() && openedDialogId != 0) {
                 dialogsAdapter.setOpenedDialogId(openedDialogId);
             }
@@ -1523,7 +1552,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                         if (child.getTop() <= middle && child.getBottom() >= middle) {
                             RecyclerListView.Holder holder = (RecyclerListView.Holder) listView.findContainingViewHolder(child);
                             if (holder != null) {
-                                ArrayList<TLRPC.TL_dialog> array = getDialogsArray();
+                                List<TLRPC.TL_dialog> array = dialogsAdapter.getDialogsArray();
                                 if (firstVisibleItem == 0) {
                                     if (unreadOnScreen != currentUnreadCount) {
                                         for (int a = holder.getAdapterPosition() + 1, size = array.size(); a < size; a++) {
@@ -1843,19 +1872,6 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         }
     }
 
-    private ArrayList<TLRPC.TL_dialog> getDialogsArray() {
-        if (dialogsType == 0) {
-            return MessagesController.getInstance(currentAccount).dialogs;
-        } else if (dialogsType == 1) {
-            return MessagesController.getInstance(currentAccount).dialogsServerOnly;
-        } else if (dialogsType == 2) {
-            return MessagesController.getInstance(currentAccount).dialogsGroupsOnly;
-        } else if (dialogsType == 3) {
-            return MessagesController.getInstance(currentAccount).dialogsForward;
-        }
-        return null;
-    }
-
     public void setSideMenu(RecyclerView recyclerView) {
         sideMenu = recyclerView;
         sideMenu.setBackgroundColor(Theme.getColor(Theme.key_chats_menuBackground));
@@ -1903,7 +1919,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 if (listView.getAdapter() != dialogsSearchAdapter) {
                     DialogCell cell = (DialogCell) child;
                     if ((mask & MessagesController.UPDATE_MASK_NEW_MESSAGE) != 0) {
-                        cell.checkCurrentDialogIndex();
+                        cell.checkCurrentDialogIndex(dialogsAdapter);
                         if (dialogsType == 0 && AndroidUtilities.isTablet()) {
                             cell.setDialogSelected(cell.getDialogId() == openedDialogId);
                         }
