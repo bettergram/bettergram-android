@@ -227,6 +227,9 @@ public class ActionBar extends FrameLayout {
     }
 
     public void setSubtitle(CharSequence value) {
+        if (value != null && value.equals(lastSubtitle)) {
+            return;
+        }
         if (value != null && subtitleTextView == null) {
             createSubtitleTextView();
         }
@@ -253,6 +256,9 @@ public class ActionBar extends FrameLayout {
     }
 
     public void setTitle(CharSequence value) {
+        if (value != null && value.equals(lastTitle)) {
+            return;
+        }
         if (value != null && titleTextView == null) {
             createTitleTextView();
         }

@@ -15,28 +15,15 @@ import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.ContentResolver;
-import android.content.ContentUris;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.SharedPreferences;
+import android.content.*;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.database.ContentObserver;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.Matrix;
-import android.graphics.Paint;
-import android.graphics.Point;
-import android.graphics.Rect;
-import android.graphics.RectF;
-import android.graphics.Typeface;
+import android.graphics.*;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -52,41 +39,25 @@ import android.support.v4.content.FileProvider;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.EdgeEffectCompat;
 import android.telephony.TelephonyManager;
-import android.text.Selection;
-import android.text.Spannable;
-import android.text.SpannableStringBuilder;
-import android.text.Spanned;
-import android.text.TextUtils;
+import android.text.*;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ForegroundColorSpan;
 import android.util.DisplayMetrics;
 import android.util.StateSet;
 import android.util.TypedValue;
-import android.view.Display;
-import android.view.MotionEvent;
-import android.view.Gravity;
-import android.view.Surface;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.WindowManager;
+import android.view.*;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.MimeTypeMap;
-import android.widget.EdgeEffect;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.ScrollView;
-import android.widget.TextView;
-
+import android.widget.*;
 import com.android.internal.telephony.ITelephony;
-
+import io.bettergram.messenger.BuildConfig;
+import io.bettergram.messenger.R;
 import net.hockeyapp.android.CrashManager;
 import net.hockeyapp.android.CrashManagerListener;
 import net.hockeyapp.android.UpdateManager;
-
 import org.telegram.PhoneFormat.PhoneFormat;
 import org.telegram.tgnet.ConnectionsManager;
 import org.telegram.tgnet.TLObject;
@@ -101,27 +72,12 @@ import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.PickerBottomLayout;
 import org.telegram.ui.Components.TypefaceSpan;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Hashtable;
-import java.util.Locale;
+import java.util.*;
 import java.util.regex.Pattern;
-
-import io.bettergram.messenger.BuildConfig;
-import io.bettergram.messenger.R;
 
 public class AndroidUtilities {
 
@@ -134,6 +90,7 @@ public class AndroidUtilities {
 
     public static int statusBarHeight = 0;
     public static float density = 1;
+    public static float scaleDensity = 1;
     public static Point displaySize = new Point();
     public static int roundMessageSize;
     public static boolean incorrectDisplaySizeFix;
@@ -154,6 +111,7 @@ public class AndroidUtilities {
     private static RectF bitmapRect;
 
     public static Pattern WEB_URL = null;
+
     static {
         try {
             final String GOOD_IRI_CHAR = "a-zA-Z0-9\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF";
@@ -939,6 +897,20 @@ public class AndroidUtilities {
         return new File("");
     }
 
+    public static int sp(float value) {
+        if (value == 0) {
+            return 0;
+        }
+        return (int) Math.ceil(scaleDensity * value);
+    }
+
+    public static float px(float dp) {
+        if (dp == 0) {
+            return 0;
+        }
+        return (float) Math.ceil(dp / density);
+    }
+
     public static int dp(float value) {
         if (value == 0) {
             return 0;
@@ -971,7 +943,9 @@ public class AndroidUtilities {
 
     public static void checkDisplaySize(Context context, Configuration newConfiguration) {
         try {
-            density = context.getResources().getDisplayMetrics().density;
+            final DisplayMetrics metrics = context.getResources().getDisplayMetrics();
+            density = metrics.density;
+            scaleDensity = metrics.scaledDensity;
             Configuration configuration = newConfiguration;
             if (configuration == null) {
                 configuration = context.getResources().getConfiguration();
@@ -1059,7 +1033,7 @@ public class AndroidUtilities {
     }
 
     public static long makeBroadcastId(int id) {
-        return 0x0000000100000000L | ((long)id & 0x00000000FFFFFFFFL);
+        return 0x0000000100000000L | ((long) id & 0x00000000FFFFFFFFL);
     }
 
     public static int getMyLayerVersion(int layer) {
@@ -1268,6 +1242,7 @@ public class AndroidUtilities {
         }
     }
 
+    @SuppressLint("MissingPermission")
     public static void removeLoginPhoneCall(String number, boolean first) {
         if (!hasCallPermissions) {
             return;
@@ -1306,6 +1281,7 @@ public class AndroidUtilities {
 
     private static Field mAttachInfoField;
     private static Field mStableInsetsField;
+
     public static int getViewInset(View view) {
         if (view == null || Build.VERSION.SDK_INT < 21 || view.getHeight() == AndroidUtilities.displaySize.y || view.getHeight() == AndroidUtilities.displaySize.y - statusBarHeight) {
             return 0;
@@ -1675,7 +1651,7 @@ public class AndroidUtilities {
         if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
             storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "Telegram");
             if (!storageDir.mkdirs()) {
-                if (!storageDir.exists()){
+                if (!storageDir.exists()) {
                     if (BuildVars.LOGS_ENABLED) {
                         FileLog.d("failed to create directory");
                     }
@@ -1726,7 +1702,7 @@ public class AndroidUtilities {
                     }
 
                     final String selection = "_id=?";
-                    final String[] selectionArgs = new String[] {
+                    final String[] selectionArgs = new String[]{
                             split[1]
                     };
 
@@ -2267,11 +2243,62 @@ public class AndroidUtilities {
         builder.show();
     }
 
-    public static String getSystemProperty(String key){
-        try{
-            Class props=Class.forName("android.os.SystemProperties");
-            return (String)props.getMethod("get", String.class).invoke(null, key);
-        }catch(Exception ignore){}
+    public static String getSystemProperty(String key) {
+        try {
+            @SuppressLint("PrivateApi") Class props = Class.forName("android.os.SystemProperties");
+            return (String) props.getMethod("get", String.class).invoke(null, key);
+        } catch (Exception ignore) {
+        }
         return null;
+    }
+
+    public static int getSystemNavigationBarHeight(int defaultHeightIfFailed) {
+        final Context context = ApplicationLoader.applicationContext;
+        final Resources resources = context.getResources();
+        int resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android");
+        int height = defaultHeightIfFailed;
+        if (resourceId > 0) {
+            height = resources.getDimensionPixelSize(resourceId);
+        }
+        return height;
+    }
+
+    public static int getToolBarHeight() {
+        final int defaultToolbarHeight = 56;
+        int toolBarHeight = -1;
+        if (toolBarHeight > 0) {
+            return toolBarHeight;
+        }
+        final Context context = ApplicationLoader.applicationContext;
+        final Resources resources = context.getResources();
+        final int resourceId = resources.getIdentifier("action_bar_size", "dimen", "android");
+        toolBarHeight = resourceId > 0 ?
+                resources.getDimensionPixelSize(resourceId) :
+                (int) (defaultToolbarHeight * density + 0.5f);
+        return toolBarHeight;
+    }
+
+
+    public static <T extends View> ArrayList<T> findViewsByType(View root, Class<T> tClass) {
+        if (root instanceof ViewGroup) {
+            return findViewsByType((ViewGroup) root, tClass);
+        }
+        throw new IllegalArgumentException("root should be instance of ViewGroup");
+    }
+
+    public static <T extends View> ArrayList<T> findViewsByType(ViewGroup root, Class<T> tClass) {
+        final ArrayList<T> result = new ArrayList<>();
+        int childCount = root.getChildCount();
+        for (int i = 0; i < childCount; i++) {
+            final View child = root.getChildAt(i);
+            if (child instanceof ViewGroup) {
+                result.addAll(findViewsByType((ViewGroup) child, tClass));
+            }
+
+            if (tClass.isInstance(child)) {
+                result.add(tClass.cast(child));
+            }
+        }
+        return result;
     }
 }

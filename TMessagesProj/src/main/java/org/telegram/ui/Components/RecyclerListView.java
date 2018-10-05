@@ -8,6 +8,7 @@
 
 package org.telegram.ui.Components;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -103,7 +104,9 @@ public class RecyclerListView extends RecyclerView {
 
     public interface OnItemLongClickListenerExtended {
         boolean onItemClick(View view, int position, float x, float y);
+
         void onMove(float dx, float dy);
+
         void onLongClickRelease();
     }
 
@@ -117,6 +120,7 @@ public class RecyclerListView extends RecyclerView {
 
     public abstract static class FastScrollAdapter extends SelectionAdapter {
         public abstract String getLetter(int position);
+
         public abstract int getPositionForScrollProgress(float progress);
     }
 
@@ -234,11 +238,17 @@ public class RecyclerListView extends RecyclerView {
         }
 
         public abstract int getSectionCount();
+
         public abstract int getCountForSection(int section);
+
         public abstract boolean isEnabled(int section, int row);
+
         public abstract int getItemViewType(int section, int position);
+
         public abstract Object getItem(int section, int position);
+
         public abstract void onBindViewHolder(int section, int position, ViewHolder holder);
+
         public abstract View getSectionHeaderView(int section, View view);
     }
 
@@ -296,6 +306,7 @@ public class RecyclerListView extends RecyclerView {
             invalidate();
         }
 
+        @SuppressLint("ClickableViewAccessibility")
         @Override
         public boolean onTouchEvent(MotionEvent event) {
             switch (event.getAction()) {
@@ -400,24 +411,24 @@ public class RecyclerListView extends RecyclerView {
                     diff = AndroidUtilities.dp(12) - y;
                     y = AndroidUtilities.dp(12);
                 }
-                float raduisTop;
-                float raduisBottom;
+                float radiusTop;
+                float radiusBottom;
                 canvas.translate(AndroidUtilities.dp(10), y);
                 if (diff <= AndroidUtilities.dp(29)) {
-                    raduisTop = AndroidUtilities.dp(44);
-                    raduisBottom = AndroidUtilities.dp(4) + (diff / AndroidUtilities.dp(29)) * AndroidUtilities.dp(40);
+                    radiusTop = AndroidUtilities.dp(44);
+                    radiusBottom = AndroidUtilities.dp(4) + (diff / AndroidUtilities.dp(29)) * AndroidUtilities.dp(40);
                 } else {
                     diff -= AndroidUtilities.dp(29);
-                    raduisBottom = AndroidUtilities.dp(44);
-                    raduisTop = AndroidUtilities.dp(4) + (1.0f - diff / AndroidUtilities.dp(29)) * AndroidUtilities.dp(40);
+                    radiusBottom = AndroidUtilities.dp(44);
+                    radiusTop = AndroidUtilities.dp(4) + (1.0f - diff / AndroidUtilities.dp(29)) * AndroidUtilities.dp(40);
                 }
-                if (LocaleController.isRTL && (radii[0] != raduisTop || radii[6] != raduisBottom) || !LocaleController.isRTL && (radii[2] != raduisTop || radii[4] != raduisBottom)) {
+                if (LocaleController.isRTL && (radii[0] != radiusTop || radii[6] != radiusBottom) || !LocaleController.isRTL && (radii[2] != radiusTop || radii[4] != radiusBottom)) {
                     if (LocaleController.isRTL) {
-                        radii[0] = radii[1] = raduisTop;
-                        radii[6] = radii[7] = raduisBottom;
+                        radii[0] = radii[1] = radiusTop;
+                        radii[6] = radii[7] = radiusBottom;
                     } else {
-                        radii[2] = radii[3] = raduisTop;
-                        radii[4] = radii[5] = raduisBottom;
+                        radii[2] = radii[3] = radiusTop;
+                        radii[4] = radii[5] = radiusBottom;
                     }
                     path.reset();
                     rect.set(LocaleController.isRTL ? AndroidUtilities.dp(10) : 0, 0, AndroidUtilities.dp(LocaleController.isRTL ? 98 : 88), AndroidUtilities.dp(88));

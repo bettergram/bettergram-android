@@ -202,7 +202,7 @@ public class DialogsAdapter extends RecyclerListView.SelectionAdapter {
                 textView.setOnClickListener(view1 -> {
                     MessagesController.getInstance(currentAccount).hintDialogs.clear();
                     SharedPreferences preferences = MessagesController.getGlobalMainSettings();
-                    preferences.edit().remove("installReferer").commit();
+                    preferences.edit().remove("installReferer").apply();
                     notifyDataSetChanged();
                 });
 

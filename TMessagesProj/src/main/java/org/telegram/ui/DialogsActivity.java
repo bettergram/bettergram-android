@@ -9,11 +9,7 @@
 package org.telegram.ui;
 
 import android.Manifest;
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
-import android.animation.StateListAnimator;
+import android.animation.*;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -28,6 +24,7 @@ import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.view.ViewCompat;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -36,83 +33,27 @@ import android.view.ViewOutlineProvider;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
-import android.widget.EditText;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-
-import org.telegram.messenger.AndroidUtilities;
-import org.telegram.messenger.ApplicationLoader;
-import org.telegram.messenger.BuildVars;
-import org.telegram.messenger.ChatObject;
-import org.telegram.messenger.DataQuery;
-import org.telegram.messenger.DialogObject;
-import org.telegram.messenger.ImageLoader;
-import org.telegram.messenger.LocaleController;
-import org.telegram.messenger.MessageObject;
-import org.telegram.messenger.SharedConfig;
-import org.telegram.messenger.UserObject;
+import android.widget.*;
+import io.bettergram.messenger.R;
+import io.bettergram.ui.adapters.BetterDialogsAdapter;
+import org.telegram.messenger.*;
 import org.telegram.messenger.support.widget.LinearLayoutManager;
 import org.telegram.messenger.support.widget.LinearSmoothScrollerMiddle;
 import org.telegram.messenger.support.widget.RecyclerView;
-import org.telegram.messenger.FileLog;
 import org.telegram.tgnet.ConnectionsManager;
 import org.telegram.tgnet.TLObject;
 import org.telegram.tgnet.TLRPC;
-import org.telegram.messenger.ContactsController;
-import org.telegram.messenger.MessagesController;
-import org.telegram.messenger.NotificationCenter;
-import io.bettergram.messenger.R;
-import io.bettergram.ui.adapters.BetterDialogsAdapter;
-
-import org.telegram.messenger.UserConfig;
-import org.telegram.ui.ActionBar.AlertDialog;
-import org.telegram.ui.ActionBar.BottomSheet;
-import org.telegram.ui.ActionBar.ThemeDescription;
+import org.telegram.ui.ActionBar.*;
 import org.telegram.ui.Adapters.DialogsSearchAdapter;
-import org.telegram.ui.Cells.AccountSelectCell;
-import org.telegram.ui.Cells.DialogsEmptyCell;
-import org.telegram.ui.Cells.DividerCell;
-import org.telegram.ui.Cells.DrawerActionCell;
-import org.telegram.ui.Cells.DrawerAddCell;
-import org.telegram.ui.Cells.DrawerProfileCell;
-import org.telegram.ui.Cells.DrawerUserCell;
-import org.telegram.ui.Cells.GraySectionCell;
-import org.telegram.ui.Cells.HashtagSearchCell;
-import org.telegram.ui.Cells.HintDialogCell;
-import org.telegram.ui.Cells.LoadingCell;
-import org.telegram.ui.Cells.ProfileSearchCell;
-import org.telegram.ui.Cells.UserCell;
-import org.telegram.ui.Cells.DialogCell;
-import org.telegram.ui.ActionBar.ActionBar;
-import org.telegram.ui.ActionBar.ActionBarMenu;
-import org.telegram.ui.ActionBar.ActionBarMenuItem;
-import org.telegram.ui.ActionBar.BaseFragment;
-import org.telegram.ui.ActionBar.MenuDrawable;
-import org.telegram.ui.Components.AlertsCreator;
-import org.telegram.ui.Components.AnimatedArrowDrawable;
-import org.telegram.ui.Components.AvatarDrawable;
-import org.telegram.ui.Components.BackupImageView;
-import org.telegram.ui.Components.ChatActivityEnterView;
-import org.telegram.ui.Components.CombinedDrawable;
-import org.telegram.ui.Components.FragmentContextView;
-import org.telegram.ui.Components.EmptyTextProgressView;
-import org.telegram.ui.Components.JoinGroupAlert;
-import org.telegram.ui.Components.LayoutHelper;
-import org.telegram.ui.Components.ProxyDrawable;
-import org.telegram.ui.Components.RadialProgressView;
-import org.telegram.ui.Components.RecyclerListView;
-import org.telegram.ui.ActionBar.Theme;
-import org.telegram.ui.Components.SizeNotifierFrameLayout;
-import org.telegram.ui.Components.StickersAlert;
-import org.telegram.ui.Components.TabsView;
+import org.telegram.ui.Cells.*;
+import org.telegram.ui.Components.*;
+import org.telegram.ui.Components.BottomBar.BottomNavigationBar;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class DialogsActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate {
-    
+
     private RecyclerListView listView;
     private LinearLayoutManager layoutManager;
     private BetterDialogsAdapter dialogsAdapter;
@@ -589,7 +530,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             }
         };
         fragmentView = contentView;
-        
+
         listView = new RecyclerListView(context);
         listView.setVerticalScrollBarEnabled(true);
         listView.setItemAnimator(null);
@@ -614,30 +555,31 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         listView.setVerticalScrollbarPosition(LocaleController.isRTL ? RecyclerListView.SCROLLBAR_POSITION_LEFT : RecyclerListView.SCROLLBAR_POSITION_RIGHT);
 
         TabsView newTabsView = new TabsView(context)
-            .refershAction(type->{
-                //todo: check for the same type?
-                int firstVisibleItem = layoutManager.findFirstVisibleItemPosition();
-                //change data set
-                if(dialogsAdapter != null) {
-                    dialogsAdapter.setDialogsType(type);
-                }
-                //scroll to top
-                if(firstVisibleItem < 20){
-                    listView.smoothScrollToPosition(0);
-                } else{
-                    listView.scrollToPosition(0);
-                }
-            });
+                .refershAction(type -> {
+                    //todo: check for the same type?
+                    int firstVisibleItem = layoutManager.findFirstVisibleItemPosition();
+                    //change data set
+                    if (dialogsAdapter != null) {
+                        dialogsAdapter.setDialogsType(type);
+                    }
+                    //scroll to top
+                    if (firstVisibleItem < 20) {
+                        listView.smoothScrollToPosition(0);
+                    } else {
+                        listView.scrollToPosition(0);
+                    }
+                });
         LinearLayout tabsContainer = new LinearLayout(context);
         tabsContainer.setOrientation(LinearLayout.VERTICAL);
         tabsContainer.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
 
-        tabsContainer.addView(newTabsView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, AndroidUtilities.isTablet() ? 42 : 40, Gravity.TOP));
+        tabsContainer.addView(newTabsView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, AndroidUtilities.isTablet() ? 44 : 42, Gravity.TOP));
         //todo: get back
 //        refreshTabAndListViews(false);
 
         tabsContainer.addView(listView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
-        contentView.addView(tabsContainer, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
+
+        contentView.addView(tabsContainer, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.CENTER, 0, AndroidUtilities.isTablet() ? 16 : 14, 0, AndroidUtilities.isTablet() ? 40 : 42));// added bottom margin for the bottom navigation view
         listView.setOnItemClickListener((view, position) -> {
             if (listView == null || listView.getAdapter() == null || getParentActivity() == null) {
                 return;
@@ -1078,7 +1020,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 }
             });
         }
-        contentView.addView(floatingButton, LayoutHelper.createFrame(Build.VERSION.SDK_INT >= 21 ? 56 : 60, Build.VERSION.SDK_INT >= 21 ? 56 : 60, (LocaleController.isRTL ? Gravity.LEFT : Gravity.RIGHT) | Gravity.BOTTOM, LocaleController.isRTL ? 14 : 0, 0, LocaleController.isRTL ? 0 : 14, 14));
+        contentView.addView(floatingButton, LayoutHelper.createFrame(Build.VERSION.SDK_INT >= 21 ? 56 : 60, Build.VERSION.SDK_INT >= 21 ? 56 : 60, (LocaleController.isRTL ? Gravity.LEFT : Gravity.RIGHT) | Gravity.BOTTOM, LocaleController.isRTL ? 14 : 0, 0, LocaleController.isRTL ? 0 : 14, 56 + 14)); // Added margin bottom same to bottom nav view
         floatingButton.setOnClickListener(v -> {
             Bundle args = new Bundle();
             args.putBoolean("destroyAfterSelect", true);
@@ -1461,6 +1403,17 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             });
         }
 
+        BottomNavigationBar bottomBar = new BottomNavigationBar(context)
+                .setOnSelectListener((position, title) -> {
+                    actionBar.setTitle(title);
+                    newTabsView.setVisibility(position > 0 ? View.GONE : View.VISIBLE);
+                })
+                .setOnReselectListener((position, title) -> actionBar.setTitle(title))
+                .selectTabAndTriggerListener(0, true);
+        ViewCompat.setTranslationZ(bottomBar, AndroidUtilities.dp(5)); // This should be above the floatingButton
+
+        contentView.addView(bottomBar, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 56, Gravity.BOTTOM));
+
         if (!onlySelect) {
             checkUnreadCount(false);
         }
@@ -1489,7 +1442,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                         AlertDialog.Builder builder = AlertsCreator.createContactsPermissionDialog(activity, param -> {
                             askAboutContacts = param != 0;
                             MessagesController.getGlobalNotificationsSettings().edit().putBoolean("askAboutContacts", askAboutContacts).commit();
-                            askForPermissons(false);
+                            askForPermissions(false);
                         });
                         showDialog(permissionDialog = builder.create());
                     } else if (activity.shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
@@ -1499,7 +1452,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                         builder.setPositiveButton(LocaleController.getString("OK", R.string.OK), null);
                         showDialog(permissionDialog = builder.create());
                     } else {
-                        askForPermissons(true);
+                        askForPermissions(true);
                     }
                 }
             }
@@ -1671,34 +1624,34 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
     }
 
     @TargetApi(Build.VERSION_CODES.M)
-    private void askForPermissons(boolean alert) {
+    private void askForPermissions(boolean alert) {
         Activity activity = getParentActivity();
         if (activity == null) {
             return;
         }
-        ArrayList<String> permissons = new ArrayList<>();
+        ArrayList<String> permissions = new ArrayList<>();
         if (UserConfig.getInstance(currentAccount).syncContacts && askAboutContacts && activity.checkSelfPermission(Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
             if (alert) {
                 AlertDialog.Builder builder = AlertsCreator.createContactsPermissionDialog(activity, param -> {
                     askAboutContacts = param != 0;
-                    MessagesController.getGlobalNotificationsSettings().edit().putBoolean("askAboutContacts", askAboutContacts).commit();
-                    askForPermissons(false);
+                    MessagesController.getGlobalNotificationsSettings().edit().putBoolean("askAboutContacts", askAboutContacts).apply();
+                    askForPermissions(false);
                 });
                 showDialog(permissionDialog = builder.create());
                 return;
             }
-            permissons.add(Manifest.permission.READ_CONTACTS);
-            permissons.add(Manifest.permission.WRITE_CONTACTS);
-            permissons.add(Manifest.permission.GET_ACCOUNTS);
+            permissions.add(Manifest.permission.READ_CONTACTS);
+            permissions.add(Manifest.permission.WRITE_CONTACTS);
+            permissions.add(Manifest.permission.GET_ACCOUNTS);
         }
         if (activity.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            permissons.add(Manifest.permission.READ_EXTERNAL_STORAGE);
-            permissons.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            permissions.add(Manifest.permission.READ_EXTERNAL_STORAGE);
+            permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
         }
-        if (permissons.isEmpty()) {
+        if (permissions.isEmpty()) {
             return;
         }
-        String[] items = permissons.toArray(new String[permissons.size()]);
+        String[] items = permissions.toArray(new String[permissions.size()]);
         try {
             activity.requestPermissions(items, 1);
         } catch (Exception ignore) {
@@ -1709,7 +1662,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
     protected void onDialogDismiss(Dialog dialog) {
         super.onDialogDismiss(dialog);
         if (permissionDialog != null && dialog == permissionDialog && getParentActivity() != null) {
-            askForPermissons(false);
+            askForPermissions(false);
         }
     }
 

@@ -1063,6 +1063,9 @@ public class Theme {
     public static final String key_calls_ratingStar = "calls_ratingStar";
     public static final String key_calls_ratingStarSelected = "calls_ratingStarSelected";
 
+    public static final String key_bottombar_inactiveColor = "bottombar_inactiveColor";
+    public static final String key_bottombar_activeColor = "bottombar_activeColor";
+
     //ununsed
     public static final String key_chat_outBroadcast = "chat_outBroadcast";
     public static final String key_chat_mediaBroadcast = "chat_mediaBroadcast";
@@ -1688,6 +1691,9 @@ public class Theme {
         defaultColors.put(key_calls_ratingStar, 0x80000000);
         defaultColors.put(key_calls_ratingStarSelected, 0xFF4a97d6);
 
+        defaultColors.put(key_bottombar_inactiveColor, 0xFFC9C9C9);
+        defaultColors.put(key_bottombar_activeColor, 0xFF1FCD6D);
+
         fallbackKeys.put(key_chat_adminText, key_chat_inTimeText);
         fallbackKeys.put(key_chat_adminSelectedText, key_chat_inTimeSelectedText);
         fallbackKeys.put(key_player_progressCachedBackground, key_player_progressBackground);
@@ -1773,7 +1779,7 @@ public class Theme {
             theme = preferences.getString("nighttheme", null);
             if (theme != null) {
                 ThemeInfo t = themesDict.get(theme);
-                if (t !=  null) {
+                if (t != null) {
                     currentNightTheme = t;
                 }
             }
