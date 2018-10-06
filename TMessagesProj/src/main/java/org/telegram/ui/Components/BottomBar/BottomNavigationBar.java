@@ -13,6 +13,7 @@ import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.Pair;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,7 +36,7 @@ public class BottomNavigationBar extends LinearLayout implements NotificationCen
     private static final String TAG = BottomNavigationBar.class.getName();
 
     private static final List<Pair<Integer, Integer>> ITEMS = Arrays.asList(
-            new Pair<>(R.drawable.floating_message, R.string.barItemChats),
+            new Pair<>(R.drawable.ic_tab_chats, R.string.barItemChats),
             new Pair<>(R.drawable.ic_tab_crypto, R.string.barItemPrices),
             new Pair<>(R.drawable.ic_tab_news, R.string.barItemNews),
             new Pair<>(R.drawable.ic_tab_videos, R.string.barItemVideos),
@@ -49,6 +50,7 @@ public class BottomNavigationBar extends LinearLayout implements NotificationCen
     private int activeColorId;
     private int selectedPosition;
     private boolean shouldTriggerListenerOnLayout;
+    private int tabItemBgRes;
 
     private OnSelectListener onSelectListener = (position, title) -> {
 
@@ -167,6 +169,7 @@ public class BottomNavigationBar extends LinearLayout implements NotificationCen
         tabView.setClickable(true);
         tabView.setOrientation(LinearLayout.VERTICAL);
         tabView.setTranslationY(AndroidUtilities.dp(2));
+        tabView.setBackgroundResource(tabItemBgRes);
 
         ImageView tabIcon = new ImageView(context);
 
@@ -231,6 +234,10 @@ public class BottomNavigationBar extends LinearLayout implements NotificationCen
         if (atLeastLollipop()) {
             setOutlineProvider(ViewOutlineProvider.BOUNDS);
         }
+
+        TypedValue outValue = new TypedValue();
+        getContext().getTheme().resolveAttribute(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ? android.R.attr.selectableItemBackgroundBorderless : android.R.attr.selectableItemBackground, outValue, true);
+        tabItemBgRes = outValue.resourceId;
     }
 
     @Override

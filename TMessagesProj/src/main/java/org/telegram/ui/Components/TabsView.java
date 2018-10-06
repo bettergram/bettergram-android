@@ -1,5 +1,7 @@
 package org.telegram.ui.Components;
 
+import android.animation.AnimatorSet;
+import android.animation.ValueAnimator;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
@@ -12,41 +14,40 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-
-import org.telegram.messenger.AndroidUtilities;
-import org.telegram.messenger.ApplicationLoader;
-import org.telegram.messenger.FileLog;
-import org.telegram.messenger.LocaleController;
-import org.telegram.messenger.MessagesController;
-import org.telegram.messenger.NotificationCenter;
-import org.telegram.messenger.UserConfig;
+import io.bettergram.messenger.R;
+import org.telegram.messenger.*;
 import org.telegram.tgnet.TLRPC;
-import org.telegram.ui.ActionBar.Theme;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import io.bettergram.messenger.R;
-
 /**
  * Created by Yan on 09/07/2018.
  */
 
-public class TabsView extends FrameLayout implements NotificationCenter.NotificationCenterDelegate{
+public class TabsView extends FrameLayout implements NotificationCenter.NotificationCenterDelegate {
     private static final String TAG = "TabsView";
     //TODO: move to controller
     private static int selectedTab = 0;
     private static final List<Tab> tabs = Arrays.asList(
-        new Tab(LocaleController.getString("tabsAll", R.string.tabsAll), R.drawable.tab_all, 0),
-        new Tab(LocaleController.getString("tabsDirect", R.string.tabsDirect), R.drawable.tab_user, 101),
-        new Tab(LocaleController.getString("tabsGroups", R.string.tabsGroups), R.drawable.tab_group, 102),
-        new Tab(LocaleController.getString("tabsAnnouncements", R.string.tabsAnnouncements), R.drawable.tab_channel, 103),
-        new Tab(LocaleController.getString("tabsFavorites", R.string.tabsFavorites), R.drawable.tab_favs, 104),
-        new Tab(LocaleController.getString("tabsCrypto", R.string.tabsCrypto), R.drawable.tab_bot, 105)
+            new Tab(LocaleController.getString("tabsAll", R.string.tabsAll), R.drawable.tab_all, 0),
+            new Tab(LocaleController.getString("tabsDirect", R.string.tabsDirect), R.drawable.tab_user, 101),
+            new Tab(LocaleController.getString("tabsGroups", R.string.tabsGroups), R.drawable.tab_group, 102),
+            new Tab(LocaleController.getString("tabsAnnouncements", R.string.tabsAnnouncements), R.drawable.tab_channel, 103),
+            new Tab(LocaleController.getString("tabsFavorites", R.string.tabsFavorites), R.drawable.tab_favs, 104),
+            new Tab(LocaleController.getString("tabsCrypto", R.string.tabsCrypto), R.drawable.tab_bot, 105)
     );
+
+    private final AccelerateDecelerateInterpolator interpolator = new AccelerateDecelerateInterpolator();
+    private int viewWidth;
+    private int viewHeight;
+    private boolean hidden;
+    private int lastParentTopMargin, lastTabTopMargin;
+
     private static class Tab {
         private final String title;
         private final int res;
@@ -66,27 +67,27 @@ public class TabsView extends FrameLayout implements NotificationCenter.Notifica
             this.unread = 0;
         }
 
-        public String getTitle(){
+        public String getTitle() {
             return this.title;
         }
 
-        public int getRes(){
+        public int getRes() {
             return this.res;
         }
 
-        public int getType(){
+        public int getType() {
             return this.type;
         }
 
-        public int getPosition(){
+        public int getPosition() {
             return this.position;
         }
 
-        public int getUnread(){
+        public int getUnread() {
             return this.unread;
         }
 
-        public void setUnread(int unread){
+        public void setUnread(int unread) {
             this.unread = unread;
         }
     }
@@ -115,12 +116,12 @@ public class TabsView extends FrameLayout implements NotificationCenter.Notifica
         updatePagerItem();
     }
 
-    public void reloadTabs(){
+    public void reloadTabs() {
         loadArray();
         pager.getAdapter().notifyDataSetChanged();
     }
 
-    private void updatePagerItem(){
+    private void updatePagerItem() {
         currentPage = selectedTab;
         pager.setCurrentItem(currentPage);
     }
@@ -144,6 +145,13 @@ public class TabsView extends FrameLayout implements NotificationCenter.Notifica
     public TabsView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         init(context);
+    }
+
+    @Override
+    protected void onSizeChanged(int xNew, int yNew, int xOld, int yOld) {
+        super.onSizeChanged(xNew, yNew, xOld, yOld);
+        viewWidth = xNew;
+        viewHeight = yNew;
     }
 
     private void init(Context context) {
@@ -183,7 +191,7 @@ public class TabsView extends FrameLayout implements NotificationCenter.Notifica
         pagerSlidingTabStrip.setDelegate(new PlusPagerSlidingTabStrip.PlusScrollSlidingTabStripDelegate() {
             @Override
             public void onTabLongClick(int position) {
-                if(selectedTab == position) {
+                if (selectedTab == position) {
                     //TODO
                 }
             }
@@ -203,8 +211,10 @@ public class TabsView extends FrameLayout implements NotificationCenter.Notifica
         pagerSlidingTabStrip.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 
             private boolean loop;
+
             @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            }
 
             @Override
             public void onPageSelected(int position) {
@@ -218,7 +228,7 @@ public class TabsView extends FrameLayout implements NotificationCenter.Notifica
             @Override
             public void onPageScrollStateChanged(int state) {
                 if (state == ViewPager.SCROLL_STATE_IDLE) {
-                    if(loop){
+                    if (loop) {
                         AndroidUtilities.runOnUIThread(() -> pager.setCurrentItem(currentPage == 0 ? pager.getAdapter().getCount() - 1 : 0), 100);
                         loop = false;
                     }
@@ -246,7 +256,7 @@ public class TabsView extends FrameLayout implements NotificationCenter.Notifica
         editor.apply();
     }
 
-    public ViewPager getPager(){
+    public ViewPager getPager() {
         return pager;
     }
 
@@ -272,11 +282,11 @@ public class TabsView extends FrameLayout implements NotificationCenter.Notifica
 //        }
     }
 
-    public void forceUpdateTabCounters(){
+    public void forceUpdateTabCounters() {
         force = true;
     }
 
-    private void unreadCount(){
+    private void unreadCount() {
 //        MessagesController messagesController = MessagesController.getInstance(currentAccount);
 //        unreadCount(messagesController.dialogsUnread, positions[8]);
 //        unreadCount(messagesController.dialogsAdmin, positions[7]);
@@ -288,23 +298,23 @@ public class TabsView extends FrameLayout implements NotificationCenter.Notifica
 //        unreadCountAll(messagesController.dialogs, positions[0]);
     }
 
-    private void unreadCountGroups(){
+    private void unreadCountGroups() {
         MessagesController messagesController = MessagesController.getInstance(currentAccount);
 //        if(!Theme.plusHideGroupsTab)unreadCount(!Theme.plusHideSuperGroupsTab ? messagesController.dialogsGroups : messagesController.dialogsGroupsAll, positions[2]);
 //        if(!Theme.plusHideSuperGroupsTab)unreadCount(messagesController.dialogsMegaGroups, positions[3]);
     }
 
-    private void unreadCount(final ArrayList<TLRPC.TL_dialog> dialogs, int position){
-        if(position == -1){
+    private void unreadCount(final ArrayList<TLRPC.TL_dialog> dialogs, int position) {
+        if (position == -1) {
             return;
         }
         SharedPreferences plusPreferences = ApplicationLoader.applicationContext.getSharedPreferences("plusconfig", Activity.MODE_PRIVATE);
         boolean allMuted = true;
         int unreadCount = 0;
         if (dialogs != null && !dialogs.isEmpty()) {
-            for(int a = 0; a < dialogs.size(); a++) {
+            for (int a = 0; a < dialogs.size(); a++) {
                 TLRPC.TL_dialog dialg = dialogs.get(a);
-                if(dialg != null && dialg.unread_count > 0) {
+                if (dialg != null && dialg.unread_count > 0) {
                     boolean isMuted = MessagesController.getInstance(currentAccount).isDialogMuted(dialg.id);
                     if (!isMuted) {
                         int i = dialg.unread_count;
@@ -318,13 +328,13 @@ public class TabsView extends FrameLayout implements NotificationCenter.Notifica
             }
         }
 
-        if(unreadCount != tabs.get(position).getUnread() || force) {
+        if (unreadCount != tabs.get(position).getUnread() || force) {
             tabs.get(position).setUnread(unreadCount);
             pagerSlidingTabStrip.updateCounter(position, unreadCount, allMuted, force);
         }
     }
 
-    private void unreadCountAll(ArrayList<TLRPC.TL_dialog> dialogs, int position){
+    private void unreadCountAll(ArrayList<TLRPC.TL_dialog> dialogs, int position) {
         unreadCount(dialogs, position);
         force = false;
     }
@@ -338,7 +348,7 @@ public class TabsView extends FrameLayout implements NotificationCenter.Notifica
         @Override
         public void notifyDataSetChanged() {
             super.notifyDataSetChanged();
-            if(pagerSlidingTabStrip != null){
+            if (pagerSlidingTabStrip != null) {
                 pagerSlidingTabStrip.notifyDataSetChanged();
             }
         }
@@ -352,7 +362,7 @@ public class TabsView extends FrameLayout implements NotificationCenter.Notifica
 
         @Override
         public void destroyItem(ViewGroup viewGroup, int position, Object object) {
-            viewGroup.removeView((View)object);
+            viewGroup.removeView((View) object);
         }
 
         @Override
@@ -378,4 +388,39 @@ public class TabsView extends FrameLayout implements NotificationCenter.Notifica
         }
     }
 
+    public void hide(boolean hide) {
+        if (hidden == hide) {
+            return;
+        }
+        hidden = hide;
+
+        ViewGroup parent = (ViewGroup) getParent();
+        MarginLayoutParams parentMargins = (MarginLayoutParams) parent.getLayoutParams();
+
+        lastParentTopMargin = hide ? parentMargins.topMargin : lastParentTopMargin;
+
+        ValueAnimator marginAnimator = ValueAnimator.ofInt(lastParentTopMargin, lastParentTopMargin);
+        marginAnimator.addUpdateListener((ValueAnimator valueAnimator) -> {
+            parentMargins.topMargin = (int) valueAnimator.getAnimatedValue();
+            parent.setLayoutParams(parentMargins);
+        });
+
+        MarginLayoutParams tabMargins = (MarginLayoutParams) getLayoutParams();
+
+        lastTabTopMargin = hide ? tabMargins.topMargin : lastTabTopMargin;
+
+        ValueAnimator tabMarginAnimator = ValueAnimator.ofInt(hide ? lastTabTopMargin : -viewHeight, hide ? -viewHeight : lastTabTopMargin);
+        tabMarginAnimator.addUpdateListener(valueAnimator -> {
+            tabMargins.topMargin = (int) valueAnimator.getAnimatedValue();
+            setLayoutParams(tabMargins);
+        });
+
+        AnimatorSet animatorSet = new AnimatorSet();
+        animatorSet.playTogether(marginAnimator, tabMarginAnimator);
+        animatorSet.setDuration(200);
+        animatorSet.setInterpolator(interpolator);
+        animatorSet.start();
+
+
+    }
 }

@@ -18,13 +18,7 @@ import android.content.ClipDescription;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.graphics.Canvas;
-import android.graphics.ColorFilter;
-import android.graphics.Paint;
-import android.graphics.PixelFormat;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffColorFilter;
-import android.graphics.RectF;
+import android.graphics.*;
 import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.os.Build;
@@ -34,11 +28,7 @@ import android.support.annotation.Keep;
 import android.support.v13.view.inputmethod.EditorInfoCompat;
 import android.support.v13.view.inputmethod.InputConnectionCompat;
 import android.support.v4.os.BuildCompat;
-import android.text.Editable;
-import android.text.InputFilter;
-import android.text.SpannableStringBuilder;
-import android.text.Spanned;
-import android.text.TextWatcher;
+import android.text.*;
 import android.text.style.ImageSpan;
 import android.util.Property;
 import android.util.TypedValue;
@@ -50,41 +40,17 @@ import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.PopupWindow;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import org.telegram.messenger.AndroidUtilities;
-import org.telegram.messenger.ChatObject;
-import org.telegram.messenger.DataQuery;
-import org.telegram.messenger.Emoji;
-import org.telegram.messenger.LocaleController;
-import org.telegram.messenger.MediaController;
-import org.telegram.messenger.MessageObject;
-import org.telegram.messenger.MessagesController;
-import org.telegram.messenger.NotificationsController;
-import org.telegram.messenger.SendMessagesHelper;
-import org.telegram.messenger.FileLog;
-import org.telegram.messenger.NotificationCenter;
+import android.widget.*;
 import io.bettergram.messenger.R;
-import org.telegram.messenger.SharedConfig;
-import org.telegram.messenger.VideoEditedInfo;
+import org.telegram.messenger.*;
+import org.telegram.messenger.MediaController;
 import org.telegram.messenger.camera.CameraController;
 import org.telegram.tgnet.ConnectionsManager;
 import org.telegram.tgnet.TLRPC;
-import org.telegram.messenger.UserConfig;
 import org.telegram.ui.ActionBar.ActionBar;
-import org.telegram.messenger.ApplicationLoader;
 import org.telegram.ui.ActionBar.AlertDialog;
 import org.telegram.ui.ActionBar.Theme;
-import org.telegram.ui.ChatActivity;
-import org.telegram.ui.DialogsActivity;
-import org.telegram.ui.GroupStickersActivity;
-import org.telegram.ui.LaunchActivity;
-import org.telegram.ui.StickersActivity;
+import org.telegram.ui.*;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -94,23 +60,133 @@ public class ChatActivityEnterView extends FrameLayout implements NotificationCe
 
     public interface ChatActivityEnterViewDelegate {
         void onMessageSend(CharSequence message);
+
         void needSendTyping();
+
         void onTextChanged(CharSequence text, boolean bigChange);
+
         void onTextSelectionChanged(int start, int end);
+
         void onTextSpansChanged(CharSequence text);
+
         void onAttachButtonHidden();
+
         void onAttachButtonShow();
+
         void onWindowSizeChanged(int size);
+
         void onStickersTab(boolean opened);
+
         void onMessageEditEnd(boolean loading);
+
         void didPressedAttachButton();
+
         void needStartRecordVideo(int state);
+
         void needChangeVideoPreviewState(int state, float seekProgress);
+
         void onSwitchRecordMode(boolean video);
+
         void onPreAudioVideoRecord();
+
         void needStartRecordAudio(int state);
+
         void needShowMediaBanHint();
+
         void onStickersExpandedChange();
+    }
+
+    public static class SimpleChatActivityEnterViewDelegate implements ChatActivityEnterViewDelegate {
+
+        @Override
+        public void onMessageSend(CharSequence message) {
+
+        }
+
+        @Override
+        public void needSendTyping() {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence text, boolean bigChange) {
+
+        }
+
+        @Override
+        public void onTextSelectionChanged(int start, int end) {
+
+        }
+
+        @Override
+        public void onTextSpansChanged(CharSequence text) {
+
+        }
+
+        @Override
+        public void onAttachButtonHidden() {
+
+        }
+
+        @Override
+        public void onAttachButtonShow() {
+
+        }
+
+        @Override
+        public void onWindowSizeChanged(int size) {
+
+        }
+
+        @Override
+        public void onStickersTab(boolean opened) {
+
+        }
+
+        @Override
+        public void onMessageEditEnd(boolean loading) {
+
+        }
+
+        @Override
+        public void didPressedAttachButton() {
+
+        }
+
+        @Override
+        public void needStartRecordVideo(int state) {
+
+        }
+
+        @Override
+        public void needChangeVideoPreviewState(int state, float seekProgress) {
+
+        }
+
+        @Override
+        public void onSwitchRecordMode(boolean video) {
+
+        }
+
+        @Override
+        public void onPreAudioVideoRecord() {
+
+        }
+
+        @Override
+        public void needStartRecordAudio(int state) {
+
+        }
+
+        @Override
+        public void needShowMediaBanHint() {
+
+        }
+
+        @Override
+        public void onStickersExpandedChange() {
+
+        }
     }
 
     private int currentAccount = UserConfig.selectedAccount;
@@ -2829,7 +2905,7 @@ public class ChatActivityEnterView extends FrameLayout implements NotificationCe
             return;
         }
         if (focus) {
-             if (!searchingStickers && !messageEditText.isFocused()) {
+            if (!searchingStickers && !messageEditText.isFocused()) {
                 messageEditText.postDelayed(() -> {
                     boolean allowFocus;
                     if (AndroidUtilities.isTablet()) {

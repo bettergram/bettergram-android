@@ -571,13 +571,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 });
         LinearLayout tabsContainer = new LinearLayout(context);
         tabsContainer.setOrientation(LinearLayout.VERTICAL);
-        tabsContainer.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
 
-        tabsContainer.addView(newTabsView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, AndroidUtilities.isTablet() ? 44 : 42, Gravity.TOP));
-        //todo: get back
-//        refreshTabAndListViews(false);
+        tabsContainer.addView(newTabsView, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, AndroidUtilities.isTablet() ? 44 : 42, Gravity.TOP));
 
-        tabsContainer.addView(listView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
+        tabsContainer.addView(listView, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 0, 1f));
 
         contentView.addView(tabsContainer, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.CENTER, 0, AndroidUtilities.isTablet() ? 16 : 14, 0, AndroidUtilities.isTablet() ? 40 : 42));// added bottom margin for the bottom navigation view
         listView.setOnItemClickListener((view, position) -> {
@@ -1303,7 +1300,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             commentView.setForceShowSendButton(true, false);
             commentView.setVisibility(View.GONE);
             contentView.addView(commentView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.LEFT | Gravity.BOTTOM));
-            commentView.setDelegate(new ChatActivityEnterView.ChatActivityEnterViewDelegate() {
+            commentView.setDelegate(new ChatActivityEnterView.SimpleChatActivityEnterViewDelegate() {
                 @Override
                 public void onMessageSend(CharSequence message) {
                     if (delegate == null) {
@@ -1315,98 +1312,15 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                     }
                     delegate.didSelectDialogs(DialogsActivity.this, selectedDialogs, message, false);
                 }
-
-                @Override
-                public void onSwitchRecordMode(boolean video) {
-
-                }
-
-                @Override
-                public void onTextSelectionChanged(int start, int end) {
-
-                }
-
-                @Override
-                public void onStickersExpandedChange() {
-
-                }
-
-                @Override
-                public void onPreAudioVideoRecord() {
-
-                }
-
-                @Override
-                public void onTextChanged(final CharSequence text, boolean bigChange) {
-
-                }
-
-                @Override
-                public void onTextSpansChanged(CharSequence text) {
-
-                }
-
-                @Override
-                public void needSendTyping() {
-
-                }
-
-                @Override
-                public void onAttachButtonHidden() {
-
-                }
-
-                @Override
-                public void onAttachButtonShow() {
-
-                }
-
-                @Override
-                public void onMessageEditEnd(boolean loading) {
-
-                }
-
-                @Override
-                public void onWindowSizeChanged(int size) {
-
-                }
-
-                @Override
-                public void onStickersTab(boolean opened) {
-
-                }
-
-                @Override
-                public void didPressedAttachButton() {
-
-                }
-
-                @Override
-                public void needStartRecordVideo(int state) {
-
-                }
-
-                @Override
-                public void needChangeVideoPreviewState(int state, float seekProgress) {
-
-                }
-
-                @Override
-                public void needStartRecordAudio(int state) {
-
-                }
-
-                @Override
-                public void needShowMediaBanHint() {
-
-                }
             });
         }
 
         BottomNavigationBar bottomBar = new BottomNavigationBar(context)
                 .setOnSelectListener((position, title) -> {
                     actionBar.setTitle(title);
-                    newTabsView.setVisibility(position > 0 ? View.GONE : View.VISIBLE);
+                    boolean isChat = position == 0;
+                    hideFloatingButton(!isChat);
+                    newTabsView.hide(!isChat);
                 })
                 .setOnReselectListener((position, title) -> actionBar.setTitle(title))
                 .selectTabAndTriggerListener(0, true);
