@@ -227,9 +227,7 @@ public class BottomNavigationBar extends LinearLayout implements NotificationCen
         setMinimumHeight(minHeight);
         setOrientation(HORIZONTAL);
 
-        if (getBackground() == null) {
-            setBackgroundColor(0xFFFFFFFF);
-        }
+        setBackgroundColor(Theme.getColor(Theme.key_bottombar_backgroundColor));
 
         if (atLeastLollipop()) {
             setOutlineProvider(ViewOutlineProvider.BOUNDS);

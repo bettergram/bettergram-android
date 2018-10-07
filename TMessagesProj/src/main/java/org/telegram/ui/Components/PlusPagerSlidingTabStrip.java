@@ -32,17 +32,12 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
-import android.widget.HorizontalScrollView;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-
+import android.widget.*;
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.FileLog;
@@ -161,12 +156,9 @@ public class PlusPagerSlidingTabStrip extends HorizontalScrollView {
         if (tabTitlesMode) {
             scrollOffset = layoutWidth / 2;
         }
-        //SharedPreferences themePrefs = ApplicationLoader.applicationContext.getSharedPreferences(AndroidUtilities.THEME_PREFS, AndroidUtilities.THEME_PREFS_MODE);
-        //counterBgColorMuted = themePrefs.getInt("chatsHeaderTabCounterSilentBGColor", 0xffb9b9b9);
-        //counterBgColor = themePrefs.getInt("chatsHeaderTabCounterBGColor", 0xffd32f2f);
-        //Log.e("PlusPager", "PlusPagerSlidingTabStrip create");
-        tabTextIconUnselectedColor = Theme.getColor(Theme.key_actionBarDefaultIcon);
-        tabTextIconSelectedColor = Theme.getColor(Theme.key_actionBarDefaultIcon);
+
+        tabTextIconUnselectedColor = Theme.getColor(Theme.key_topbar_inactiveColor);
+        tabTextIconSelectedColor = Theme.getColor(Theme.key_topbar_activeColor);
     }
 
     public void setViewPager(ViewPager pager) {
@@ -263,7 +255,9 @@ public class PlusPagerSlidingTabStrip extends HorizontalScrollView {
         view.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Log.e("PlusPager", "position " + position + " / " + pager.getCurrentItem());
+                Log.e("PlusPager", "position " + position + " / " + pager.getCurrentItem());
+                int currentPosition = pager.getCurrentItem();
+
                 if (position == pager.getCurrentItem()) {
                     if (delegate != null) {
                         delegate.onTabClick();
@@ -348,7 +342,7 @@ public class PlusPagerSlidingTabStrip extends HorizontalScrollView {
                     //tv.setText(count >= 10000 && Theme.plusLimitTabsCounters ? "+9999" : String.format("%d", count));
                     tv.setText(String.format("%d", count));
                     //tv.getBackground().setColorFilter(allMuted ? Theme.usePlusTheme ? Theme.chatsTabCounterSilentBGColor : Theme.getColor(Theme.key_chats_unreadCounterMuted) : Theme.usePlusTheme ? Theme.chatsTabCounterBGColor : Theme.getColor(Theme.key_chats_unreadCounter), PorterDuff.Mode.SRC_IN);
-                    tv.getBackground().setColorFilter(Color.parseColor("#ff585b"), PorterDuff.Mode.SRC_IN);
+                    tv.getBackground().setColorFilter(Theme.getColor(Theme.key_topbar_unreadCounterColor), PorterDuff.Mode.SRC_IN);
                 } else {
                     tv.setVisibility(INVISIBLE);
                     //tv.getBackground().setColorFilter(0x00000000, PorterDuff.Mode.SRC_IN);

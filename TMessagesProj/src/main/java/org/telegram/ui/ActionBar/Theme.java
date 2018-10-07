@@ -1065,6 +1065,11 @@ public class Theme {
 
     public static final String key_bottombar_inactiveColor = "bottombar_inactiveColor";
     public static final String key_bottombar_activeColor = "bottombar_activeColor";
+    public static final String key_bottombar_backgroundColor = "bottombar_backgroundColor";
+
+    public static final String key_topbar_inactiveColor = "topbar_inactiveColor";
+    public static final String key_topbar_activeColor = "topbar_activeColor";
+    public static final String key_topbar_unreadCounterColor = "topbar_unreadCounterColor";
 
     //ununsed
     public static final String key_chat_outBroadcast = "chat_outBroadcast";
@@ -1693,6 +1698,11 @@ public class Theme {
 
         defaultColors.put(key_bottombar_inactiveColor, 0xFFC9C9C9);
         defaultColors.put(key_bottombar_activeColor, 0xFF1FCD6D);
+        defaultColors.put(key_bottombar_backgroundColor, 0xFFFFFFFF);
+
+        defaultColors.put(key_topbar_inactiveColor, 0xffa5ebc5);
+        defaultColors.put(key_topbar_activeColor, 0xffffffff);
+        defaultColors.put(key_topbar_unreadCounterColor, 0xFFEB3E4A);
 
         fallbackKeys.put(key_chat_adminText, key_chat_inTimeText);
         fallbackKeys.put(key_chat_adminSelectedText, key_chat_inTimeSelectedText);
