@@ -11,7 +11,6 @@ import android.os.Build;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +24,8 @@ import org.telegram.tgnet.TLRPC;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import static io.bettergram.tools.DialogsObject.*;
 
 /**
  * Created by Yan on 09/07/2018.
@@ -265,8 +266,7 @@ public class TabsView extends FrameLayout implements NotificationCenter.Notifica
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         //TODO: important
-        NotificationCenter.getInstance(currentAccount).removeObserver(this, NotificationCenter.updateInterfaces);
-        NotificationCenter.getInstance(currentAccount).removeObserver(this, NotificationCenter.dialogsUnreadCounterChanged);
+        //NotificationCenter.getInstance(currentAccount).removeObserver(this, NotificationCenter.updateInterfaces);
     }
 
     @Override
@@ -274,7 +274,6 @@ public class TabsView extends FrameLayout implements NotificationCenter.Notifica
         super.onAttachedToWindow();
         //TODO: important
         NotificationCenter.getInstance(currentAccount).addObserver(this, NotificationCenter.updateInterfaces);
-        NotificationCenter.getInstance(currentAccount).addObserver(this, NotificationCenter.dialogsUnreadCounterChanged);
     }
 
     @Override
@@ -282,8 +281,6 @@ public class TabsView extends FrameLayout implements NotificationCenter.Notifica
         //TODO: important
         if (id == NotificationCenter.updateInterfaces) {
             unreadCount();
-        } else if (id == NotificationCenter.dialogsUnreadCounterChanged) {
-
         }
     }
 
@@ -300,7 +297,10 @@ public class TabsView extends FrameLayout implements NotificationCenter.Notifica
         //unreadCount(messagesController.dialogsChannels, positions[4]);
         //unreadCountGroups();
         //unreadCount(messagesController.dialogsUsers, positions[1]);
-        unreadCountAll(messagesController.dialogs, 0);
+        ArrayList<TLRPC.TL_dialog> dialogs = messagesController.dialogs;
+        for (int i = 0; i < 4; i++) {
+            unreadCountAll(dialogs, i);
+        }
     }
 
 //    private void unreadCountGroups() {
@@ -316,16 +316,19 @@ public class TabsView extends FrameLayout implements NotificationCenter.Notifica
         SharedPreferences plusPreferences = ApplicationLoader.applicationContext.getSharedPreferences("plusconfig", Activity.MODE_PRIVATE);
         boolean allMuted = true;
         int unreadCount = 0;
+        int i;
         if (dialogs != null && !dialogs.isEmpty()) {
             for (int a = 0; a < dialogs.size(); a++) {
                 TLRPC.TL_dialog dialg = dialogs.get(a);
                 if (dialg != null && dialg.unread_count > 0) {
                     boolean isMuted = MessagesController.getInstance(currentAccount).isDialogMuted(dialg.id);
                     if (!isMuted) {
-                        int i = dialg.unread_count;
+                        i = dialg.unread_count;
                         if (i == 0 && plusPreferences.getInt("unread_" + dialg.id, 0) == 1) i = 1;
                         if (i > 0) {
-                            unreadCount = unreadCount + i;
+                            if (position == 0 || (position == 1 && isDirect(dialg)) || (position == 2 && isGroup(dialg)) || (position == 3 && isAnnouncement(dialg))) {
+                                unreadCount++;
+                            }
                             allMuted = false;
                         }
                     }
