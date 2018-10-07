@@ -190,7 +190,8 @@
                 android:taskAffinity=""
                 android:theme="@style/Theme.TMessages.PopupNotification"
                 android:resizeableActivity="false"
-                android:windowSoftInputMode="adjustResize|stateHidden">
+                android:windowSoftInputMode="adjustResize|stateHidden"
+                tools:targetApi="n">
         </activity>
         <activity
                 android:name="org.telegram.ui.VoIPActivity"
@@ -200,11 +201,11 @@
                 android:taskAffinity="${applicationId}.voip">
         </activity>
         <!--<activity-->
-                <!--android:name="org.telegram.ui.VoIPGroupActivity"-->
-                <!--android:configChanges="keyboard|keyboardHidden|orientation|screenSize"-->
-                <!--android:excludeFromRecents="true"-->
-                <!--android:windowSoftInputMode="adjustNothing"-->
-                <!--android:taskAffinity="${applicationId}.voip">-->
+        <!--android:name="org.telegram.ui.VoIPGroupActivity"-->
+        <!--android:configChanges="keyboard|keyboardHidden|orientation|screenSize"-->
+        <!--android:excludeFromRecents="true"-->
+        <!--android:windowSoftInputMode="adjustNothing"-->
+        <!--android:taskAffinity="${applicationId}.voip">-->
         <!--</activity>-->
         <activity android:name="org.telegram.ui.VoIPPermissionActivity"
                   android:configChanges="keyboard|keyboardHidden|orientation|screenSize"

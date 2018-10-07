@@ -555,7 +555,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         listView.setVerticalScrollbarPosition(LocaleController.isRTL ? RecyclerListView.SCROLLBAR_POSITION_LEFT : RecyclerListView.SCROLLBAR_POSITION_RIGHT);
 
         TabsView newTabsView = new TabsView(context)
-                .refershAction(type -> {
+                .refreshAction(type -> {
                     //todo: check for the same type?
                     int firstVisibleItem = layoutManager.findFirstVisibleItemPosition();
                     //change data set
@@ -1161,7 +1161,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                     if (layoutManager.findLastVisibleItemPosition() >= dialogsAdapter.getDialogsArray().size() - 10) {
                         boolean fromCache = !MessagesController.getInstance(currentAccount).dialogsEndReached;
                         if (fromCache || !MessagesController.getInstance(currentAccount).serverDialogsEndReached) {
-                            MessagesController.getInstance(currentAccount).loadDialogs(-1, 100, fromCache);
+                            listView.post(() -> MessagesController.getInstance(currentAccount).loadDialogs(-1, 100, fromCache));
                         }
                     }
                 }

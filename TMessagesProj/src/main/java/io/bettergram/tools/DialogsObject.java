@@ -8,19 +8,6 @@ import org.telegram.tgnet.TLRPC;
 public class DialogsObject extends DialogObject {
 
     public static boolean isGroup(TLRPC.TL_dialog d) {
-//        if (DialogObject.isChannel(d)) {
-//            MessagesController messagesController = MessagesController.getInstance(UserConfig.selectedAccount);
-//            TLRPC.Chat chat = messagesController.getChat(-getLowerId(d));
-//            return (
-//                chat != null && (
-//                    chat.megagroup && (
-//                        chat.admin_rights != null && (
-//                            chat.admin_rights.post_messages || chat.admin_rights.add_admins
-//                        )
-//                    ) || chat.creator
-//                )
-//            );
-//        }
         return getHigherId(d) != 0;
     }
 
@@ -28,6 +15,23 @@ public class DialogsObject extends DialogObject {
 //        int selfId = UserConfig.getInstance(UserConfig.selectedAccount).getClientUserId();
 //        int lower_id = getLowerId(d);
         return getHigherId(d) == 0;
+    }
+
+    public static boolean isAnnouncement(TLRPC.TL_dialog d) {
+        if (DialogObject.isChannel(d)) {
+            MessagesController messagesController = MessagesController.getInstance(UserConfig.selectedAccount);
+            TLRPC.Chat chat = messagesController.getChat(-getLowerId(d));
+            return (
+                    chat != null && (
+                            chat.megagroup && (
+                                    chat.admin_rights != null && (
+                                            chat.admin_rights.post_messages || chat.admin_rights.add_admins
+                                    )
+                            ) || chat.creator
+                    )
+            );
+        }
+        return false;
     }
 
     private static int getHigherId(TLRPC.TL_dialog d) {

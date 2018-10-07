@@ -20,14 +20,12 @@ package org.telegram.ui.Components;
  * limitations under the License.
  */
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Canvas;
-import android.graphics.Paint;
+import android.graphics.*;
 import android.graphics.Paint.Style;
-import android.graphics.PorterDuff;
-import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.os.Parcel;
@@ -58,13 +56,16 @@ public class PlusPagerSlidingTabStrip extends HorizontalScrollView {
 
     public interface IconTabProvider {
         int getPageIconResId(int position);
+
         String getPageTitle(int position);
     }
 
     public interface PlusScrollSlidingTabStripDelegate {
         //void onPageSelected(int page);
         void onTabLongClick(int position);
+
         void onTabsUpdated();
+
         void onTabClick();
     }
 
@@ -187,13 +188,13 @@ public class PlusPagerSlidingTabStrip extends HorizontalScrollView {
         //Log.e("PlusPager", "Plus Pager notifyDataSetChanged");
         tabsContainer.removeAllViews();
         tabCount = pager.getAdapter().getCount();
-        if(tabCount < 2){
+        if (tabCount < 2) {
             return;
         }
         for (int i = 0; i < tabCount; i++) {
-            if(tabTitlesMode){
+            if (tabTitlesMode) {
                 addTextTabWithCounter(i, ((IconTabProvider) pager.getAdapter()).getPageTitle(i));
-            } else{
+            } else {
                 addIconTabWithCounter(i, ((IconTabProvider) pager.getAdapter()).getPageIconResId(i));
             }
         }
@@ -213,7 +214,7 @@ public class PlusPagerSlidingTabStrip extends HorizontalScrollView {
                 //modified to check if center alignment is true
                 if (tabTitlesMode) {
                     scrollToChild2(currentPosition, 0);
-                }else {
+                } else {
                     scrollToChild(currentPosition, 0);
                 }
             }
@@ -263,8 +264,8 @@ public class PlusPagerSlidingTabStrip extends HorizontalScrollView {
             @Override
             public void onClick(View v) {
                 //Log.e("PlusPager", "position " + position + " / " + pager.getCurrentItem());
-                if(position == pager.getCurrentItem()){
-                    if(delegate != null){
+                if (position == pager.getCurrentItem()) {
+                    if (delegate != null) {
                         delegate.onTabClick();
                     }
                 } else {
@@ -276,7 +277,7 @@ public class PlusPagerSlidingTabStrip extends HorizontalScrollView {
         });
         view.setOnLongClickListener(new View.OnLongClickListener() {
             public boolean onLongClick(View view) {
-                if(delegate != null){
+                if (delegate != null) {
                     delegate.onTabLongClick(position);
                 }
                 return true;
@@ -293,7 +294,7 @@ public class PlusPagerSlidingTabStrip extends HorizontalScrollView {
         textView.setGravity(Gravity.CENTER);
         //textView.setBackgroundResource(R.drawable.sticker_badge);
 
-        GradientDrawable shape =  new GradientDrawable();
+        GradientDrawable shape = new GradientDrawable();
         shape.setShape(GradientDrawable.RECTANGLE);
         shape.setCornerRadius(AndroidUtilities.dp(32));
         textView.setBackgroundDrawable(shape);
@@ -301,7 +302,7 @@ public class PlusPagerSlidingTabStrip extends HorizontalScrollView {
         textView.setMinWidth(AndroidUtilities.dp(18));
 
         //TODO: WHAAAAT!?!? textView.setPadding(AndroidUtilities.dp(Theme.chatsTabCounterSize > 10 ? Theme.chatsTabCounterSize - 7 : 4), 0, AndroidUtilities.dp(Theme.chatsTabCounterSize > 10 ? Theme.chatsTabCounterSize - 7 : 4), 0);
-        textView.setPadding(4,0,4,0);
+        textView.setPadding(4, 0, 4, 0);
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         params.setMargins(AndroidUtilities.dp(3), AndroidUtilities.dp(5), AndroidUtilities.dp(3), AndroidUtilities.dp(5));  // left, top, right, bottom
         //RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) textView.getLayoutParams();
@@ -314,12 +315,12 @@ public class PlusPagerSlidingTabStrip extends HorizontalScrollView {
 
     }
 
-    public void changeTabsColor(int position){
+    public void changeTabsColor(int position) {
         //Log.e("PlusPager", "changeTabsColor position " + position + " currentPage " + currentPage);
-        RelativeLayout frame = (RelativeLayout)tabsContainer.getChildAt(currentPage);
-        if(frame != null) {
-            try{
-                View view = ((RelativeLayout)tabsContainer.getChildAt(position)).getChildAt(0);
+        RelativeLayout frame = (RelativeLayout) tabsContainer.getChildAt(currentPage);
+        if (frame != null) {
+            try {
+                View view = ((RelativeLayout) tabsContainer.getChildAt(position)).getChildAt(0);
                 if (view instanceof ImageButton) {
                     ((ImageButton) frame.getChildAt(0)).setColorFilter(tabTextIconUnselectedColor, PorterDuff.Mode.SRC_IN); // Previous
                     ((ImageButton) view).setColorFilter(tabTextIconSelectedColor, PorterDuff.Mode.SRC_IN); // Selected
@@ -328,31 +329,38 @@ public class PlusPagerSlidingTabStrip extends HorizontalScrollView {
                     ((TextView) view).setTextColor(tabTextIconSelectedColor); // Selected
                 }
             } catch (Exception e) {
-                FileLog.e( e);
+                FileLog.e(e);
             }
         }
     }
 
-    public void updateCounter(int position, int count, boolean allMuted, boolean force){
-        RelativeLayout frame = (RelativeLayout)tabsContainer.getChildAt(position);
+    @SuppressLint("DefaultLocale")
+    public void updateCounter(int position, int count, boolean allMuted, boolean force) {
+        RelativeLayout frame = (RelativeLayout) tabsContainer.getChildAt(position);
         //Log.e("TabsView", "PlusPager updateCounter position " + position + " unreadCount " + count + " allMuted " + allMuted);
-        if(frame != null && frame.getChildCount() > 1) {
+        if (frame != null && frame.getChildCount() > 1) {
             TextView tv = (TextView) frame.getChildAt(1);
-            if(tv != null){
+            if (tv != null) {
                 //Log.e("TabsView", "PlusPager updateCounter NOT NULL");
-//                if(count > 0 && !Theme.plusHideTabsCounters){
-//                    tv.setVisibility(VISIBLE);
-//                    tv.setText(count >= 10000 && Theme.plusLimitTabsCounters ? "+9999" : String.format("%d", count));
-//                    tv.getBackground().setColorFilter(allMuted ? Theme.usePlusTheme ? Theme.chatsTabCounterSilentBGColor : Theme.getColor(Theme.key_chats_unreadCounterMuted) : Theme.usePlusTheme ? Theme.chatsTabCounterBGColor : Theme.getColor(Theme.key_chats_unreadCounter), PorterDuff.Mode.SRC_IN);
-//                } else{
-//                    tv.setVisibility(INVISIBLE);
-//                    //tv.getBackground().setColorFilter(0x00000000, PorterDuff.Mode.SRC_IN);
-//                }
-//                if(force) {
-//                    tv.setTextSize(TypedValue.COMPLEX_UNIT_DIP, Theme.chatsTabCounterSize);
-//                    tv.setTextColor(Theme.usePlusTheme ? Theme.chatsTabCounterColor : Theme.getColor(Theme.key_chats_unreadCounterText));
-//                    tv.setPadding(AndroidUtilities.dp(Theme.chatsTabCounterSize > 10 ? Theme.chatsTabCounterSize - 7 : 4), 0, AndroidUtilities.dp(Theme.chatsTabCounterSize > 10 ? Theme.chatsTabCounterSize - 7 : 4), 0);
-//                }
+                //if (count > 0 && !Theme.plusHideTabsCounters) {
+                if (count > 0) {
+                    tv.setVisibility(VISIBLE);
+                    //tv.setText(count >= 10000 && Theme.plusLimitTabsCounters ? "+9999" : String.format("%d", count));
+                    tv.setText(String.format("%d", count));
+                    //tv.getBackground().setColorFilter(allMuted ? Theme.usePlusTheme ? Theme.chatsTabCounterSilentBGColor : Theme.getColor(Theme.key_chats_unreadCounterMuted) : Theme.usePlusTheme ? Theme.chatsTabCounterBGColor : Theme.getColor(Theme.key_chats_unreadCounter), PorterDuff.Mode.SRC_IN);
+                    tv.getBackground().setColorFilter(Color.parseColor("#ff585b"), PorterDuff.Mode.SRC_IN);
+                } else {
+                    tv.setVisibility(INVISIBLE);
+                    //tv.getBackground().setColorFilter(0x00000000, PorterDuff.Mode.SRC_IN);
+                }
+                if (force) {
+                    //tv.setTextSize(TypedValue.COMPLEX_UNIT_DIP, Theme.chatsTabCounterSize);
+                    //tv.setTextColor(Theme.usePlusTheme ? Theme.chatsTabCounterColor : Theme.getColor(Theme.key_chats_unreadCounterText));
+                    //tv.setPadding(AndroidUtilities.dp(Theme.chatsTabCounterSize > 10 ? Theme.chatsTabCounterSize - 7 : 4), 0, AndroidUtilities.dp(Theme.chatsTabCounterSize > 10 ? Theme.chatsTabCounterSize - 7 : 4), 0);
+                    tv.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 11);
+                    tv.setTextColor(Theme.getColor(Theme.key_chats_unreadCounterText));
+                    tv.setPadding(AndroidUtilities.dp(4), 0, AndroidUtilities.dp(4), 0);
+                }
             }
         }
     }
@@ -364,20 +372,20 @@ public class PlusPagerSlidingTabStrip extends HorizontalScrollView {
         for (int i = 0; i < tabCount; i++) {
             View tab = tabsContainer.getChildAt(i); // RelativeLayout
 
-             // ImageButton or TextView
+            // ImageButton or TextView
 
             //Log.e("PlusPager", i + " updateTabStyles view " + tab.toString());
 
             //v.setPadding(0, 0, 0, 0);
             tab.setPadding(0, 0, 0, 0);
             if (tabShouldExpand) {
-                if(tab.getLayoutParams() != expandedTabLayoutParams)tab.setLayoutParams(expandedTabLayoutParams);
+                if (tab.getLayoutParams() != expandedTabLayoutParams) tab.setLayoutParams(expandedTabLayoutParams);
                 //v.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, 1.0F));
                 //v.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT, 1.0F));
             } else {
-                if(tab.getLayoutParams() != defaultTabLayoutParams)tab.setLayoutParams(defaultTabLayoutParams);
-                View view = ((RelativeLayout)tabsContainer.getChildAt(i)).getChildAt(0);
-                if(view != null) {
+                if (tab.getLayoutParams() != defaultTabLayoutParams) tab.setLayoutParams(defaultTabLayoutParams);
+                View view = ((RelativeLayout) tabsContainer.getChildAt(i)).getChildAt(0);
+                if (view != null) {
                     view.setPadding(tabPadding, 0, tabPadding, 0);
                 }
 
@@ -386,26 +394,25 @@ public class PlusPagerSlidingTabStrip extends HorizontalScrollView {
             //Log.e("PlusPager", i + " updateTabStyles tab " + tab.toString() + " " + tab.getMeasuredWidth() + " " + tab.getWidth());
             //if (v instanceof TextView) {
 
-                //TextView tab = (TextView) v;
-                //tab.setTextSize(TypedValue.COMPLEX_UNIT_DIP, tabTextSize);
-                //tab.setTypeface(tabTypeface, tabTypefaceStyle);
-                //tab.setTypeface(Typeface.DEFAULT_BOLD);
-                //tab.setTextColor(i == currentPosition ? tabTextSelectedColor : tabTextColor);
+            //TextView tab = (TextView) v;
+            //tab.setTextSize(TypedValue.COMPLEX_UNIT_DIP, tabTextSize);
+            //tab.setTypeface(tabTypeface, tabTypefaceStyle);
+            //tab.setTypeface(Typeface.DEFAULT_BOLD);
+            //tab.setTextColor(i == currentPosition ? tabTextSelectedColor : tabTextColor);
 
-                // setAllCaps() is only available from API 14, so the upper case is made manually if we are on a
-                // pre-ICS-build
-                //if (textAllCaps) {
-                //    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-                //        tab.setAllCaps(true);
-                //    }
-                //}
+            // setAllCaps() is only available from API 14, so the upper case is made manually if we are on a
+            // pre-ICS-build
+            //if (textAllCaps) {
+            //    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+            //        tab.setAllCaps(true);
+            //    }
+            //}
             //}
             //childWidth += v.getWidth();
 
 
-
         }
-        if(delegate != null){
+        if (delegate != null) {
             delegate.onTabsUpdated();
         }
         //Log.e("PlusPager", AndroidUtilities.displaySize.x + " / " + AndroidUtilities.displaySize.x/tabCount + " / " + tabsContainer.getMeasuredWidth() + " " + pager.getCurrentItem());
@@ -447,7 +454,7 @@ public class PlusPagerSlidingTabStrip extends HorizontalScrollView {
         if (tabCount == 0) {
             return;
         }
-        if(position >= tabsContainer.getChildCount()){
+        if (position >= tabsContainer.getChildCount()) {
             return;
         }
 
@@ -467,7 +474,7 @@ public class PlusPagerSlidingTabStrip extends HorizontalScrollView {
         if (tabCount == 0) {
             return;
         }
-        if(position >= tabsContainer.getChildCount()){
+        if (position >= tabsContainer.getChildCount()) {
             return;
         }
         int cellWidth = tabsContainer.getChildAt(position).getWidth();
@@ -523,11 +530,11 @@ public class PlusPagerSlidingTabStrip extends HorizontalScrollView {
         }
         //Log.e("PlusPager", "onDraw getWidth " + tabsContainer.getWidth() + " " + tabsContainer.getChildAt(0).getWidth());
 //        if(!tabShouldExpand && tabTitlesMode){
-            if(tabsContainer.getChildAt(0).getWidth() > tabsContainer.getWidth() / 2){
-                enableShouldExpand();
-                notifyDataSetChanged();
-                return;
-            }
+        if (tabsContainer.getChildAt(0).getWidth() > tabsContainer.getWidth() / 2) {
+            enableShouldExpand();
+            notifyDataSetChanged();
+            return;
+        }
 //        }
         final int height = getHeight();
 
@@ -594,7 +601,7 @@ public class PlusPagerSlidingTabStrip extends HorizontalScrollView {
         private void scroll() {
             if (tabTitlesMode) {
                 scrollToChild2(pager.getCurrentItem(), 0);
-            }else {
+            } else {
                 scrollToChild(pager.getCurrentItem(), 0);
             }
         }
@@ -617,11 +624,11 @@ public class PlusPagerSlidingTabStrip extends HorizontalScrollView {
 
     public void onSizeChanged(int paramInt1, int paramInt2, int paramInt3, int paramInt4) {
 //        if (!tabShouldExpand) {
-            post(new Runnable() {
-                public void run() {
-                    PlusPagerSlidingTabStrip.this.notifyDataSetChanged();
-                }
-            });
+        post(new Runnable() {
+            public void run() {
+                PlusPagerSlidingTabStrip.this.notifyDataSetChanged();
+            }
+        });
 //        }
     }
 
@@ -670,6 +677,7 @@ public class PlusPagerSlidingTabStrip extends HorizontalScrollView {
     public int getUnderlineHeight() {
         return underlineHeight;
     }
+
     public void setDividerColor(int dividerColor) {
         this.dividerColor = dividerColor;
         invalidate();
@@ -705,9 +713,9 @@ public class PlusPagerSlidingTabStrip extends HorizontalScrollView {
     public void setShouldExpand(boolean shouldExpand) {
 //        if(tabShouldExpand != shouldExpand) {
 //            tabShouldExpand = shouldExpand;
-            //tabsContainer.setLayoutParams(new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-            //updateTabStyles();
-            requestLayout();
+        //tabsContainer.setLayoutParams(new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+        //updateTabStyles();
+        requestLayout();
 //        }
     }
 

@@ -15,10 +15,10 @@ import ru.johnlife.lifetools.tools.ListUtil;
 
 public class BetterDialogsAdapter extends DialogsAdapter {
     private static final Mapper<ListUtil.Filter<TLRPC.TL_dialog>> filterMapper = new Mapper<ListUtil.Filter<TLRPC.TL_dialog>>()
-        .defaultValue(dialog->false)
-        .add(101, DialogsObject::isDirect)
-        .add(102, DialogsObject::isGroup)
-        ;
+            .defaultValue(dialog -> false)
+            .add(101, DialogsObject::isDirect)
+            .add(102, DialogsObject::isGroup)
+            .add(103, DialogsObject::isAnnouncement);
     private int currentAccount = UserConfig.selectedAccount;
     private List<TLRPC.TL_dialog> cache = null;
 
