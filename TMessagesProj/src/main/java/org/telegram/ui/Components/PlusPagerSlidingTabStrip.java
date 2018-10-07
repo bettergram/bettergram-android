@@ -24,15 +24,17 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.*;
+import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.Paint.Style;
-import android.graphics.drawable.GradientDrawable;
+import android.graphics.PorterDuff;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
-import android.util.Log;
+import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
@@ -243,69 +245,51 @@ public class PlusPagerSlidingTabStrip extends HorizontalScrollView {
     }
 
     public void addTabWithCounter(final int position, View view) {
-        //Log.e(TAG, "addTabWithCounter " + tabsContainer.getLayoutParams().toString());
         RelativeLayout tab = new RelativeLayout(getContext());
         tab.setFocusable(true);
 
         tabsContainer.addView(tab, tabShouldExpand ? expandedTabLayoutParams : defaultTabLayoutParams);
-        //tab.setPadding(tabPadding, 0, tabPadding, 0);
-        //tabsContainer.addView(tab, position, tabShouldExpand ? expandedTabLayoutParams : defaultTabLayoutParams);
-        view.setBackgroundResource(btnBgRes);
-        //view.setId(1); // changed id from 0 to 1
-        view.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.e("PlusPager", "position " + position + " / " + pager.getCurrentItem());
-                int currentPosition = pager.getCurrentItem();
 
-                if (position == pager.getCurrentItem()) {
-                    if (delegate != null) {
-                        delegate.onTabClick();
-                    }
-                } else {
-                    if (pager != null) {
-                        pager.setCurrentItem(position);
-                    }
+        view.setBackgroundResource(btnBgRes);
+
+        view.setOnClickListener(v -> {
+            if (position == pager.getCurrentItem()) {
+                if (delegate != null) {
+                    delegate.onTabClick();
+                }
+            } else {
+                if (pager != null) {
+                    pager.setCurrentItem(position);
                 }
             }
         });
-        view.setOnLongClickListener(new View.OnLongClickListener() {
-            public boolean onLongClick(View view) {
-                if (delegate != null) {
-                    delegate.onTabLongClick(position);
-                }
-                return true;
+        view.setOnLongClickListener(v -> {
+            if (delegate != null) {
+                delegate.onTabLongClick(position);
             }
+            return true;
         });
 
         tab.addView(view, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
         tab.setSelected(position == currentPosition);
 
-        TextView textView = new TextView(getContext());
+        CircularTextView counterView = new CircularTextView(getContext());
 
-        textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 12);
-        textView.setTextColor(0xffffffff);
-        textView.setGravity(Gravity.CENTER);
-        //textView.setBackgroundResource(R.drawable.sticker_badge);
+        counterView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 10);
+        counterView.setTextColor(0xffffffff);
+        counterView.setGravity(Gravity.CENTER);
+        counterView.setSolidColor(Theme.getColor(Theme.key_topbar_unreadCounterColor));
+        counterView.setVisibility(INVISIBLE);
 
-        GradientDrawable shape = new GradientDrawable();
-        shape.setShape(GradientDrawable.RECTANGLE);
-        shape.setCornerRadius(AndroidUtilities.dp(32));
-        textView.setBackgroundDrawable(shape);
+        counterView.setMinWidth(AndroidUtilities.dp(18));
 
-        textView.setMinWidth(AndroidUtilities.dp(18));
-
-        //TODO: WHAAAAT!?!? textView.setPadding(AndroidUtilities.dp(Theme.chatsTabCounterSize > 10 ? Theme.chatsTabCounterSize - 7 : 4), 0, AndroidUtilities.dp(Theme.chatsTabCounterSize > 10 ? Theme.chatsTabCounterSize - 7 : 4), 0);
-        textView.setPadding(4, 0, 4, 0);
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         params.setMargins(AndroidUtilities.dp(3), AndroidUtilities.dp(5), AndroidUtilities.dp(3), AndroidUtilities.dp(5));  // left, top, right, bottom
-        //RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) textView.getLayoutParams();
-        //params.addRule(tabShouldExpand ? RelativeLayout.ALIGN_PARENT_RIGHT : RelativeLayout.RIGHT_OF, view.getId());
+
         params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
         params.addRule(/*Theme.plusTabsToBottom ? RelativeLayout.ALIGN_PARENT_TOP : */RelativeLayout.ALIGN_PARENT_BOTTOM);
-        //textView.setLayoutParams(params);
-        //tab.addView(textView, LayoutHelper.createRelative(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, 0, 6, 3, 6, RelativeLayout.ALIGN_PARENT_RIGHT));
-        tab.addView(textView, params);
+
+        tab.addView(counterView, params);
 
     }
 
@@ -342,7 +326,7 @@ public class PlusPagerSlidingTabStrip extends HorizontalScrollView {
                     //tv.setText(count >= 10000 && Theme.plusLimitTabsCounters ? "+9999" : String.format("%d", count));
                     tv.setText(String.format("%d", count));
                     //tv.getBackground().setColorFilter(allMuted ? Theme.usePlusTheme ? Theme.chatsTabCounterSilentBGColor : Theme.getColor(Theme.key_chats_unreadCounterMuted) : Theme.usePlusTheme ? Theme.chatsTabCounterBGColor : Theme.getColor(Theme.key_chats_unreadCounter), PorterDuff.Mode.SRC_IN);
-                    tv.getBackground().setColorFilter(Theme.getColor(Theme.key_topbar_unreadCounterColor), PorterDuff.Mode.SRC_IN);
+                    //tv.getBackground().setColorFilter(Theme.getColor(Theme.key_topbar_unreadCounterColor), PorterDuff.Mode.SRC_IN);
                 } else {
                     tv.setVisibility(INVISIBLE);
                     //tv.getBackground().setColorFilter(0x00000000, PorterDuff.Mode.SRC_IN);
@@ -800,4 +784,47 @@ public class PlusPagerSlidingTabStrip extends HorizontalScrollView {
         };
     }
 
+    class CircularTextView extends TextView {
+
+        int solidColor;
+
+        public CircularTextView(Context context) {
+            super(context);
+        }
+
+        public CircularTextView(Context context, AttributeSet attrs) {
+            super(context, attrs);
+        }
+
+        public CircularTextView(Context context, AttributeSet attrs, int defStyleAttr) {
+            super(context, attrs, defStyleAttr);
+        }
+
+
+        @Override
+        public void draw(Canvas canvas) {
+
+            Paint circlePaint = new Paint();
+            circlePaint.setColor(solidColor);
+            circlePaint.setFlags(Paint.ANTI_ALIAS_FLAG);
+
+            int h = this.getHeight();
+            int w = this.getWidth();
+
+            int diameter = ((h > w) ? h : w);
+            int radius = diameter / 2;
+
+            this.setHeight(diameter);
+            this.setWidth(diameter);
+
+
+            canvas.drawCircle(diameter / 2, diameter / 2, radius, circlePaint);
+
+            super.draw(canvas);
+        }
+
+        public void setSolidColor(int color) {
+            solidColor = color;
+        }
+    }
 }
