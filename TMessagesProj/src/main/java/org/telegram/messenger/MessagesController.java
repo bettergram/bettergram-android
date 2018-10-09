@@ -23,7 +23,7 @@ import android.util.SparseArray;
 import android.util.SparseBooleanArray;
 import android.util.SparseIntArray;
 import android.widget.Toast;
-
+import io.bettergram.messenger.R;
 import org.telegram.SQLite.SQLiteCursor;
 import org.telegram.messenger.support.SparseLongArray;
 import org.telegram.messenger.voip.VoIPService;
@@ -39,15 +39,9 @@ import org.telegram.ui.Components.AlertsCreator;
 import org.telegram.ui.DialogsActivity;
 import org.telegram.ui.ProfileActivity;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Locale;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
-
-import io.bettergram.messenger.R;
 
 public class MessagesController implements NotificationCenter.NotificationCenterDelegate {
 
@@ -309,6 +303,7 @@ public class MessagesController implements NotificationCenter.NotificationCenter
 
     private int currentAccount;
     private static volatile MessagesController[] Instance = new MessagesController[UserConfig.MAX_ACCOUNT_COUNT];
+
     public static MessagesController getInstance(int num) {
         MessagesController localInstance = Instance[num];
         if (localInstance == null) {
@@ -949,7 +944,7 @@ public class MessagesController implements NotificationCenter.NotificationCenter
                         oldUser.photo = user.photo;
                         oldUser.flags |= 32;
                     } else {
-                        oldUser.flags = oldUser.flags &~ 32;
+                        oldUser.flags = oldUser.flags & ~32;
                         oldUser.photo = null;
                     }
                 }
@@ -983,7 +978,7 @@ public class MessagesController implements NotificationCenter.NotificationCenter
                     user.photo = oldUser.photo;
                     user.flags |= 32;
                 } else {
-                    user.flags = user.flags &~ 32;
+                    user.flags = user.flags & ~32;
                     user.photo = null;
                 }
                 users.put(user.id, user);
@@ -1036,7 +1031,7 @@ public class MessagesController implements NotificationCenter.NotificationCenter
                         oldChat.username = chat.username;
                         oldChat.flags |= 64;
                     } else {
-                        oldChat.flags = oldChat.flags &~ 64;
+                        oldChat.flags = oldChat.flags & ~64;
                         oldChat.username = null;
                     }
                     if (chat.participants_count != 0) {
@@ -1077,7 +1072,7 @@ public class MessagesController implements NotificationCenter.NotificationCenter
                     chat.username = oldChat.username;
                     chat.flags |= 64;
                 } else {
-                    chat.flags = chat.flags &~ 64;
+                    chat.flags = chat.flags & ~64;
                     chat.username = null;
                 }
                 if (oldChat.participants_count != 0 && chat.participants_count == 0) {
@@ -3980,7 +3975,6 @@ public class MessagesController implements NotificationCenter.NotificationCenter
                 });
                 return;
             }
-
             final LongSparseArray<TLRPC.TL_dialog> new_dialogs_dict = new LongSparseArray<>();
             final LongSparseArray<MessageObject> new_dialogMessage = new LongSparseArray<>();
             final SparseArray<TLRPC.User> usersDict = new SparseArray<>();
@@ -6541,6 +6535,14 @@ public class MessagesController implements NotificationCenter.NotificationCenter
         }
     }
 
+    public void favoriteDialog(final long did) {
+        TLRPC.TL_dialog dialog = dialogs_dict.get(did);
+        if (dialog != null) {
+            MessagesStorage.getInstance(currentAccount).setDialogFavorite(did, dialog.favorite_date);
+            loadDialogs(0, 100, true);
+        }
+    }
+
     public void loadUnreadDialogs() {
         if (loadingUnreadDialogs || UserConfig.getInstance(currentAccount).unreadDialogsLoaded) {
             return;
@@ -8770,7 +8772,7 @@ public class MessagesController implements NotificationCenter.NotificationCenter
                                 continue;
                             }
                             TelephonyManager tm = (TelephonyManager) ApplicationLoader.applicationContext.getSystemService(Context.TELEPHONY_SERVICE);
-                            if (svc != null || VoIPService.callIShouldHavePutIntoIntent!=null || tm.getCallState() != TelephonyManager.CALL_STATE_IDLE) {
+                            if (svc != null || VoIPService.callIShouldHavePutIntoIntent != null || tm.getCallState() != TelephonyManager.CALL_STATE_IDLE) {
                                 if (BuildVars.LOGS_ENABLED) {
                                     FileLog.d("Auto-declining call " + call.id + " because there's already active one");
                                 }
@@ -8796,9 +8798,9 @@ public class MessagesController implements NotificationCenter.NotificationCenter
                             intent.putExtra("user_id", call.participant_id == UserConfig.getInstance(currentAccount).getClientUserId() ? call.admin_id : call.participant_id);
                             intent.putExtra("account", currentAccount);
                             try {
-                                if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O){
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                                     ApplicationLoader.applicationContext.startForegroundService(intent);
-                                }else{
+                                } else {
                                     ApplicationLoader.applicationContext.startService(intent);
                                 }
                             } catch (Throwable e) {
@@ -9531,7 +9533,7 @@ public class MessagesController implements NotificationCenter.NotificationCenter
             if (fragment.getParentActivity() == null) {
                 return;
             }
-            final AlertDialog progressDialog[] = new AlertDialog[] {new AlertDialog(fragment.getParentActivity(), 1)};
+            final AlertDialog progressDialog[] = new AlertDialog[]{new AlertDialog(fragment.getParentActivity(), 1)};
 
             TLRPC.TL_contacts_resolveUsername req = new TLRPC.TL_contacts_resolveUsername();
             req.username = username;

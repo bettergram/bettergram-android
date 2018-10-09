@@ -32559,6 +32559,7 @@ public class TLRPC {
 		public int last_message_date; //custom
 		public long id; //custom
 		public int pinnedNum; //custom
+        public int favorite_date; //custom
 
 		public static TL_dialog TLdeserialize(AbstractSerializedData stream, int constructor, boolean exception) {
 			if (TL_dialog.constructor != constructor) {

@@ -10,10 +10,12 @@ package org.telegram.messenger;
 
 import android.content.SharedPreferences;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.LongSparseArray;
 import android.util.SparseArray;
 import android.util.SparseIntArray;
 
+import io.bettergram.utils.Time;
 import org.telegram.PhoneFormat.PhoneFormat;
 import org.telegram.SQLite.SQLiteCursor;
 import org.telegram.SQLite.SQLiteDatabase;
@@ -230,7 +232,7 @@ public class MessagesStorage {
                 database.executeFast("CREATE TABLE user_phones_v7(key TEXT, phone TEXT, sphone TEXT, deleted INTEGER, PRIMARY KEY (key, phone))").stepThis().dispose();
                 database.executeFast("CREATE INDEX IF NOT EXISTS sphone_deleted_idx_user_phones ON user_phones_v7(sphone, deleted);").stepThis().dispose();
 
-                database.executeFast("CREATE TABLE dialogs(did INTEGER PRIMARY KEY, date INTEGER, unread_count INTEGER, last_mid INTEGER, inbox_max INTEGER, outbox_max INTEGER, last_mid_i INTEGER, unread_count_i INTEGER, pts INTEGER, date_i INTEGER, pinned INTEGER, flags INTEGER)").stepThis().dispose();
+                database.executeFast("CREATE TABLE dialogs(did INTEGER PRIMARY KEY, date INTEGER, unread_count INTEGER, last_mid INTEGER, inbox_max INTEGER, outbox_max INTEGER, last_mid_i INTEGER, unread_count_i INTEGER, pts INTEGER, date_i INTEGER, pinned INTEGER, flags INTEGER, favorite_date INTEGER)").stepThis().dispose();
                 database.executeFast("CREATE INDEX IF NOT EXISTS date_idx_dialogs ON dialogs(date);").stepThis().dispose();
                 database.executeFast("CREATE INDEX IF NOT EXISTS last_mid_idx_dialogs ON dialogs(last_mid);").stepThis().dispose();
                 database.executeFast("CREATE INDEX IF NOT EXISTS unread_count_idx_dialogs ON dialogs(unread_count);").stepThis().dispose();
@@ -2447,7 +2449,7 @@ public class MessagesStorage {
                 data.reuse();
 
                 if (info instanceof TLRPC.TL_channelFull) {
-                    SQLiteCursor cursor = database.queryFinalized("SELECT date, pts, last_mid, inbox_max, outbox_max, pinned, unread_count_i, flags FROM dialogs WHERE did = " + (-info.id));
+                    SQLiteCursor cursor = database.queryFinalized("SELECT date, pts, last_mid, inbox_max, outbox_max, pinned, unread_count_i, flags, favorite_date FROM dialogs WHERE did = " + (-info.id));
                     if (cursor.next()) {
                         int inbox_max = cursor.intValue(3);
                         if (inbox_max < info.read_inbox_max_id) {
@@ -2462,8 +2464,9 @@ public class MessagesStorage {
                             int pinned = cursor.intValue(5);
                             int mentions = cursor.intValue(6);
                             int flags = cursor.intValue(7);
+                            int favorite_date = cursor.intValue(8);
 
-                            state = database.executeFast("REPLACE INTO dialogs VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                            state = database.executeFast("REPLACE INTO dialogs VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
                             state.bindLong(1, -info.id);
                             state.bindInteger(2, dialog_date);
                             state.bindInteger(3, info.unread_count);
@@ -2476,6 +2479,7 @@ public class MessagesStorage {
                             state.bindInteger(10, 0);
                             state.bindInteger(11, pinned);
                             state.bindInteger(12, flags);
+                            state.bindInteger(13, favorite_date);
                             state.step();
                             state.dispose();
                         }
@@ -4247,7 +4251,7 @@ public class MessagesStorage {
                 data4.reuse();
                 data5.reuse();
                 if (dialog != null) {
-                    state = database.executeFast("REPLACE INTO dialogs VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                    state = database.executeFast("REPLACE INTO dialogs VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
                     state.bindLong(1, dialog.id);
                     state.bindInteger(2, dialog.last_message_date);
                     state.bindInteger(3, dialog.unread_count);
@@ -4260,6 +4264,7 @@ public class MessagesStorage {
                     state.bindInteger(10, 0);
                     state.bindInteger(11, dialog.pinnedNum);
                     state.bindInteger(12, dialog.flags);
+                    state.bindInteger(13, dialog.favorite_date);
                     state.step();
                     state.dispose();
                 }
@@ -4853,7 +4858,8 @@ public class MessagesStorage {
                     mentionsIdsMap.put(messageId, message.dialog_id);
                 }
 
-                if (!(message.action instanceof TLRPC.TL_messageActionHistoryClear) && !MessageObject.isOut(message) && (message.id > 0 || MessageObject.isUnread(message))) {Integer currentMaxId = dialogsReadMax.get(message.dialog_id);
+                if (!(message.action instanceof TLRPC.TL_messageActionHistoryClear) && !MessageObject.isOut(message) && (message.id > 0 || MessageObject.isUnread(message))) {
+                    Integer currentMaxId = dialogsReadMax.get(message.dialog_id);
                     if (currentMaxId == null) {
                         SQLiteCursor cursor = database.queryFinalized("SELECT inbox_max FROM dialogs WHERE did = " + message.dialog_id);
                         if (cursor.next()) {
@@ -5095,7 +5101,7 @@ public class MessagesStorage {
             state4.dispose();
             state5.dispose();
 
-            state = database.executeFast("REPLACE INTO dialogs VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            state = database.executeFast("REPLACE INTO dialogs VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
             for (int a = 0; a < messagesMap.size(); a++) {
                 long key = messagesMap.keyAt(a);
@@ -5109,7 +5115,7 @@ public class MessagesStorage {
                     channelId = message.to_id.channel_id;
                 }
 
-                SQLiteCursor cursor = database.queryFinalized("SELECT date, unread_count, pts, last_mid, inbox_max, outbox_max, pinned, unread_count_i, flags FROM dialogs WHERE did = " + key);
+                SQLiteCursor cursor = database.queryFinalized("SELECT date, unread_count, pts, last_mid, inbox_max, outbox_max, pinned, unread_count_i, flags, favorite_date FROM dialogs WHERE did = " + key);
                 int dialog_date = 0;
                 int last_mid = 0;
                 int old_unread_count = 0;
@@ -5119,6 +5125,7 @@ public class MessagesStorage {
                 int pinned = 0;
                 int old_mentions_count = 0;
                 int flags = 0;
+                int favorite_date = 0;
                 if (cursor.next()) {
                     dialog_date = cursor.intValue(0);
                     old_unread_count = cursor.intValue(1);
@@ -5129,6 +5136,7 @@ public class MessagesStorage {
                     pinned = cursor.intValue(6);
                     old_mentions_count = cursor.intValue(7);
                     flags = cursor.intValue(8);
+                    favorite_date = cursor.intValue(9);
                 } else if (channelId != 0) {
                     MessagesController.getInstance(currentAccount).checkChannelInviter(channelId);
                 }
@@ -5174,6 +5182,7 @@ public class MessagesStorage {
                 state.bindInteger(10, 0);
                 state.bindInteger(11, pinned);
                 state.bindInteger(12, flags);
+                state.bindInteger(13, favorite_date);
                 state.step();
             }
             state.dispose();
@@ -5837,7 +5846,7 @@ public class MessagesStorage {
             ArrayList<Integer> usersToLoad = new ArrayList<>();
             ArrayList<Integer> chatsToLoad = new ArrayList<>();
             ArrayList<Integer> encryptedToLoad = new ArrayList<>();
-            SQLiteCursor cursor = database.queryFinalized(String.format(Locale.US, "SELECT d.did, d.last_mid, d.unread_count, d.date, m.data, m.read_state, m.mid, m.send_state, m.date, d.pts, d.inbox_max, d.outbox_max, d.pinned, d.unread_count_i, d.flags FROM dialogs as d LEFT JOIN messages as m ON d.last_mid = m.mid WHERE d.did IN(%s)", ids));
+            SQLiteCursor cursor = database.queryFinalized(String.format(Locale.US, "SELECT d.did, d.last_mid, d.unread_count, d.date, m.data, m.read_state, m.mid, m.send_state, m.date, d.pts, d.inbox_max, d.outbox_max, d.pinned, d.unread_count_i, d.flags, d.favorite_date FROM dialogs as d LEFT JOIN messages as m ON d.last_mid = m.mid WHERE d.did IN(%s)", ids));
             while (cursor.next()) {
                 TLRPC.TL_dialog dialog = new TLRPC.TL_dialog();
                 dialog.id = cursor.longValue(0);
@@ -5853,6 +5862,7 @@ public class MessagesStorage {
                 dialog.pinned = dialog.pinnedNum != 0;
                 int dialog_flags = cursor.intValue(14);
                 dialog.unread_mark = (dialog_flags & 1) != 0;
+                dialog.favorite_date = cursor.intValue(15);
 
                 dialogs.dialogs.add(dialog);
 
@@ -6366,15 +6376,17 @@ public class MessagesStorage {
                         int pinned = 0;
                         int mentions = 0;
                         int flags = 0;
-                        SQLiteCursor cursor = database.queryFinalized("SELECT pinned, unread_count_i, flags FROM dialogs WHERE did = " + dialog_id);
+                        int favorite_date = 0;
+                        SQLiteCursor cursor = database.queryFinalized("SELECT pinned, unread_count_i, flags, favorite_date FROM dialogs WHERE did = " + dialog_id);
                         if (cursor.next()) {
                             pinned = cursor.intValue(0);
                             mentions = cursor.intValue(1);
                             flags = cursor.intValue(2);
+                            favorite_date = cursor.intValue(3);
                         }
                         cursor.dispose();
 
-                        SQLitePreparedStatement state3 = database.executeFast("REPLACE INTO dialogs VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                        SQLitePreparedStatement state3 = database.executeFast("REPLACE INTO dialogs VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
                         state3.bindLong(1, dialog_id);
                         state3.bindInteger(2, message.date);
                         state3.bindInteger(3, 0);
@@ -6387,6 +6399,7 @@ public class MessagesStorage {
                         state3.bindInteger(10, message.date);
                         state3.bindInteger(11, pinned);
                         state3.bindInteger(12, flags);
+                        state3.bindInteger(13, favorite_date);
                         state3.step();
                         state3.dispose();
                     }
@@ -6562,7 +6575,7 @@ public class MessagesStorage {
                 ArrayList<Integer> encryptedToLoad = new ArrayList<>();
                 ArrayList<Long> replyMessages = new ArrayList<>();
                 LongSparseArray<TLRPC.Message> replyMessageOwners = new LongSparseArray<>();
-                SQLiteCursor cursor = database.queryFinalized(String.format(Locale.US, "SELECT d.did, d.last_mid, d.unread_count, d.date, m.data, m.read_state, m.mid, m.send_state, s.flags, m.date, d.pts, d.inbox_max, d.outbox_max, m.replydata, d.pinned, d.unread_count_i, d.flags FROM dialogs as d LEFT JOIN messages as m ON d.last_mid = m.mid LEFT JOIN dialog_settings as s ON d.did = s.did ORDER BY d.pinned DESC, d.date DESC LIMIT %d,%d", offset, count));
+                SQLiteCursor cursor = database.queryFinalized(String.format(Locale.US, "SELECT d.did, d.last_mid, d.unread_count, d.date, m.data, m.read_state, m.mid, m.send_state, s.flags, m.date, d.pts, d.inbox_max, d.outbox_max, m.replydata, d.pinned, d.unread_count_i, d.flags, d.favorite_date FROM dialogs as d LEFT JOIN messages as m ON d.last_mid = m.mid LEFT JOIN dialog_settings as s ON d.did = s.did ORDER BY d.pinned DESC, d.date DESC LIMIT %d,%d", offset, count));
                 while (cursor.next()) {
                     TLRPC.TL_dialog dialog = new TLRPC.TL_dialog();
                     dialog.id = cursor.longValue(0);
@@ -6578,6 +6591,7 @@ public class MessagesStorage {
                     dialog.unread_mentions_count = cursor.intValue(15);
                     int dialog_flags = cursor.intValue(16);
                     dialog.unread_mark = (dialog_flags & 1) != 0;
+                    dialog.favorite_date = cursor.intValue(17);
                     long flags = cursor.longValue(8);
                     int low_flags = (int) flags;
                     dialog.notify_settings = new TLRPC.TL_peerNotifySettings();
@@ -6746,7 +6760,7 @@ public class MessagesStorage {
 
             if (!dialogs.dialogs.isEmpty()) {
                 SQLitePreparedStatement state = database.executeFast("REPLACE INTO messages VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, ?, ?)");
-                SQLitePreparedStatement state2 = database.executeFast("REPLACE INTO dialogs VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                SQLitePreparedStatement state2 = database.executeFast("REPLACE INTO dialogs VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
                 SQLitePreparedStatement state3 = database.executeFast("REPLACE INTO media_v2 VALUES(?, ?, ?, ?, ?)");
                 SQLitePreparedStatement state4 = database.executeFast("REPLACE INTO dialog_settings VALUES(?, ?)");
                 SQLitePreparedStatement state5 = database.executeFast("REPLACE INTO messages_holes VALUES(?, ?, ?)");
@@ -6847,6 +6861,7 @@ public class MessagesStorage {
                         flags |= 1;
                     }
                     state2.bindInteger(12, flags);
+                    state2.bindInteger(13, dialog.favorite_date);
                     state2.step();
 
                     if (dialog.notify_settings != null) {
@@ -6932,6 +6947,38 @@ public class MessagesStorage {
                 state.step();
                 state.dispose();
             } catch (Exception e) {
+                FileLog.e(e);
+            }
+        });
+    }
+
+    public void setDialogFavorite(final long did, final int favorite_date) {
+        storageQueue.postRunnable(() -> {
+            try {
+                int value = 0;
+                SQLiteCursor cursor = null;
+                try {
+                    cursor = database.queryFinalized("SELECT favorite_date FROM dialogs WHERE did = " + did);
+                    if (cursor.next()) {
+                        value = cursor.intValue(0);
+                    }
+                } catch (Exception e) {
+                    FileLog.e(e);
+                } finally {
+                    if (cursor != null) {
+                        cursor.dispose();
+                    }
+                }
+
+                value = (value == 0 ? favorite_date : value) > 0 ? 0 : Time.currentMillis();
+
+                SQLitePreparedStatement state = database.executeFast("UPDATE dialogs SET favorite_date = ? WHERE did = ?");
+                state.bindInteger(1, value);
+                state.bindLong(2, did);
+                state.step();
+                state.dispose();
+            } catch (Exception e) {
+                e.printStackTrace();
                 FileLog.e(e);
             }
         });

@@ -1,5 +1,6 @@
 package io.bettergram.tools;
 
+import android.util.Log;
 import org.telegram.messenger.DialogObject;
 import org.telegram.messenger.MessagesController;
 import org.telegram.messenger.UserConfig;
@@ -32,6 +33,10 @@ public class DialogsObject extends DialogObject {
             );
         }
         return false;
+    }
+
+    public static boolean isFavorite(TLRPC.TL_dialog d) {
+        return d.favorite_date > 0;
     }
 
     private static int getHigherId(TLRPC.TL_dialog d) {

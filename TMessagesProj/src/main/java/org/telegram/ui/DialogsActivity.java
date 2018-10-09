@@ -26,6 +26,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.view.ViewCompat;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
@@ -818,6 +819,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                         final TLRPC.Chat chat = MessagesController.getInstance(currentAccount).getChat(-lower_id);
                         CharSequence items[];
                         int icons[] = new int[]{
+                                dialog.favorite_date > 0 ? R.drawable.chat_unfavorite : R.drawable.chat_favorite,
                                 dialog.pinned ? R.drawable.chats_unpin : R.drawable.chats_pin,
                                 R.drawable.chats_clear,
                                 hasUnread ? R.drawable.menu_read : R.drawable.menu_unread,
@@ -831,12 +833,14 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                                     null};
                         } else if (chat != null && chat.megagroup) {
                             items = new CharSequence[]{
+                                    dialog.favorite_date > 0 ? LocaleController.getString("Unfavorite", R.string.Unfavorite) : LocaleController.getString("Favorite", R.string.Favorite),
                                     dialog.pinned || MessagesController.getInstance(currentAccount).canPinDialog(false) ? (dialog.pinned ? LocaleController.getString("UnpinFromTop", R.string.UnpinFromTop) : LocaleController.getString("PinToTop", R.string.PinToTop)) : null,
                                     TextUtils.isEmpty(chat.username) ? LocaleController.getString("ClearHistory", R.string.ClearHistory) : LocaleController.getString("ClearHistoryCache", R.string.ClearHistoryCache),
                                     hasUnread ? LocaleController.getString("MarkAsRead", R.string.MarkAsRead) : LocaleController.getString("MarkAsUnread", R.string.MarkAsUnread),
                                     LocaleController.getString("LeaveMegaMenu", R.string.LeaveMegaMenu)};
                         } else {
                             items = new CharSequence[]{
+                                    dialog.favorite_date > 0 ? LocaleController.getString("Unfavorite", R.string.Unfavorite) : LocaleController.getString("Favorite", R.string.Favorite),
                                     dialog.pinned || MessagesController.getInstance(currentAccount).canPinDialog(false) ? (dialog.pinned ? LocaleController.getString("UnpinFromTop", R.string.UnpinFromTop) : LocaleController.getString("PinToTop", R.string.PinToTop)) : null,
                                     LocaleController.getString("ClearHistoryCache", R.string.ClearHistoryCache),
                                     hasUnread ? LocaleController.getString("MarkAsRead", R.string.MarkAsRead) : LocaleController.getString("MarkAsUnread", R.string.MarkAsUnread),
@@ -844,11 +848,14 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                         }
                         builder.setItems(items, icons, (d, which) -> {
                             if (which == 0) {
+                                MessagesController.getInstance(currentAccount).favoriteDialog(selectedDialog);
+                                newTabsView.postDelayed(newTabsView::forceRefreshAction, 500);
+                            } else if (which == 1) {
                                 if (MessagesController.getInstance(currentAccount).pinDialog(selectedDialog, !pinned, null, 0) && !pinned) {
                                     hideFloatingButton(false);
                                     listView.smoothScrollToPosition(0);
                                 }
-                            } else if (which == 2) {
+                            } else if (which == 3) {
                                 if (hasUnread) {
                                     MessagesController.getInstance(currentAccount).markMentionsAsRead(selectedDialog);
                                     MessagesController.getInstance(currentAccount).markDialogAsRead(selectedDialog, dialog.top_message, dialog.top_message, dialog.last_message_date, false, 0, true);
@@ -858,7 +865,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                             } else {
                                 AlertDialog.Builder builder1 = new AlertDialog.Builder(getParentActivity());
                                 builder1.setTitle(LocaleController.getString("AppName", R.string.AppName));
-                                if (which == 1) {
+                                if (which == 2) {
                                     if (chat != null && chat.megagroup) {
                                         if (TextUtils.isEmpty(chat.username)) {
                                             builder1.setMessage(LocaleController.getString("AreYouSureClearHistory", R.string.AreYouSureClearHistory));
@@ -902,22 +909,27 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                         final boolean isBot = user != null && user.bot;
 
                         builder.setItems(new CharSequence[]{
+                                dialog.favorite_date > 0 ? LocaleController.getString("Unfavorite", R.string.Unfavorite) : LocaleController.getString("Favorite", R.string.Favorite),
                                 dialog.pinned || MessagesController.getInstance(currentAccount).canPinDialog(lower_id == 0) ? (dialog.pinned ? LocaleController.getString("UnpinFromTop", R.string.UnpinFromTop) : LocaleController.getString("PinToTop", R.string.PinToTop)) : null,
                                 LocaleController.getString("ClearHistory", R.string.ClearHistory),
                                 hasUnread ? LocaleController.getString("MarkAsRead", R.string.MarkAsRead) : LocaleController.getString("MarkAsUnread", R.string.MarkAsUnread),
                                 isChat ? LocaleController.getString("DeleteChat", R.string.DeleteChat) : isBot ? LocaleController.getString("DeleteAndStop", R.string.DeleteAndStop) : LocaleController.getString("Delete", R.string.Delete)
                         }, new int[]{
+                                dialog.favorite_date > 0 ? R.drawable.chat_unfavorite : R.drawable.chat_favorite,
                                 dialog.pinned ? R.drawable.chats_unpin : R.drawable.chats_pin,
                                 R.drawable.chats_clear,
                                 hasUnread ? R.drawable.menu_read : R.drawable.menu_unread,
                                 isChat ? R.drawable.chats_leave : R.drawable.chats_delete
                         }, (d, which) -> {
                             if (which == 0) {
+                                MessagesController.getInstance(currentAccount).favoriteDialog(selectedDialog);
+                                newTabsView.postDelayed(newTabsView::forceRefreshAction, 500);
+                            } else if (which == 1) {
                                 if (MessagesController.getInstance(currentAccount).pinDialog(selectedDialog, !pinned, null, 0) && !pinned) {
                                     hideFloatingButton(false);
                                     listView.smoothScrollToPosition(0);
                                 }
-                            } else if (which == 2) {
+                            } else if (which == 3) {
                                 if (hasUnread) {
                                     MessagesController.getInstance(currentAccount).markMentionsAsRead(selectedDialog);
                                     MessagesController.getInstance(currentAccount).markDialogAsRead(selectedDialog, dialog.top_message, dialog.top_message, dialog.last_message_date, false, 0, true);
@@ -927,7 +939,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                             } else {
                                 AlertDialog.Builder builder12 = new AlertDialog.Builder(getParentActivity());
                                 builder12.setTitle(LocaleController.getString("AppName", R.string.AppName));
-                                if (which == 1) {
+                                if (which == 2) {
                                     builder12.setMessage(LocaleController.getString("AreYouSureClearHistory", R.string.AreYouSureClearHistory));
                                 } else {
                                     if (isChat) {
@@ -937,7 +949,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                                     }
                                 }
                                 builder12.setPositiveButton(LocaleController.getString("OK", R.string.OK), (dialogInterface, i) -> {
-                                    if (which != 1) {
+                                    if (which != 2) {
                                         if (isChat) {
                                             TLRPC.Chat currentChat = MessagesController.getInstance(currentAccount).getChat((int) -selectedDialog);
                                             if (currentChat != null && ChatObject.isNotInChat(currentChat)) {

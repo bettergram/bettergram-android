@@ -18,7 +18,8 @@ public class BetterDialogsAdapter extends DialogsAdapter {
             .defaultValue(dialog -> false)
             .add(101, DialogsObject::isDirect)
             .add(102, DialogsObject::isGroup)
-            .add(103, DialogsObject::isAnnouncement);
+            .add(103, DialogsObject::isAnnouncement)
+            .add(104, DialogsObject::isFavorite);
     private int currentAccount = UserConfig.selectedAccount;
     private List<TLRPC.TL_dialog> cache = null;
 

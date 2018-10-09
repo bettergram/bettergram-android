@@ -201,6 +201,8 @@
     <string name="PreviewFeedback">Leave feedback about this preview</string>
     <string name="SendStickerPreview">Send Sticker</string>
     <string name="ViewPackPreview">View Pack</string>
+    <string name="Favorite">Favorite</string>
+    <string name="Unfavorite">Unfavorite</string>
     <string name="PinToTop">Pin to top</string>
     <string name="UnpinFromTop">Unpin from top</string>
     <string name="MarkAsUnread">Mark as unread</string>
