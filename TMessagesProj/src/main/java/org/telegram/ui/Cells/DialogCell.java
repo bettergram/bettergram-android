@@ -12,32 +12,17 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.RectF;
 import android.os.Build;
-import android.text.Layout;
-import android.text.SpannableStringBuilder;
-import android.text.Spanned;
-import android.text.StaticLayout;
-import android.text.TextPaint;
-import android.text.TextUtils;
+import android.text.*;
 import android.text.style.ForegroundColorSpan;
-
-import org.telegram.messenger.AndroidUtilities;
+import io.bettergram.messenger.R;
 import org.telegram.PhoneFormat.PhoneFormat;
-import org.telegram.messenger.ChatObject;
-import org.telegram.messenger.DataQuery;
-import org.telegram.messenger.LocaleController;
-import org.telegram.messenger.MessageObject;
-import org.telegram.messenger.UserObject;
-import org.telegram.messenger.FileLog;
+import org.telegram.messenger.*;
+import org.telegram.tgnet.ConnectionsManager;
 import org.telegram.tgnet.TLObject;
 import org.telegram.tgnet.TLRPC;
-import org.telegram.messenger.ContactsController;
-import org.telegram.messenger.Emoji;
-import org.telegram.messenger.MessagesController;
-import io.bettergram.messenger.R;
-import org.telegram.messenger.UserConfig;
-import org.telegram.messenger.ImageReceiver;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Adapters.DialogsAdapter;
+import org.telegram.ui.Components.OnlineIndicator;
 import org.telegram.ui.Components.AvatarDrawable;
 import org.telegram.ui.Components.GroupCreateCheckBox;
 
@@ -79,6 +64,8 @@ public class DialogCell extends BaseCell {
 
     private ImageReceiver avatarImage = new ImageReceiver(this);
     private AvatarDrawable avatarDrawable = new AvatarDrawable();
+
+    private OnlineIndicator onlineIndicator = new OnlineIndicator(this);
 
     private TLRPC.User user = null;
     private TLRPC.Chat chat = null;
@@ -148,6 +135,8 @@ public class DialogCell extends BaseCell {
         Theme.createDialogsResources(context);
         avatarImage.setRoundRadius(AndroidUtilities.dp(26));
 
+        onlineIndicator.radius(avatarImage.getRoundRadius());
+
         if (needCheck) {
             checkBox = new GroupCreateCheckBox(context);
             checkBox.setVisibility(VISIBLE);
@@ -161,12 +150,18 @@ public class DialogCell extends BaseCell {
         index = i;
         dialogsType = type;
         messageId = 0;
+
+        onlineIndicator.dialog(currentDialogId);
+
         update(0);
     }
 
     public void setDialog(CustomDialog dialog) {
         customDialog = dialog;
         messageId = 0;
+
+        onlineIndicator.dialog(customDialog.id);
+
         update(0);
     }
 
@@ -184,6 +179,9 @@ public class DialogCell extends BaseCell {
         if (message != null) {
             lastSendState = message.messageOwner.send_state;
         }
+
+        onlineIndicator.dialog(dialog_id);
+
         update(0);
     }
 
@@ -757,6 +755,9 @@ public class DialogCell extends BaseCell {
             avatarLeft = getMeasuredWidth() - AndroidUtilities.dp(AndroidUtilities.isTablet() ? 65 : 61);
         }
         avatarImage.setImageCoords(avatarLeft, avatarTop, AndroidUtilities.dp(52), AndroidUtilities.dp(52));
+
+        onlineIndicator.offsetX(avatarLeft).offsetY(avatarTop);
+
         if (drawError) {
             int w = AndroidUtilities.dp(23 + 8);
             messageWidth -= w;
@@ -1055,6 +1056,15 @@ public class DialogCell extends BaseCell {
                 }
                 avatarDrawable.setInfo(chat);
             }
+
+            boolean isOnline = user != null
+                    && (user.id == UserConfig.getInstance(currentAccount).getClientUserId()
+                    || user.status != null
+                    && user.status.expires > ConnectionsManager.getInstance(currentAccount).getCurrentTime()
+                    || MessagesController.getInstance(currentAccount).onlinePrivacy.containsKey(user.id));
+
+            onlineIndicator.active(isOnline ? 1 : 0);
+
             avatarImage.setImage(photo, "50_50", avatarDrawable, null, 0);
         }
         if (getMeasuredWidth() != 0 || getMeasuredHeight() != 0) {
@@ -1181,6 +1191,8 @@ public class DialogCell extends BaseCell {
         }
 
         avatarImage.draw(canvas);
+
+        onlineIndicator.draw(canvas);
     }
 
     @Override

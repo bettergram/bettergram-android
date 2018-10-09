@@ -300,6 +300,7 @@ public class Theme {
     public static Paint checkboxSquare_checkPaint;
     public static Paint checkboxSquare_backgroundPaint;
     public static Paint avatar_backgroundPaint;
+    public static Paint dialog_activeStatePaint;
 
     public static Drawable listSelector;
     public static Drawable avatar_broadcastDrawable;
@@ -1071,6 +1072,10 @@ public class Theme {
     public static final String key_topbar_activeColor = "topbar_activeColor";
     public static final String key_topbar_unreadCounterColor = "topbar_unreadCounterColor";
 
+    public static final String key_dialog_activeStateBorderColor = "dialog_activeStateBorderColor";
+    public static final String key_dialog_activeStateOnlineColor = "dialog_activeStateOnlineColor";
+    public static final String key_dialog_activeStateOfflineColor = "dialog_activeStateOfflineColor";
+
     //ununsed
     public static final String key_chat_outBroadcast = "chat_outBroadcast";
     public static final String key_chat_mediaBroadcast = "chat_mediaBroadcast";
@@ -1703,6 +1708,10 @@ public class Theme {
         defaultColors.put(key_topbar_inactiveColor, 0xffa5ebc5);
         defaultColors.put(key_topbar_activeColor, 0xffffffff);
         defaultColors.put(key_topbar_unreadCounterColor, 0xFFEB3E4A);
+
+        defaultColors.put(key_dialog_activeStateBorderColor, 0xFFFFFFFF);
+        defaultColors.put(key_dialog_activeStateOnlineColor, 0xff69bc35);
+        defaultColors.put(key_dialog_activeStateOfflineColor, 0xffcdcdcd);
 
         fallbackKeys.put(key_chat_adminText, key_chat_inTimeText);
         fallbackKeys.put(key_chat_adminSelectedText, key_chat_inTimeSelectedText);
@@ -2812,6 +2821,10 @@ public class Theme {
             dialogs_botDrawable = resources.getDrawable(R.drawable.list_bot);
             dialogs_pinnedDrawable = resources.getDrawable(R.drawable.list_pin);
             moveUpDrawable = resources.getDrawable(R.drawable.preview_open);
+
+            dialog_activeStatePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            dialog_activeStatePaint.setAntiAlias(true);
+            dialog_activeStatePaint.setStyle(Paint.Style.FILL_AND_STROKE);
 
             applyDialogsTheme();
         }

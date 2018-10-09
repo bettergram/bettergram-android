@@ -1,6 +1,5 @@
 package io.bettergram.tools;
 
-import android.util.Log;
 import org.telegram.messenger.DialogObject;
 import org.telegram.messenger.MessagesController;
 import org.telegram.messenger.UserConfig;
@@ -13,8 +12,6 @@ public class DialogsObject extends DialogObject {
     }
 
     public static boolean isDirect(TLRPC.TL_dialog d) {
-//        int selfId = UserConfig.getInstance(UserConfig.selectedAccount).getClientUserId();
-//        int lower_id = getLowerId(d);
         return getHigherId(d) == 0;
     }
 
