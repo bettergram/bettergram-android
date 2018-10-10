@@ -556,18 +556,20 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         listView.setVerticalScrollbarPosition(LocaleController.isRTL ? RecyclerListView.SCROLLBAR_POSITION_LEFT : RecyclerListView.SCROLLBAR_POSITION_RIGHT);
 
         TabsView newTabsView = new TabsView(context)
-                .refreshAction(type -> {
+                .refreshAction((type, scroll) -> {
                     //todo: check for the same type?
                     int firstVisibleItem = layoutManager.findFirstVisibleItemPosition();
                     //change data set
                     if (dialogsAdapter != null) {
                         dialogsAdapter.setDialogsType(type);
                     }
-                    //scroll to top
-                    if (firstVisibleItem < 20) {
-                        listView.smoothScrollToPosition(0);
-                    } else {
-                        listView.scrollToPosition(0);
+                    if (scroll) {
+                        //scroll to top
+                        if (firstVisibleItem < 20) {
+                            listView.smoothScrollToPosition(0);
+                        } else {
+                            listView.scrollToPosition(0);
+                        }
                     }
                 });
         LinearLayout tabsContainer = new LinearLayout(context);
@@ -819,7 +821,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                         final TLRPC.Chat chat = MessagesController.getInstance(currentAccount).getChat(-lower_id);
                         CharSequence items[];
                         int icons[] = new int[]{
-                                dialog.favorite_date > 0 ? R.drawable.chat_unfavorite : R.drawable.chat_favorite,
+                                dialog.favorite_date > 0 ? R.drawable.chats_unfavorite : R.drawable.chats_favorite,
                                 dialog.pinned ? R.drawable.chats_unpin : R.drawable.chats_pin,
                                 R.drawable.chats_clear,
                                 hasUnread ? R.drawable.menu_read : R.drawable.menu_unread,
@@ -915,7 +917,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                                 hasUnread ? LocaleController.getString("MarkAsRead", R.string.MarkAsRead) : LocaleController.getString("MarkAsUnread", R.string.MarkAsUnread),
                                 isChat ? LocaleController.getString("DeleteChat", R.string.DeleteChat) : isBot ? LocaleController.getString("DeleteAndStop", R.string.DeleteAndStop) : LocaleController.getString("Delete", R.string.Delete)
                         }, new int[]{
-                                dialog.favorite_date > 0 ? R.drawable.chat_unfavorite : R.drawable.chat_favorite,
+                                dialog.favorite_date > 0 ? R.drawable.chats_unfavorite : R.drawable.chats_favorite,
                                 dialog.pinned ? R.drawable.chats_unpin : R.drawable.chats_pin,
                                 R.drawable.chats_clear,
                                 hasUnread ? R.drawable.menu_read : R.drawable.menu_unread,

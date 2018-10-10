@@ -11,7 +11,6 @@ import android.os.Build;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -98,7 +97,7 @@ public class TabsView extends FrameLayout implements NotificationCenter.Notifica
     }
 
     public interface RefreshAction {
-        void onNewTypeSelected(int type);
+        void onNewTypeSelected(int type, boolean scroll);
     }
 
     private LinearLayout tabsContainer;
@@ -224,7 +223,7 @@ public class TabsView extends FrameLayout implements NotificationCenter.Notifica
             @Override
             public void onPageSelected(int position) {
                 if (refreshAction != null) {
-                    refreshAction.onNewTypeSelected(tabs.get(position).getType());
+                    refreshAction.onNewTypeSelected(tabs.get(position).getType(), true);
                 }
                 currentPage = position;
                 saveNewPage();
@@ -304,7 +303,8 @@ public class TabsView extends FrameLayout implements NotificationCenter.Notifica
         //unreadCount(messagesController.dialogsUsers, positions[1]);
         ArrayList<TLRPC.TL_dialog> dialogs = messagesController.dialogs;
         for (int i = 0; i < tabs.size(); i++) {
-            unreadCountAll(dialogs, i);
+            force = true;
+            unreadCount(dialogs, i);
         }
     }
 
@@ -341,7 +341,6 @@ public class TabsView extends FrameLayout implements NotificationCenter.Notifica
                 }
             }
         }
-
         if (unreadCount != tabs.get(position).getUnread() || force) {
             tabs.get(position).setUnread(unreadCount);
             pagerSlidingTabStrip.updateCounter(position, unreadCount, allMuted, force);
@@ -407,7 +406,7 @@ public class TabsView extends FrameLayout implements NotificationCenter.Notifica
     public void forceRefreshAction() {
         if (refreshAction != null) {
             int type = tabs.get(currentPage).getType();
-            refreshAction.onNewTypeSelected(type);
+            refreshAction.onNewTypeSelected(type, false);
         }
     }
 
