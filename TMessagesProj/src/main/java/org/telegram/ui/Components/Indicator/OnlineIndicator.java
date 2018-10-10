@@ -1,8 +1,7 @@
-package org.telegram.ui.Components;
+package org.telegram.ui.Components.Indicator;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.view.View;
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.ui.ActionBar.Theme;
 
@@ -13,8 +12,6 @@ public class OnlineIndicator {
 
     private Paint paint = Theme.dialog_activeStatePaint;
 
-    private View parent;
-
     private int offsetX, offsetY;
     private int radius;
 
@@ -22,8 +19,7 @@ public class OnlineIndicator {
 
     private int active = -1;
 
-    public OnlineIndicator(View parent) {
-        this.parent = parent;
+    public OnlineIndicator() {
     }
 
     public OnlineIndicator dialog(long dialog_id) {
@@ -41,7 +37,7 @@ public class OnlineIndicator {
         return this;
     }
 
-    public OnlineIndicator radius(int radius) {
+    public OnlineIndicator anchorAvatarRadius(int radius) {
         this.radius = radius;
         return this;
     }
@@ -66,11 +62,6 @@ public class OnlineIndicator {
             canvas.drawCircle(offsetX + dx, offsetY + dy, circleSize + borderWidth, paint);
             paint.setColor(Theme.getColor(active == 1 ? Theme.key_dialog_activeStateOnlineColor : Theme.key_dialog_activeStateOfflineColor));
             canvas.drawCircle(offsetX + dx, offsetY + dy, circleSize, paint);
-
-            if (parent == null) {
-                throw new NullPointerException("\"parent\" cannot be null.");
-            }
-            parent.invalidate();
         }
     }
 }

@@ -22,9 +22,10 @@ import org.telegram.tgnet.TLObject;
 import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Adapters.DialogsAdapter;
-import org.telegram.ui.Components.OnlineIndicator;
 import org.telegram.ui.Components.AvatarDrawable;
 import org.telegram.ui.Components.GroupCreateCheckBox;
+import org.telegram.ui.Components.Indicator.FavoriteIndicator;
+import org.telegram.ui.Components.Indicator.OnlineIndicator;
 
 import java.util.List;
 
@@ -65,7 +66,8 @@ public class DialogCell extends BaseCell {
     private ImageReceiver avatarImage = new ImageReceiver(this);
     private AvatarDrawable avatarDrawable = new AvatarDrawable();
 
-    private OnlineIndicator onlineIndicator = new OnlineIndicator(this);
+    private OnlineIndicator onlineIndicator = new OnlineIndicator();
+    private FavoriteIndicator favoriteIndicator = new FavoriteIndicator();
 
     private TLRPC.User user = null;
     private TLRPC.Chat chat = null;
@@ -135,7 +137,8 @@ public class DialogCell extends BaseCell {
         Theme.createDialogsResources(context);
         avatarImage.setRoundRadius(AndroidUtilities.dp(26));
 
-        onlineIndicator.radius(avatarImage.getRoundRadius());
+        onlineIndicator.anchorAvatarRadius(avatarImage.getRoundRadius());
+        favoriteIndicator.anchorAvatarRadius(avatarImage.getRoundRadius());
 
         if (needCheck) {
             checkBox = new GroupCreateCheckBox(context);
@@ -152,6 +155,7 @@ public class DialogCell extends BaseCell {
         messageId = 0;
 
         onlineIndicator.dialog(currentDialogId);
+        favoriteIndicator.dialog(currentDialogId);
 
         update(0);
     }
@@ -161,6 +165,7 @@ public class DialogCell extends BaseCell {
         messageId = 0;
 
         onlineIndicator.dialog(customDialog.id);
+        favoriteIndicator.dialog(customDialog.id);
 
         update(0);
     }
@@ -181,6 +186,7 @@ public class DialogCell extends BaseCell {
         }
 
         onlineIndicator.dialog(dialog_id);
+        favoriteIndicator.dialog(dialog_id);
 
         update(0);
     }
@@ -757,6 +763,7 @@ public class DialogCell extends BaseCell {
         avatarImage.setImageCoords(avatarLeft, avatarTop, AndroidUtilities.dp(52), AndroidUtilities.dp(52));
 
         onlineIndicator.offsetX(avatarLeft).offsetY(avatarTop);
+        favoriteIndicator.offsetX(avatarLeft).offsetY(0);
 
         if (drawError) {
             int w = AndroidUtilities.dp(23 + 8);
@@ -1193,6 +1200,7 @@ public class DialogCell extends BaseCell {
         avatarImage.draw(canvas);
 
         onlineIndicator.draw(canvas);
+        favoriteIndicator.draw(canvas);
     }
 
     @Override

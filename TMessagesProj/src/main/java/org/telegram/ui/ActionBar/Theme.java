@@ -14,25 +14,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.ColorFilter;
-import android.graphics.Paint;
-import android.graphics.Path;
-import android.graphics.PixelFormat;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffColorFilter;
-import android.graphics.PorterDuffXfermode;
-import android.graphics.RectF;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.NinePatchDrawable;
-import android.graphics.drawable.RippleDrawable;
-import android.graphics.drawable.ShapeDrawable;
-import android.graphics.drawable.StateListDrawable;
+import android.graphics.*;
+import android.graphics.drawable.*;
 import android.graphics.drawable.shapes.OvalShape;
 import android.graphics.drawable.shapes.RoundRectShape;
 import android.hardware.Sensor;
@@ -44,20 +27,10 @@ import android.os.SystemClock;
 import android.text.TextPaint;
 import android.text.TextUtils;
 import android.util.StateSet;
-
+import io.bettergram.messenger.R;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.telegram.messenger.AndroidUtilities;
-import org.telegram.messenger.ApplicationLoader;
-import org.telegram.messenger.BuildVars;
-import org.telegram.messenger.FileLog;
-import org.telegram.messenger.LocaleController;
-import org.telegram.messenger.MediaController;
-import org.telegram.messenger.MessagesController;
-import org.telegram.messenger.NotificationCenter;
-import io.bettergram.messenger.R;
-import org.telegram.messenger.SharedConfig;
-import org.telegram.messenger.Utilities;
+import org.telegram.messenger.*;
 import org.telegram.messenger.time.SunDate;
 import org.telegram.ui.Components.CombinedDrawable;
 import org.telegram.ui.Components.ThemeEditorView;
@@ -306,6 +279,8 @@ public class Theme {
     public static Drawable avatar_broadcastDrawable;
     public static Drawable avatar_savedDrawable;
     public static Drawable avatar_photoDrawable;
+
+    public static Drawable dialog_favoriteDrawable;
 
     public static Drawable moveUpDrawable;
 
@@ -1076,6 +1051,9 @@ public class Theme {
     public static final String key_dialog_activeStateOnlineColor = "dialog_activeStateOnlineColor";
     public static final String key_dialog_activeStateOfflineColor = "dialog_activeStateOfflineColor";
 
+    public static final String key_dialog_favoriteBackgroundColor = "dialog_favoriteBackgroundColor";
+    public static final String key_dialog_favoriteForegroundColor = "dialog_favoriteForegroundColor";
+
     //ununsed
     public static final String key_chat_outBroadcast = "chat_outBroadcast";
     public static final String key_chat_mediaBroadcast = "chat_mediaBroadcast";
@@ -1712,6 +1690,9 @@ public class Theme {
         defaultColors.put(key_dialog_activeStateBorderColor, 0xFFFFFFFF);
         defaultColors.put(key_dialog_activeStateOnlineColor, 0xff69bc35);
         defaultColors.put(key_dialog_activeStateOfflineColor, 0xffcdcdcd);
+
+        defaultColors.put(key_dialog_favoriteBackgroundColor, 0xFFFFFFFF);
+        defaultColors.put(key_dialog_favoriteForegroundColor, 0xffffc200);
 
         fallbackKeys.put(key_chat_adminText, key_chat_inTimeText);
         fallbackKeys.put(key_chat_adminSelectedText, key_chat_inTimeSelectedText);
@@ -2767,6 +2748,8 @@ public class Theme {
             avatar_broadcastDrawable = resources.getDrawable(R.drawable.broadcast_w);
             avatar_savedDrawable = resources.getDrawable(R.drawable.bookmark_large);
             avatar_photoDrawable = resources.getDrawable(R.drawable.photo_w);
+
+            dialog_favoriteDrawable = resources.getDrawable(R.drawable.ic_ab_fave);
 
             applyCommonTheme();
         }
