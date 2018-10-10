@@ -290,7 +290,6 @@ public class PlusPagerSlidingTabStrip extends HorizontalScrollView {
         params.addRule(/*Theme.plusTabsToBottom ? RelativeLayout.ALIGN_PARENT_TOP : */RelativeLayout.ALIGN_PARENT_BOTTOM);
 
         tab.addView(counterView, params);
-
     }
 
     public void changeTabsColor(int position) {
@@ -502,18 +501,16 @@ public class PlusPagerSlidingTabStrip extends HorizontalScrollView {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        //Log.e("PlusPager", "onDraw");
         if (isInEditMode() || tabCount == 0 || currentPosition >= tabCount) {
             return;
         }
-        //Log.e("PlusPager", "onDraw getWidth " + tabsContainer.getWidth() + " " + tabsContainer.getChildAt(0).getWidth());
-//        if(!tabShouldExpand && tabTitlesMode){
+
         if (tabsContainer.getChildAt(0).getWidth() > tabsContainer.getWidth() / 2) {
             enableShouldExpand();
             notifyDataSetChanged();
             return;
         }
-//        }
+
         final int height = getHeight();
 
         //draw underline
@@ -787,6 +784,7 @@ public class PlusPagerSlidingTabStrip extends HorizontalScrollView {
     class CircularTextView extends TextView {
 
         int solidColor;
+        int lastDiameter;
 
         public CircularTextView(Context context) {
             super(context);
@@ -803,7 +801,6 @@ public class PlusPagerSlidingTabStrip extends HorizontalScrollView {
 
         @Override
         public void draw(Canvas canvas) {
-
             Paint circlePaint = new Paint();
             circlePaint.setColor(solidColor);
             circlePaint.setFlags(Paint.ANTI_ALIAS_FLAG);
@@ -814,9 +811,11 @@ public class PlusPagerSlidingTabStrip extends HorizontalScrollView {
             int diameter = ((h > w) ? h : w);
             int radius = diameter / 2;
 
-            this.setHeight(diameter);
-            this.setWidth(diameter);
-
+            if (diameter != lastDiameter) {
+                lastDiameter = diameter;
+                this.setHeight(diameter);
+                this.setWidth(diameter);
+            }
 
             canvas.drawCircle(diameter / 2, diameter / 2, radius, circlePaint);
 
