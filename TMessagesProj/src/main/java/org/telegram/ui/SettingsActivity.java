@@ -8,11 +8,7 @@
 
 package org.telegram.ui;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
-import android.animation.StateListAnimator;
+import android.animation.*;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -37,68 +33,24 @@ import android.text.method.LinkMovementMethod;
 import android.text.style.URLSpan;
 import android.util.Base64;
 import android.util.TypedValue;
-import android.view.Gravity;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewOutlineProvider;
-import android.view.ViewTreeObserver;
+import android.view.*;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import org.telegram.messenger.AndroidUtilities;
-import org.telegram.PhoneFormat.PhoneFormat;
+import android.widget.*;
 import io.bettergram.messenger.BuildConfig;
-import org.telegram.messenger.ContactsController;
-import org.telegram.messenger.DataQuery;
-import org.telegram.messenger.SharedConfig;
-import org.telegram.messenger.UserObject;
-import org.telegram.messenger.ApplicationLoader;
-import org.telegram.messenger.BuildVars;
-import org.telegram.messenger.LocaleController;
-import org.telegram.messenger.FileLoader;
+import io.bettergram.messenger.R;
+import org.telegram.PhoneFormat.PhoneFormat;
+import org.telegram.messenger.*;
 import org.telegram.messenger.browser.Browser;
 import org.telegram.messenger.support.widget.LinearLayoutManager;
 import org.telegram.messenger.support.widget.RecyclerView;
 import org.telegram.tgnet.ConnectionsManager;
 import org.telegram.tgnet.SerializedData;
 import org.telegram.tgnet.TLRPC;
-import org.telegram.messenger.FileLog;
-import org.telegram.messenger.MessagesController;
-import org.telegram.messenger.MessagesStorage;
-import org.telegram.messenger.NotificationCenter;
-import io.bettergram.messenger.R;
-import org.telegram.messenger.UserConfig;
-import org.telegram.messenger.MessageObject;
-import org.telegram.ui.ActionBar.AlertDialog;
-import org.telegram.ui.ActionBar.BottomSheet;
-import org.telegram.ui.ActionBar.ThemeDescription;
-import org.telegram.ui.Cells.CheckBoxCell;
-import org.telegram.ui.Cells.TextInfoCell;
-import org.telegram.ui.Cells.EmptyCell;
-import org.telegram.ui.Cells.HeaderCell;
-import org.telegram.ui.Cells.ShadowSectionCell;
-import org.telegram.ui.Cells.TextCheckCell;
-import org.telegram.ui.Cells.TextDetailSettingsCell;
-import org.telegram.ui.Cells.TextSettingsCell;
-import org.telegram.ui.ActionBar.ActionBar;
-import org.telegram.ui.ActionBar.ActionBarMenu;
-import org.telegram.ui.ActionBar.ActionBarMenuItem;
-import org.telegram.ui.Components.AvatarDrawable;
-import org.telegram.ui.Components.ImageUpdater;
-import org.telegram.ui.Components.BackupImageView;
-import org.telegram.ui.ActionBar.BaseFragment;
-import org.telegram.ui.Components.CombinedDrawable;
-import org.telegram.ui.Components.LayoutHelper;
+import org.telegram.ui.ActionBar.*;
+import org.telegram.ui.Cells.*;
+import org.telegram.ui.Components.*;
 import org.telegram.ui.Components.NumberPicker;
-import org.telegram.ui.ActionBar.Theme;
-import org.telegram.ui.Components.RecyclerListView;
-import org.telegram.ui.Components.URLSpanNoUnderline;
 import org.telegram.ui.Components.voip.VoIPHelper;
 
 import java.io.File;
@@ -152,6 +104,10 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
     private int askQuestionRow;
     private int telegramFaqRow;
     private int privacyPolicyRow;
+    private int socialSectionRow;
+    private int twitterRow;
+    private int githubRow;
+    private int telegramRow;
     private int sendLogsRow;
     private int clearLogsRow;
     private int switchBackendButtonRow;
@@ -297,6 +253,10 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
         askQuestionRow = rowCount++;
         telegramFaqRow = rowCount++;
         privacyPolicyRow = rowCount++;
+        socialSectionRow = rowCount++;
+        twitterRow = rowCount++;
+        githubRow = rowCount++;
+        telegramRow = rowCount++;
         if (BuildVars.LOGS_ENABLED) {
             sendLogsRow = rowCount++;
             clearLogsRow = rowCount++;
@@ -522,7 +482,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
                     if (view instanceof TextCheckCell) {
                         ((TextCheckCell) view).setChecked(SharedConfig.customTabs);
                     }
-                } else if(position == directShareRow) {
+                } else if (position == directShareRow) {
                     SharedConfig.toggleDirectShare();
                     if (view instanceof TextCheckCell) {
                         ((TextCheckCell) view).setChecked(SharedConfig.directShare);
@@ -644,6 +604,12 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
                     linearLayout.addView(cell, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 48));
                     builder.setCustomView(linearLayout);
                     showDialog(builder.create());
+                } else if (position == twitterRow) {
+                    context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://twitter.com/bettergramapp")));
+                } else if (position == githubRow) {
+                    context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.github.com/bettergram")));
+                } else if (position == telegramRow) {
+                    context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.t.me/bettergramapp")));
                 }
             }
         });
@@ -1097,7 +1063,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
             nameTextView.setTranslationX(-21 * AndroidUtilities.density * diff);
             nameTextView.setTranslationY((float) Math.floor(avatarY) - (float) Math.ceil(AndroidUtilities.density) + (float) Math.floor(7 * AndroidUtilities.density * diff));
             onlineTextView.setTranslationX(-21 * AndroidUtilities.density * diff);
-            onlineTextView.setTranslationY((float) Math.floor(avatarY) + AndroidUtilities.dp(22) + (float )Math.floor(11 * AndroidUtilities.density) * diff);
+            onlineTextView.setTranslationY((float) Math.floor(avatarY) + AndroidUtilities.dp(22) + (float) Math.floor(11 * AndroidUtilities.density) * diff);
             nameTextView.setScaleX(1.0f + 0.12f * diff);
             nameTextView.setScaleY(1.0f + 0.12f * diff);
         }
@@ -1246,6 +1212,12 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
                         textCell.setText(LocaleController.getString("PrivacyPolicy", R.string.PrivacyPolicy), true);
                     } else if (position == emojiRow) {
                         textCell.setText(LocaleController.getString("Emoji", R.string.Emoji), true);
+                    } else if (position == twitterRow) {
+                        textCell.setTextAndIcon(LocaleController.getString("socialTwitter", R.string.socialTwitter), R.drawable.ic_settings_twitter, true);
+                    } else if (position == githubRow) {
+                        textCell.setTextAndIcon(LocaleController.getString("socialGithub", R.string.socialGithub), R.drawable.ic_settings_github, true);
+                    } else if (position == telegramRow) {
+                        textCell.setTextAndIcon(LocaleController.getString("socialTelegram", R.string.socialTelegram), R.drawable.ic_settings_telegram, true);
                     }
                     break;
                 }
@@ -1324,6 +1296,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
             int position = holder.getAdapterPosition();
             return position == textSizeRow || position == enableAnimationsRow || position == notificationRow || position == backgroundRow || position == numberRow ||
                     position == askQuestionRow || position == sendLogsRow || position == sendByEnterRow || position == autoplayGifsRow || position == privacyRow ||
+                    position == twitterRow || position == githubRow || position == telegramRow ||
                     position == clearLogsRow || position == languageRow || position == usernameRow || position == bioRow ||
                     position == switchBackendButtonRow || position == telegramFaqRow || position == contactsSortRow || position == contactsReimportRow || position == saveToGalleryRow ||
                     position == stickersRow || position == raiseToSpeakRow || position == privacyPolicyRow || position == customTabsRow || position == directShareRow || position == versionRow ||
@@ -1401,11 +1374,11 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
             if (position == emptyRow || position == overscrollRow) {
                 return 0;
             }
-            if (position == settingsSectionRow || position == supportSectionRow || position == messagesSectionRow || position == contactsSectionRow) {
+            if (position == settingsSectionRow || position == supportSectionRow || position == messagesSectionRow || position == contactsSectionRow || position == socialSectionRow) {
                 return 1;
             } else if (position == enableAnimationsRow || position == sendByEnterRow || position == saveToGalleryRow || position == autoplayGifsRow || position == raiseToSpeakRow || position == customTabsRow || position == directShareRow) {
                 return 3;
-            } else if (position == notificationRow || position == themeRow || position == backgroundRow || position == askQuestionRow || position == sendLogsRow || position == privacyRow || position == clearLogsRow || position == switchBackendButtonRow || position == telegramFaqRow || position == contactsReimportRow || position == textSizeRow || position == languageRow || position == contactsSortRow || position == stickersRow || position == privacyPolicyRow || position == emojiRow || position == dataRow) {
+            } else if (position == notificationRow || position == themeRow || position == backgroundRow || position == askQuestionRow || position == sendLogsRow || position == privacyRow || position == clearLogsRow || position == switchBackendButtonRow || position == telegramFaqRow || position == contactsReimportRow || position == textSizeRow || position == languageRow || position == contactsSortRow || position == stickersRow || position == privacyPolicyRow || position == emojiRow || position == dataRow || position == twitterRow || position == githubRow || position == telegramRow) {
                 return 2;
             } else if (position == versionRow) {
                 return 5;

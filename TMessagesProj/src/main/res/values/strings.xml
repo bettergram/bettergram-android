@@ -2572,4 +2572,9 @@
     <string name="barItemNews">News</string>
     <string name="barItemVideos">Videos</string>
     <string name="barItemResources">Resources</string>
+
+    <!-- Setting Social Links Label-->
+    <string name="socialTwitter">Twitter</string>
+    <string name="socialGithub">Github</string>
+    <string name="socialTelegram">Telegram</string>
 </resources>
