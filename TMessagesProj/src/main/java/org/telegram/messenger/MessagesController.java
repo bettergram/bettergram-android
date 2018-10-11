@@ -192,7 +192,7 @@ public class MessagesController implements NotificationCenter.NotificationCenter
     public int callRingTimeout;
     public int callConnectTimeout;
     public int callPacketTimeout;
-    public int maxPinnedDialogsCount;
+    public int maxPinnedDialogsCount = 200;
     public int mapProvider;
     public int availableMapProviders;
     public String mapKey;
@@ -380,7 +380,7 @@ public class MessagesController implements NotificationCenter.NotificationCenter
         callRingTimeout = mainPreferences.getInt("callRingTimeout", 90000);
         callConnectTimeout = mainPreferences.getInt("callConnectTimeout", 30000);
         callPacketTimeout = mainPreferences.getInt("callPacketTimeout", 10000);
-        maxPinnedDialogsCount = mainPreferences.getInt("maxPinnedDialogsCount", 5);
+        maxPinnedDialogsCount = mainPreferences.getInt("maxPinnedDialogsCount", 200);
         maxMessageLength = mainPreferences.getInt("maxMessageLength", 4096);
         maxCaptionLength = mainPreferences.getInt("maxCaptionLength", 200);
         mapProvider = mainPreferences.getInt("mapProvider", 0);
@@ -428,7 +428,7 @@ public class MessagesController implements NotificationCenter.NotificationCenter
             callRingTimeout = config.call_ring_timeout_ms;
             callConnectTimeout = config.call_connect_timeout_ms;
             callPacketTimeout = config.call_packet_timeout_ms;
-            maxPinnedDialogsCount = config.pinned_dialogs_count_max;
+            //maxPinnedDialogsCount = config.pinned_dialogs_count_max;
             maxMessageLength = config.message_length_max;
             maxCaptionLength = config.caption_length_max;
             defaultP2pContacts = config.default_p2p_contacts;
@@ -6613,40 +6613,40 @@ public class MessagesController implements NotificationCenter.NotificationCenter
         NotificationCenter.getInstance(currentAccount).postNotificationName(NotificationCenter.dialogsNeedReload);
         if (lower_id != 0) {
             if (taskId != -1) {
-                TLRPC.TL_messages_toggleDialogPin req = new TLRPC.TL_messages_toggleDialogPin();
-                req.pinned = pin;
-                if (peer == null) {
-                    peer = getInputPeer(lower_id);
-                }
-                if (peer instanceof TLRPC.TL_inputPeerEmpty) {
-                    return false;
-                }
-                TLRPC.TL_inputDialogPeer inputDialogPeer = new TLRPC.TL_inputDialogPeer();
-                inputDialogPeer.peer = peer;
-                req.peer = inputDialogPeer;
-
-                final long newTaskId;
-                if (taskId == 0) {
-                    NativeByteBuffer data = null;
-                    try {
-                        data = new NativeByteBuffer(16 + peer.getObjectSize());
-                        data.writeInt32(4);
-                        data.writeInt64(did);
-                        data.writeBool(pin);
-                        peer.serializeToStream(data);
-                    } catch (Exception e) {
-                        FileLog.e(e);
-                    }
-                    newTaskId = MessagesStorage.getInstance(currentAccount).createPendingTask(data);
-                } else {
-                    newTaskId = taskId;
-                }
-
-                ConnectionsManager.getInstance(currentAccount).sendRequest(req, (response, error) -> {
-                    if (newTaskId != 0) {
-                        MessagesStorage.getInstance(currentAccount).removePendingTask(newTaskId);
-                    }
-                });
+//                TLRPC.TL_messages_toggleDialogPin req = new TLRPC.TL_messages_toggleDialogPin();
+//                req.pinned = pin;
+//                if (peer == null) {
+//                    peer = getInputPeer(lower_id);
+//                }
+//                if (peer instanceof TLRPC.TL_inputPeerEmpty) {
+//                    return false;
+//                }
+//                TLRPC.TL_inputDialogPeer inputDialogPeer = new TLRPC.TL_inputDialogPeer();
+//                inputDialogPeer.peer = peer;
+//                req.peer = inputDialogPeer;
+//
+//                final long newTaskId;
+//                if (taskId == 0) {
+//                    NativeByteBuffer data = null;
+//                    try {
+//                        data = new NativeByteBuffer(16 + peer.getObjectSize());
+//                        data.writeInt32(4);
+//                        data.writeInt64(did);
+//                        data.writeBool(pin);
+//                        peer.serializeToStream(data);
+//                    } catch (Exception e) {
+//                        FileLog.e(e);
+//                    }
+//                    newTaskId = MessagesStorage.getInstance(currentAccount).createPendingTask(data);
+//                } else {
+//                    newTaskId = taskId;
+//                }
+//
+//                ConnectionsManager.getInstance(currentAccount).sendRequest(req, (response, error) -> {
+//                    if (newTaskId != 0) {
+//                        MessagesStorage.getInstance(currentAccount).removePendingTask(newTaskId);
+//                    }
+//                });
             }
         }
         MessagesStorage.getInstance(currentAccount).setDialogPinned(did, dialog.pinnedNum);
