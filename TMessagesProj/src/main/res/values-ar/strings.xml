@@ -621,7 +621,7 @@
     <string name="URL">الرابط</string>
     <string name="MapPreviewProvider">مزود معاينة الخرائط</string>
     <string name="ChooseMapPreviewProvider">اختيار مزود معاينة الخرائط</string>
-    <string name="MapPreviewProviderTelegram">تيليجرام</string>
+    <string name="MapPreviewProviderBettergram">تيليجرام</string>
     <string name="MapPreviewProviderGoogle">جوجل</string>
     <string name="MapPreviewProviderYandex">ياندكس</string>
     <string name="MapPreviewProviderNobody">لا أحد</string>
@@ -743,8 +743,8 @@
     <string name="ALongTimeAgo">آخر ظهور كان منذ زمن طويل</string>
     <string name="NewMessageTitle">رسالة جديدة</string>
     <string name="InviteFriendsHelp">اختر جهات اتصال لدعوتها إلى تيليجرام</string>
-    <string name="InviteToTelegram">دعوة إلى تيليجرام</string>
-    <string name="ShareTelegram">شارك تيليجرام...</string>
+    <string name="InviteToBettergram">دعوة إلى تيليجرام</string>
+    <string name="ShareBettergram">شارك تيليجرام...</string>
     <string name="UpdateContactsTitle">هل ترغب في تحديث جهات الاتصال؟</string>
     <string name="UpdateContactsMessage">اكتشف تيليجرام العديد من جهات الاتصال غير المزامَنة، هل ترغب في مزامنتها الآن؟ اختر \"نعم\" إن كنت تستخدم جهازك الخاص، شريحتك، وحساب جوجل الخاص بك.</string>
     <!--group create view-->
@@ -986,8 +986,8 @@
     <string name="LanguageCustom">مخصص</string>
     <string name="AskAQuestionInfo">نرجو الأخذ بالعلم أن الدعم الفني في تيليجرام يقوم به مجموعة من المتطوعين. نحاول الرد سريعًا قدر الإمكان، لكن ذلك قد يستغرق بعض الوقت.\n\nيرجى الإطلاع على<![CDATA[<a href=\"https://telegram.org/faq/ar#a\"> الأسئلة الشائعة عن تيليجرام</a>]]> فهي تحوي إجابات لمعظم الأسئلة  <![CDATA[<a href=\"https://telegram.org/faq/ar#j\">وحلولًا للعديد من المشاكل.</a>]]></string>
     <string name="AskButton">اسأل متطوعًا</string>
-    <string name="TelegramFAQ">الأسئلة الشائعة</string>
-    <string name="TelegramFaq">الأسئلة الشائعة</string>
+    <string name="BettergramFAQ">الأسئلة الشائعة</string>
+    <string name="BettergramFaq">الأسئلة الشائعة</string>
     <string name="AddAccount">أضف حساب</string>
     <string name="SelectAccount">اختيار حساب</string>
     <string name="TelegramFaqUrl">https://telegram.org/faq/ar</string>
@@ -1070,7 +1070,7 @@
     <string name="Emoji">الرموز التعبيرية</string>
     <string name="EmojiBigSize">رسمُ رمز تعبيري واحد كبير</string>
     <string name="EmojiUseDefault">استخدم الرموز التعبيرية الافتراضية</string>
-    <string name="TelegramVersion">تيليجرام للأندرويد %1$s</string>
+    <string name="BettergramVersion">تيليجرام للأندرويد %1$s</string>
     <string name="DebugMenu">قائمة المعالجة</string>
     <string name="DebugSendLogs">إرسال السجلات</string>
     <string name="DebugClearLogs">مسح السجلات</string>
@@ -1099,13 +1099,13 @@
     <string name="UseProxySecret">السر</string>
     <string name="UseProxyUsername">اسم المستخدم</string>
     <string name="UseProxySocks5">SOCKS5</string>
-    <string name="UseProxyTelegram">بروكسي MTProto</string>
-    <string name="UseProxyTelegramError">لم يتم إعداد البروكسي الذي تستخدمه بشكل صحيح وسيتم تعطيله. يرجى العثور على واحد آخر.</string>
+    <string name="UseProxyBettergram">بروكسي MTProto</string>
+    <string name="UseProxyBettergramError">لم يتم إعداد البروكسي الذي تستخدمه بشكل صحيح وسيتم تعطيله. يرجى العثور على واحد آخر.</string>
     <string name="UseProxySponsor">راعي البروكسي</string>
     <string name="UseProxySponsorInfo">يقوم البروكسي الخاص بك بعرض هذه القناة. لإزالتها من قائمة دردشاتك، قم بتعطيل البروكسي من إعدادات تيليجرام.</string>
     <string name="UseProxyInfo">إعدادات بروكسي SOCKS5</string>
-    <string name="UseProxyTelegramInfo">إعدادات بروكسي MTProto.</string>
-    <string name="UseProxyTelegramInfo2">قد يعرض هذا البروكسي قناة إعلانية في قائمة الدردشات الخاصة بك.\nلن يكشف هذا عن أي من بيانات تيليجرام الخاصة بك.</string>
+    <string name="UseProxyBettergramInfo">إعدادات بروكسي MTProto.</string>
+    <string name="UseProxyBettergramInfo2">قد يعرض هذا البروكسي قناة إعلانية في قائمة الدردشات الخاصة بك.\nلن يكشف هذا عن أي من بيانات تيليجرام الخاصة بك.</string>
     <string name="UseProxyForCalls">استخدام البروكسي للمكالمات</string>
     <string name="UseProxyForCallsInfo">قد تقلل خوادم البروكسي من جودة مكالماتك.</string>
     <string name="ConnectingToProxyEnable">تفعيل</string>
@@ -1144,15 +1144,15 @@
     <string name="AudioAutodownload">الرسائل الصوتية</string>
     <string name="VideoMessagesAutodownload">الرسائل المرئية</string>
     <!--passport view-->
-    <string name="TelegramPassport">جواز تيليجرام</string>
+    <string name="BettergramPassport">جواز تيليجرام</string>
     <string name="PassportRequestedInformation">المعلومات المطلوبة</string>
     <string name="PassportProvidedInformation">المعلومات المضافة</string>
     <string name="PassportInfoTitle">ماهو جواز تيليجرام؟</string>
     <string name="PassportInfo">مع **جواز تيليجرام** يمْكنك التسجيل في المواقع والخدمات التي تتطلب توثيق الهوية الشخصية بسهولة.\n\nمعلوماتك، بياناتك الشخصية ووثائقك محمية ومشفرة من البداية للنهاية. لا أحد بما فيهم تيليجرام ذاتُه يمكنه الوصول إليها دون إذنك. \n\nلمزيد من التفاصيل يمكنك زيارة الأسئلة الشائعة عن تيليجرام.</string>
-    <string name="TelegramPassportCreatePasswordInfo">يرجى إنشاء كلمة مرور لحماية بياناتك الشخصية باستخدام التشفير من البداية للنهاية.\n\nستكون كلمة المرور هذه مطلوبة أيضًا عند تسجيل دخولك إلى تيليجرام على جهاز جديد.</string>
-    <string name="TelegramPassportCreatePassword">إنشاء كلمة مرور</string>
-    <string name="TelegramPassportDelete">حذف جواز تيليجرام</string>
-    <string name="TelegramPassportDeleteAlert">هل أنت متأكد من رغبتك في حذف جواز تيليجرام الخاص بك؟</string>
+    <string name="BettergramPassportCreatePasswordInfo">يرجى إنشاء كلمة مرور لحماية بياناتك الشخصية باستخدام التشفير من البداية للنهاية.\n\nستكون كلمة المرور هذه مطلوبة أيضًا عند تسجيل دخولك إلى تيليجرام على جهاز جديد.</string>
+    <string name="BettergramPassportCreatePassword">إنشاء كلمة مرور</string>
+    <string name="BettergramPassportDelete">حذف جواز تيليجرام</string>
+    <string name="BettergramPassportDeleteAlert">هل أنت متأكد من رغبتك في حذف جواز تيليجرام الخاص بك؟</string>
     <string name="PassportUseLatinOnly">يرجى استخدام الأحرف اللاتينية فقط</string>
     <string name="PassportAddPassportInfo">قم برفع نسخ ترجمة موثّقة عن جواز سفرك.</string>
     <string name="PassportAddInternalPassportInfo">قم برفع نسخ ترجمة موثّقة عن جوازك الداخلي.</string>
@@ -1727,7 +1727,7 @@
     <string name="ActionTakeScreenshootYou">لقد قمت بتصوير الشاشة!</string>
     <string name="ActionTakeScreenshoot">un1 صوّر الشاشة!</string>
     <!--Alert messages-->
-    <string name="UpdateTelegram">تحديث تيليجرام</string>
+    <string name="UpdateBettergram">تحديث تيليجرام</string>
     <string name="UpdateAppAlert">عذرًا، تطبيق تيليجرام الذي تملكه قديم ولا يمكنه التعامل مع هذا الطلب، يرجى القيام بتحديثه.</string>
     <string name="InvalidPhoneNumber">رقم الهاتف غير صحيح</string>
     <string name="PleaseLoginPassport">يرجى تسجيل الدخول إلى حسابك في تيليجرام لتتمكن من استخدام جواز تيليجرام.</string>
@@ -1874,7 +1874,7 @@
     <string name="CallAgain">معاودة الاتصال</string>
     <string name="DefaultRingtone">افتراضي</string>
     <string name="ConfirmDeleteCallLog">هل أنت متأكد من رغبتك في حذف المكالمة من سجل المكالمات؟</string>
-    <string name="CallViaTelegram">مكالمة تيليجرام</string>
+    <string name="CallViaBettergram">مكالمة تيليجرام</string>
     <string name="VoipAudioRoutingEarpiece">سماعة الأذن</string>
     <string name="VoipAudioRoutingSpeaker">مكبر صوت</string>
     <string name="VoipAudioRoutingBluetooth">بلوتوث</string>
@@ -1910,12 +1910,12 @@
     <string name="OnlineCount_few">%1$d متصل</string>
     <string name="OnlineCount_many">%1$d متصل</string>
     <string name="OnlineCount_other">%1$d متصل</string>
-    <string name="TelegramContacts_zero">لا يوجد جهات اتصال على تيليجرام</string>
-    <string name="TelegramContacts_one">جهة اتصال واحدة على تيليجرام</string>
-    <string name="TelegramContacts_two">جهتا اتصال على تيليجرام</string>
-    <string name="TelegramContacts_few">%1$d جهات اتصال على تيليجرام</string>
-    <string name="TelegramContacts_many">%1$d جهة اتصال على تيليجرام</string>
-    <string name="TelegramContacts_other">%1$d جهة اتصال على تيليجرام</string>
+    <string name="BettergramContacts_zero">لا يوجد جهات اتصال على تيليجرام</string>
+    <string name="BettergramContacts_one">جهة اتصال واحدة على تيليجرام</string>
+    <string name="BettergramContacts_two">جهتا اتصال على تيليجرام</string>
+    <string name="BettergramContacts_few">%1$d جهات اتصال على تيليجرام</string>
+    <string name="BettergramContacts_many">%1$d جهة اتصال على تيليجرام</string>
+    <string name="BettergramContacts_other">%1$d جهة اتصال على تيليجرام</string>
     <string name="InviteTextNum_zero">"مرحبا، أنا أستخدم تيليجرام للمحادثة - يمكنك تنزيله من هنا: %2$s "</string>
     <string name="InviteTextNum_one">"مرحبا، أنا وإحدى جهات اتصالي نستخدم تيليجرام للمحادثة - يمكنك تنزيله من هنا: %2$s "</string>
     <string name="InviteTextNum_two">"مرحبا، أنا و%1$d من جهات اتصالي نستخدم تيليجرام للمحادثة - يمكنك تنزيله من هنا: %2$s "</string>

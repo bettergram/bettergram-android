@@ -1482,7 +1482,7 @@ public class PassportActivity extends BaseFragment implements NotificationCenter
 
         FrameLayout frameLayout = (FrameLayout) fragmentView;
 
-        actionBar.setTitle(LocaleController.getString("TelegramPassport", R.string.TelegramPassport));
+        actionBar.setTitle(LocaleController.getString("TelegramPassport", R.string.BettergramPassport));
 
         emptyView = new EmptyTextProgressView(context);
         emptyView.showProgress();
@@ -1522,7 +1522,7 @@ public class PassportActivity extends BaseFragment implements NotificationCenter
         noPasswordTextView.setGravity(Gravity.CENTER_HORIZONTAL);
         noPasswordTextView.setPadding(AndroidUtilities.dp(17), AndroidUtilities.dp(10), AndroidUtilities.dp(17), AndroidUtilities.dp(17));
         noPasswordTextView.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGrayText4));
-        noPasswordTextView.setText(LocaleController.getString("TelegramPassportCreatePasswordInfo", R.string.TelegramPassportCreatePasswordInfo));
+        noPasswordTextView.setText(LocaleController.getString("TelegramPassportCreatePasswordInfo", R.string.BettergramPassportCreatePasswordInfo));
         linearLayout2.addView(noPasswordTextView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.TOP, 17, 10, 17, 0));
 
         noPasswordSetTextView = new TextView(context);
@@ -1530,7 +1530,7 @@ public class PassportActivity extends BaseFragment implements NotificationCenter
         noPasswordSetTextView.setGravity(Gravity.CENTER);
         noPasswordSetTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16);
         noPasswordSetTextView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
-        noPasswordSetTextView.setText(LocaleController.getString("TelegramPassportCreatePassword", R.string.TelegramPassportCreatePassword));
+        noPasswordSetTextView.setText(LocaleController.getString("TelegramPassportCreatePassword", R.string.BettergramPassportCreatePassword));
         linearLayout2.addView(noPasswordSetTextView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 24, (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.TOP, 17, 9, 17, 0));
         noPasswordSetTextView.setOnClickListener(v -> {
             TwoStepVerificationActivity activity = new TwoStepVerificationActivity(currentAccount, 1);
@@ -1964,7 +1964,7 @@ public class PassportActivity extends BaseFragment implements NotificationCenter
 
         FrameLayout frameLayout = (FrameLayout) fragmentView;
 
-        actionBar.setTitle(LocaleController.getString("TelegramPassport", R.string.TelegramPassport));
+        actionBar.setTitle(LocaleController.getString("TelegramPassport", R.string.BettergramPassport));
 
         actionBar.createMenu().addItem(info_item, R.drawable.profile_info);
 
@@ -2398,7 +2398,7 @@ public class PassportActivity extends BaseFragment implements NotificationCenter
     private void createManageInterface(Context context) {
         FrameLayout frameLayout = (FrameLayout) fragmentView;
 
-        actionBar.setTitle(LocaleController.getString("TelegramPassport", R.string.TelegramPassport));
+        actionBar.setTitle(LocaleController.getString("TelegramPassport", R.string.BettergramPassport));
 
         actionBar.createMenu().addItem(info_item, R.drawable.profile_info);
 
@@ -2420,7 +2420,7 @@ public class PassportActivity extends BaseFragment implements NotificationCenter
         deletePassportCell = new TextSettingsCell(context);
         deletePassportCell.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteRedText3));
         deletePassportCell.setBackgroundDrawable(Theme.getSelectorDrawable(true));
-        deletePassportCell.setText(LocaleController.getString("TelegramPassportDelete", R.string.TelegramPassportDelete), false);
+        deletePassportCell.setText(LocaleController.getString("TelegramPassportDelete", R.string.BettergramPassportDelete), false);
         linearLayout2.addView(deletePassportCell, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
         deletePassportCell.setOnClickListener(v -> {
             AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity());
@@ -2447,7 +2447,7 @@ public class PassportActivity extends BaseFragment implements NotificationCenter
             });
             builder.setNegativeButton(LocaleController.getString("Cancel", R.string.Cancel), null);
             builder.setTitle(LocaleController.getString("AppName", R.string.AppName));
-            builder.setMessage(LocaleController.getString("TelegramPassportDeleteAlert", R.string.TelegramPassportDeleteAlert));
+            builder.setMessage(LocaleController.getString("TelegramPassportDeleteAlert", R.string.BettergramPassportDeleteAlert));
             showDialog(builder.create());
         });
 

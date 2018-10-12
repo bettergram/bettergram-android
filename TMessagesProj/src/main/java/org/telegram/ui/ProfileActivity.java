@@ -1131,7 +1131,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             final ArrayList<Integer> actions = new ArrayList<>();
             TLRPC.TL_userFull userFull = MessagesController.getInstance(currentAccount).getUserFull(user.id);
             if (userFull != null && userFull.phone_calls_available) {
-                items.add(LocaleController.getString("CallViaTelegram", R.string.CallViaTelegram));
+                items.add(LocaleController.getString("CallViaTelegram", R.string.CallViaBettergram));
                 actions.add(2);
             }
 			items.add(LocaleController.getString("Call", R.string.Call));

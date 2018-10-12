@@ -594,7 +594,7 @@ public class PrivacySettingsActivity extends BaseFragment implements Notificatio
                         }
                         textCell.setTextAndValue(LocaleController.getString("PrivacyLastSeen", R.string.PrivacyLastSeen), value, true);
                     } else if (position == passportRow) {
-                        textCell.setText(LocaleController.getString("TelegramPassport", R.string.TelegramPassport), true);
+                        textCell.setText(LocaleController.getString("TelegramPassport", R.string.BettergramPassport), true);
                     } else if (position == callsRow) {
                         String value;
                         if (ContactsController.getInstance(currentAccount).getLoadingCallsInfo()) {
@@ -650,7 +650,7 @@ public class PrivacySettingsActivity extends BaseFragment implements Notificatio
                         String value;
                         switch (SharedConfig.mapPreviewType) {
                             case 0:
-                                value = LocaleController.getString("MapPreviewProviderTelegram", R.string.MapPreviewProviderTelegram);
+                                value = LocaleController.getString("MapPreviewProviderTelegram", R.string.MapPreviewProviderBettergram);
                                 break;
                             case 1:
                                 value = LocaleController.getString("MapPreviewProviderGoogle", R.string.MapPreviewProviderGoogle);

@@ -1649,7 +1649,7 @@ public class AndroidUtilities {
         }
         File storageDir = null;
         if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
-            storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "Telegram");
+            storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "Bettergram");
             if (!storageDir.mkdirs()) {
                 if (!storageDir.exists()) {
                     if (BuildVars.LOGS_ENABLED) {
@@ -2144,7 +2144,7 @@ public class AndroidUtilities {
         linearLayout.setOrientation(LinearLayout.VERTICAL);
         if (!TextUtils.isEmpty(secret)) {
             TextView titleTextView = new TextView(activity);
-            titleTextView.setText(LocaleController.getString("UseProxyTelegramInfo2", R.string.UseProxyTelegramInfo2));
+            titleTextView.setText(LocaleController.getString("UseProxyTelegramInfo2", R.string.UseProxyBettergramInfo2));
             titleTextView.setTextColor(Theme.getColor(Theme.key_dialogTextGray4));
             titleTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
             titleTextView.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL);

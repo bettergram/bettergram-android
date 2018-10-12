@@ -232,7 +232,7 @@ public class ProxySettingsActivity extends BaseFragment {
             if (a == 0) {
                 typeCell[a].setValue(LocaleController.getString("UseProxySocks5", R.string.UseProxySocks5), a == currentType, true);
             } else if (a == 1) {
-                typeCell[a].setValue(LocaleController.getString("UseProxyTelegram", R.string.UseProxyTelegram), a == currentType, false);
+                typeCell[a].setValue(LocaleController.getString("UseProxyTelegram", R.string.UseProxyBettergram), a == currentType, false);
             }
             linearLayout2.addView(typeCell[a], LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 48));
             typeCell[a].setOnClickListener(new View.OnClickListener() {
@@ -489,7 +489,7 @@ public class ProxySettingsActivity extends BaseFragment {
             ((View) inputFields[FIELD_PASSWORD].getParent()).setVisibility(View.VISIBLE);
             ((View) inputFields[FIELD_USER].getParent()).setVisibility(View.VISIBLE);
         } else if (currentType == 1) {
-            bottomCell.setText(LocaleController.getString("UseProxyTelegramInfo", R.string.UseProxyTelegramInfo) + "\n\n" + LocaleController.getString("UseProxyTelegramInfo2", R.string.UseProxyTelegramInfo2));
+            bottomCell.setText(LocaleController.getString("UseProxyTelegramInfo", R.string.UseProxyBettergramInfo) + "\n\n" + LocaleController.getString("UseProxyTelegramInfo2", R.string.UseProxyBettergramInfo2));
             ((View) inputFields[FIELD_SECRET].getParent()).setVisibility(View.VISIBLE);
             ((View) inputFields[FIELD_PASSWORD].getParent()).setVisibility(View.GONE);
             ((View) inputFields[FIELD_USER].getParent()).setVisibility(View.GONE);

@@ -1202,7 +1202,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
                     } else if (position == switchBackendButtonRow) {
                         textCell.setText("Switch Backend", true);
                     } else if (position == telegramFaqRow) {
-                        textCell.setText(LocaleController.getString("TelegramFAQ", R.string.TelegramFAQ), true);
+                        textCell.setText(LocaleController.getString("TelegramFAQ", R.string.BettergramFAQ), true);
                     } else if (position == contactsReimportRow) {
                         textCell.setText(LocaleController.getString("ImportContacts", R.string.ImportContacts), true);
                     } else if (position == stickersRow) {
@@ -1355,7 +1355,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
                                 abi = "universal " + Build.CPU_ABI + " " + Build.CPU_ABI2;
                                 break;
                         }
-                        ((TextInfoCell) view).setText(mContext.getString(R.string.TelegramVersion, String.format(Locale.US, "v%s (%d) %s", pInfo.versionName, code, abi)));
+                        ((TextInfoCell) view).setText(mContext.getString(R.string.BettergramVersion, String.format(Locale.US, "v%s (%d) %s", pInfo.versionName, code, abi)));
                     } catch (Exception e) {
                         FileLog.e(e);
                     }

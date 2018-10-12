@@ -36,7 +36,7 @@ android {
     compileSdkVersion 28
     buildToolsVersion '28.0.3'
 
-    defaultConfig.applicationId = "org.telegram.messenger"
+    defaultConfig.applicationId = "io.bettergram"
 
     sourceSets.main.jniLibs.srcDirs = ['./jni/']
 

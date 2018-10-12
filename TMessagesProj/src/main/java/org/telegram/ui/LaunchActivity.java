@@ -2335,7 +2335,7 @@ public class LaunchActivity extends Activity implements ActionBarLayout.ActionBa
                     builder.setPositiveButton(LocaleController.getString("OK", R.string.OK), null);
                 }
             } else if (reason == 3) {
-                builder.setMessage(LocaleController.getString("UseProxyTelegramError", R.string.UseProxyTelegramError));
+                builder.setMessage(LocaleController.getString("UseProxyTelegramError", R.string.UseProxyBettergramError));
                 builder.setPositiveButton(LocaleController.getString("OK", R.string.OK), null);
                 proxyErrorDialog = showAlertDialog(builder);
                 return;

@@ -623,7 +623,7 @@ public class InviteContactsActivity extends BaseFragment implements Notification
         textView.setTextColor(Theme.getColor(Theme.key_contacts_inviteText));
         textView.setGravity(Gravity.CENTER);
         textView.setCompoundDrawablePadding(AndroidUtilities.dp(8));
-        textView.setText(LocaleController.getString("InviteToTelegram", R.string.InviteToTelegram).toUpperCase());
+        textView.setText(LocaleController.getString("InviteToTelegram", R.string.InviteToBettergram).toUpperCase());
         textView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
         linearLayout.addView(textView, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER_VERTICAL));
 
@@ -750,7 +750,7 @@ public class InviteContactsActivity extends BaseFragment implements Notification
             switch (viewType) {
                 case 1:
                     view = new InviteTextCell(context);
-                    ((InviteTextCell) view).setTextAndIcon(LocaleController.getString("ShareTelegram", R.string.ShareTelegram), R.drawable.share);
+                    ((InviteTextCell) view).setTextAndIcon(LocaleController.getString("ShareTelegram", R.string.ShareBettergram), R.drawable.share);
                     break;
                 default:
                     view = new InviteUserCell(context, true);

@@ -220,7 +220,7 @@ public class DrawerLayoutAdapter extends RecyclerListView.SelectionAdapter {
         items.add(new Item(10, LocaleController.getString("Calls", R.string.Calls), R.drawable.menu_calls));
         items.add(new Item(7, LocaleController.getString("InviteFriends", R.string.InviteFriends), R.drawable.menu_invite));
         items.add(new Item(8, LocaleController.getString("Settings", R.string.Settings), R.drawable.menu_settings));
-        items.add(new Item(9, LocaleController.getString("TelegramFAQ", R.string.TelegramFAQ), R.drawable.menu_help));
+        items.add(new Item(9, LocaleController.getString("TelegramFAQ", R.string.BettergramFAQ), R.drawable.menu_help));
     }
 
     public int getId(int position) {
