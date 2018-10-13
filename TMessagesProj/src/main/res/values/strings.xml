@@ -15,7 +15,8 @@
     <string name="AccountAlreadyLoggedIn">This account is already logged in from this app.</string>
     <string name="AccountSwitch">Switch</string>
     <string name="SyncContacts">Sync Contacts</string>
-    <string name="SyncContactsDeleteInfo">This will remove your contacts from the Bettergram servers. If \'Sync Contacts\'
+    <string name="SyncContactsDeleteInfo">This will remove your contacts from the Bettergram servers. If \'Sync
+        Contacts\'
         is enabled, contacts will be re-synced.
     </string>
     <string name="SyncContactsOn">Contacts from this device will be added to this account.</string>
@@ -39,7 +40,8 @@
     <string name="DidNotGetTheCode">Didn\'t get the code?</string>
     <string name="CancelAccountReset">Cancel account reset</string>
     <string name="CancelAccountResetInfo">Somebody with access to your phone number **%1$s** has requested to delete
-        your Bettergram account and reset your 2-Step Verification password.\n\nIf this wasn\'t you, please enter the code
+        your Bettergram account and reset your 2-Step Verification password.\n\nIf this wasn\'t you, please enter the
+        code
         we\'ve just sent you via SMS to your number.
     </string>
     <string name="ResetAccount">Reset account</string>
@@ -179,7 +181,8 @@
     <string name="DisappearingVideo">Secret Video</string>
     <string name="DisappearingGif">Secret GIF</string>
     <string name="CompatibilityChat">%1$s is using an older version of Bettergram, so secret photos will be shown in
-        compatibility mode.\n\nOnce %2$s updates Bettergram, photos with timers for 1 minute or less will start working in
+        compatibility mode.\n\nOnce %2$s updates Bettergram, photos with timers for 1 minute or less will start working
+        in
         \'Tap and hold to view\' mode, and you will be notified whenever the other party takes a screenshot.
     </string>
     <string name="SearchMessages">MESSAGES</string>
@@ -211,7 +214,8 @@
     <string name="Italic">Italic</string>
     <string name="Mono">Mono</string>
     <string name="Regular">Regular</string>
-    <string name="ContactsPermissionAlert">**Bettergram** needs access to your contacts so that you can connect with your
+    <string name="ContactsPermissionAlert">**Bettergram** needs access to your contacts so that you can connect with
+        your
         friends across all your devices. Your contacts will be continuously synced with Bettergram\'s heavily encrypted
         cloud servers.
     </string>
@@ -347,7 +351,8 @@
     <string name="ChannelInviteViaLink">Invite via Link</string>
     <string name="ChannelRemoveUserAdmin">Dismiss admin</string>
     <string name="ChannelMembersInfo">Only channel administrators can see this list.</string>
-    <string name="ChannelLinkInfo">Anyone who has Bettergram installed will be able to join your channel by following this
+    <string name="ChannelLinkInfo">Anyone who has Bettergram installed will be able to join your channel by following
+        this
         link.
     </string>
     <string name="ChannelAdminsInfo">You can add administrators to help you manage your channel. Tap and hold to remove
@@ -629,7 +634,8 @@
     <string name="SendAsFiles">Send as files</string>
     <string name="OpenUrlAlert">Open url %1$s?</string>
     <string name="CancelSending">Cancel sending</string>
-    <string name="BotPermissionGameAlert">Allow %1$s to pass your Bettergram name and id (not your phone number) to pages
+    <string name="BotPermissionGameAlert">Allow %1$s to pass your Bettergram name and id (not your phone number) to
+        pages
         you open with this bot?
     </string>
     <string name="ReportSpam">REPORT SPAM</string>
@@ -853,7 +859,8 @@
     <string name="InviteToBettergram">INVITE TO BETTERGRAM</string>
     <string name="ShareBettergram">Share Bettergram...</string>
     <string name="UpdateContactsTitle">Update contacts?</string>
-    <string name="UpdateContactsMessage">Bettergram has detected many unsynced contacts, would you like to sync them now?
+    <string name="UpdateContactsMessage">Bettergram has detected many unsynced contacts, would you like to sync them
+        now?
         Choose \'OK\' if you\'re using your own device, SIM card and Google account.
     </string>
     <!--group create view-->
@@ -973,7 +980,8 @@
     <string name="UsernameInvalidShort">A username must have at least 5 characters.</string>
     <string name="UsernameInvalidLong">The username must not exceed 32 characters.</string>
     <string name="UsernameInvalidStartNumber">Sorry, a username can\'t start with a number.</string>
-    <string name="UsernameHelp">You can choose a username on **Bettergram**. If you do, other people will be able to find
+    <string name="UsernameHelp">You can choose a username on **Bettergram**. If you do, other people will be able to
+        find
         you by this username and contact you without knowing your phone number.\n\nYou can use **a–z**, **0–9** and
         underscores. Minimum length is **5** characters.
     </string>
@@ -1157,11 +1165,11 @@
     <string name="BettergramFaq">Bettergram FAQ</string>
     <string name="AddAccount">Add Account</string>
     <string name="SelectAccount">Select Account</string>
-    <string name="TelegramFaqUrl">https://telegram.org/faq</string>
+    <string name="BettergramFaqUrl">https://bettergram.io/#faq</string>
     <string name="PrivacyPolicy">Privacy Policy</string>
     <string name="TermsOfService">Terms of Service</string>
     <string name="TermsOfServiceLogin">By signing up,\nyou agree to the *Terms of Service*.</string>
-    <string name="PrivacyPolicyUrl">https://telegram.org/privacy</string>
+    <string name="PrivacyPolicyUrl">https://bettergram.io/#</string>
     <string name="DeleteLocalization">Delete localization?</string>
     <string name="IncorrectLocalization">Incorrect localization file</string>
     <string name="NotificationsService">Keep-Alive Service</string>
@@ -1242,7 +1250,8 @@
     <string name="SmartNotificationsAlert">Sound Alert Frequency</string>
     <string name="SmartNotificationsDetail">%1$s within %2$s</string>
     <string name="SecretWebPage">Link Previews</string>
-    <string name="SecretWebPageInfo">Link previews will be generated on Bettergram servers. We do not store data about the
+    <string name="SecretWebPageInfo">Link previews will be generated on Bettergram servers. We do not store data about
+        the
         links you send.
     </string>
     <string name="SecretChat">Secret chats</string>
@@ -1579,10 +1588,12 @@
     <string name="TerminateWebSessionQuestion">Disconnect %1$s?</string>
     <string name="TerminateWebSessionStop">Block %1$s</string>
     <string name="TerminateAllWebSessions">Disconnect All Websites</string>
-    <string name="AreYouSureWebSessions">Are you sure you want to disconnect all websites where you used Bettergram to log
+    <string name="AreYouSureWebSessions">Are you sure you want to disconnect all websites where you used Bettergram to
+        log
         in?
     </string>
-    <string name="ClearOtherWebSessionsHelp">You can log in on websites that support signing in with Bettergram.</string>
+    <string name="ClearOtherWebSessionsHelp">You can log in on websites that support signing in with Bettergram.
+    </string>
     <!--passcode view-->
     <string name="Passcode">Passcode Lock</string>
     <string name="ChangePasscode">Change Passcode</string>
@@ -2089,13 +2100,15 @@
     <string name="AllowReadSms">Please allow Bettergram to receive SMS so that we can automatically enter your code for
         you.
     </string>
-    <string name="AllowReadCall">Please allow Bettergram to receive calls so that we can automatically enter your code for
+    <string name="AllowReadCall">Please allow Bettergram to receive calls so that we can automatically enter your code
+        for
         you.
     </string>
     <string name="AllowFillNumber">Please allow Bettergram to receive calls and SMS so that we can fill in your phone
         number, send you a code, and enter it for you.
     </string>
-    <string name="AllowReadCallAndSms">Please allow Bettergram to receive calls and SMS so that we can automatically enter
+    <string name="AllowReadCallAndSms">Please allow Bettergram to receive calls and SMS so that we can automatically
+        enter
         your code for you.
     </string>
     <string name="UserRestricted">Sorry, you are not allowed to do this.</string>
@@ -2120,7 +2133,8 @@
     <string name="TosDecline">We\'re very sorry, but this means you can\'t sign up for Bettergram.\n\nUnlike others, we
         don\'t use your data for ad targeting or other commercial purposes. Bettergram only stores the information it
         needs to function as a feature-rich cloud service. You can adjust how we use your data (e.g., delete synced
-        contacts) in Privacy &amp; Security settings.\n\nBut if you\'re generally not OK with Bettergram\'s modest needs,
+        contacts) in Privacy &amp; Security settings.\n\nBut if you\'re generally not OK with Bettergram\'s modest
+        needs,
         it won\'t be possible for us to provide this service.
     </string>
     <string name="TosAgeTitle">Age Verification</string>
@@ -2129,7 +2143,8 @@
     <string name="TosUpdateDecline">We\'re very sorry, but this means we must part ways here. Unlike others, we don\'t
         use your data for ad targeting or other commercial purposes. Bettergram only stores the information it needs to
         function as a feature-rich cloud service. You can adjust how we use your data (e.g., delete synced contacts) in
-        Privacy &amp; Security settings.\n\nBut if you\'re generally not OK with Bettergram\'s modest needs, it won\'t be
+        Privacy &amp; Security settings.\n\nBut if you\'re generally not OK with Bettergram\'s modest needs, it won\'t
+        be
         possible for us to provide this service. You can deactivate your account now — or look around some more and
         deactivate it later if you feel you\'re not happy with the way we use your data. How does that sound?
     </string>
@@ -2141,7 +2156,8 @@
     <string name="PermissionContacts">Bettergram needs access to your contacts so that you can connect with your friends
         across all your devices.
     </string>
-    <string name="PermissionStorage">Bettergram needs access to your storage so that you can send and save photos, videos,
+    <string name="PermissionStorage">Bettergram needs access to your storage so that you can send and save photos,
+        videos,
         music and other media.
     </string>
     <string name="PermissionNoAudio">Bettergram needs access to your microphone so that you can send voice messages.
@@ -2280,19 +2296,23 @@
     <string name="BettergramContacts_few">%1$d contacts on Bettergram</string>
     <string name="BettergramContacts_many">%1$d contacts on Bettergram</string>
     <string name="BettergramContacts_other">%1$d contacts on Bettergram</string>
-    <string name="InviteTextNum_zero">Hey, I\'m using Bettergram to chat – and so are %1$d of our other contacts. Join us!
+    <string name="InviteTextNum_zero">Hey, I\'m using Bettergram to chat – and so are %1$d of our other contacts. Join
+        us!
         Download it here: %2$s
     </string>
     <string name="InviteTextNum_one">Hey, I\'m using Bettergram to chat – and so are %1$d of our other contact. Join us!
         Download it here: %2$s
     </string>
-    <string name="InviteTextNum_two">Hey, I\'m using Bettergram to chat – and so are %1$d of our other contacts. Join us!
+    <string name="InviteTextNum_two">Hey, I\'m using Bettergram to chat – and so are %1$d of our other contacts. Join
+        us!
         Download it here: %2$s
     </string>
-    <string name="InviteTextNum_few">Hey, I\'m using Bettergram to chat – and so are %1$d of our other contacts. Join us!
+    <string name="InviteTextNum_few">Hey, I\'m using Bettergram to chat – and so are %1$d of our other contacts. Join
+        us!
         Download it here: %2$s
     </string>
-    <string name="InviteTextNum_many">Hey, I\'m using Bettergram to chat – and so are %1$d of our other contacts. Join us!
+    <string name="InviteTextNum_many">Hey, I\'m using Bettergram to chat – and so are %1$d of our other contacts. Join
+        us!
         Download it here: %2$s
     </string>
     <string name="InviteTextNum_other">Hey, I\'m using Bettergram to chat – and so are %1$d of our other contacts. Join
@@ -2577,4 +2597,9 @@
     <string name="socialTwitter">Twitter</string>
     <string name="socialGithub">Github</string>
     <string name="socialTelegram">Telegram</string>
+
+    <!-- Crypto -->
+    <string name="code">CODE</string>
+    <string name="price">PRICE</string>
+    <string name="_24h">24H</string>
 </resources>

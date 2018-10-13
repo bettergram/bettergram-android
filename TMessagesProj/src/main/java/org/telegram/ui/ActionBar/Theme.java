@@ -320,6 +320,9 @@ public class Theme {
     public static Drawable profile_verifiedDrawable;
     public static Drawable profile_verifiedCheckDrawable;
 
+    public static Drawable crypto_priceDownDrawable;
+    public static Drawable crypto_priceUpDrawable;
+
     public static Paint chat_docBackPaint;
     public static Paint chat_deleteProgressPaint;
     public static Paint chat_botProgressPaint;
@@ -2750,6 +2753,9 @@ public class Theme {
             avatar_photoDrawable = resources.getDrawable(R.drawable.photo_w);
 
             dialog_favoriteDrawable = resources.getDrawable(R.drawable.ic_ab_fave);
+
+            crypto_priceDownDrawable = resources.getDrawable(R.drawable.ic_arrow_price_down);
+            crypto_priceUpDrawable = resources.getDrawable(R.drawable.ic_arrow_price_up);
 
             applyCommonTheme();
         }

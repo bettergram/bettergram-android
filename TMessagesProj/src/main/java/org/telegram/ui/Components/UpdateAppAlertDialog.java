@@ -47,7 +47,7 @@ public class UpdateAppAlertDialog extends AlertDialog implements NotificationCen
             setSecondTitle(AndroidUtilities.formatFileSize(appUpdate.document.size));
         }
         setDismissDialogByButtons(false);
-        setTitle(LocaleController.getString("UpdateTelegram", R.string.UpdateBettergram));
+        setTitle(LocaleController.getString("UpdateBettergram", R.string.UpdateBettergram));
         setPositiveButton(LocaleController.getString("UpdateNow", R.string.UpdateNow), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {

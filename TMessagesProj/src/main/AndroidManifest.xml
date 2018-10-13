@@ -308,6 +308,11 @@
             </intent-filter>
         </service>
 
+        <service android:name="io.bettergram.service.NewsDataService"/>
+        <service android:name="io.bettergram.service.YoutubeDataService"/>
+        <service android:name="io.bettergram.service.CryptoDataService"/>
+        <service android:name="io.bettergram.service.ResourcesDataService"/>
+
         <receiver android:name="org.telegram.messenger.MusicPlayerReceiver">
             <intent-filter>
                 <action android:name="org.telegram.android.musicplayer.close"/>

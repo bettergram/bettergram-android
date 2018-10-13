@@ -3,4 +3,8 @@
     <color name="divider">#dcdcdc</color>
 
     <color name="actionBarDefault">#FF2DCC70</color>
+    <color name="grey70">#FF707a75</color>
+    <color name="grey3d">#ff3d4b43</color>
+    <color name="grey73">#737876</color>
+    <color name="grey2c">#2c2c2e</color>
 </resources>

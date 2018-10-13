@@ -17,3 +17,10 @@
 # Use -keep to explicitly keep any other classes shrinking would remove
 -dontoptimize
 -dontobfuscate
+-dontwarn sun.misc.Unsafe
+-dontwarn javax.annotation.**
+-dontwarn org.jaxen.**
+-dontwarn org.conscrypt.**
+-dontwarn javax.xml.stream.**
+-dontwarn org.slf4j.**
+-keep class com.rometools.** { *; }

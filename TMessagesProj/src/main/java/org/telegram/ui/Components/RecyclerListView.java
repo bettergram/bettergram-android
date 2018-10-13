@@ -11,11 +11,7 @@ package org.telegram.ui.Components;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Path;
-import android.graphics.RectF;
+import android.graphics.*;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
 import android.os.Build;
@@ -24,19 +20,12 @@ import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.util.SparseIntArray;
 import android.util.StateSet;
-import android.view.GestureDetector;
-import android.view.HapticFeedbackConstants;
-import android.view.MotionEvent;
-import android.view.SoundEffectConstants;
-import android.view.View;
-import android.view.ViewConfiguration;
-import android.view.ViewGroup;
-
+import android.view.*;
 import org.telegram.messenger.AndroidUtilities;
+import org.telegram.messenger.FileLog;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.support.widget.LinearLayoutManager;
 import org.telegram.messenger.support.widget.RecyclerView;
-import org.telegram.messenger.FileLog;
 import org.telegram.ui.ActionBar.Theme;
 
 import java.lang.reflect.Field;
@@ -1336,6 +1325,16 @@ public class RecyclerListView extends RecyclerView {
         super.onDetachedFromWindow();
         selectorPosition = NO_POSITION;
         selectorRect.setEmpty();
+    }
+
+    public void postAndNotifyAdapter() {
+        post(() -> {
+            if (!isComputingLayout()) {
+                getAdapter().notifyDataSetChanged();
+            } else {
+                postAndNotifyAdapter();
+            }
+        });
     }
 
     public ArrayList<View> getHeaders() {

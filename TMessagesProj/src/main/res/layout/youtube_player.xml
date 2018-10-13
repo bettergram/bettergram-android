@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<org.telegram.ui.Components.CardView.CardView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:elevation="2dp"
+        app:cardCornerRadius="4dp"
+        app:cardUseCompatPadding="true"
+        android:minHeight="200dp">
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:orientation="vertical">
+
+        <!--<FrameLayout-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content">-->
+
+        <com.flipkart.youtubeview.YouTubePlayerView
+                android:id="@+id/youtube_player_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+        <!--<TextView-->
+        <!--android:id="@+id/textDuration"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_margin="8dp"-->
+        <!--android:layout_gravity="bottom|end"-->
+        <!--android:paddingTop="2dp"-->
+        <!--android:paddingBottom="2dp"-->
+        <!--android:paddingStart="4dp"-->
+        <!--android:paddingEnd="4dp"-->
+        <!--android:background="@drawable/youtube_duration_bg"-->
+        <!--android:textColor="@android:color/white"-->
+        <!--android:visibility="gone"/>-->
+        <!--</FrameLayout>-->
+
+        <TextView
+                android:id="@+id/textTitle"
+                android:textStyle="bold"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
+                android:ellipsize="end"
+                android:gravity="start"
+                android:maxLines="2"
+                android:textSize="16sp"/>
+
+        <LinearLayout
+                android:id="@+id/container_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
+                android:orientation="horizontal"
+                android:weightSum="3">
+
+            <TextView
+                    android:id="@+id/textAccount"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_margin="0dp"
+                    android:drawablePadding="2dp"
+                    android:drawableStart="@drawable/ic_account_circle"
+                    android:ellipsize="end"
+                    android:gravity="center_vertical"
+                    android:maxLines="1"
+                    android:textSize="12sp"/>
+
+            <TextView
+                    android:id="@+id/textDatePosted"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_margin="0dp"
+                    android:drawablePadding="2dp"
+                    android:drawableStart="@drawable/ic_date"
+                    android:gravity="center_vertical"
+                    android:textSize="12sp"/>
+
+            <TextView
+                    android:id="@+id/textViewCount"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_margin="0dp"
+                    android:drawablePadding="2dp"
+                    android:drawableStart="@drawable/ic_views"
+                    android:gravity="center_vertical"
+                    android:textSize="12sp"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</org.telegram.ui.Components.CardView.CardView>

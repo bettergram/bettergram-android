@@ -61,7 +61,7 @@ public class ApplicationLoader extends Application {
         } catch (Exception e) {
             FileLog.e(e);
         }
-        return new File("/data/data/org.telegram.messenger/files");
+        return new File("/data/data/io.bettergram.messenger/files");
     }
 
     public static void postInitApplication() {
@@ -87,7 +87,7 @@ public class ApplicationLoader extends Application {
         }
 
         try {
-            PowerManager pm = (PowerManager)ApplicationLoader.applicationContext.getSystemService(Context.POWER_SERVICE);
+            PowerManager pm = (PowerManager) ApplicationLoader.applicationContext.getSystemService(Context.POWER_SERVICE);
             isScreenOn = pm.isScreenOn();
             if (BuildVars.LOGS_ENABLED) {
                 FileLog.d("screen state = " + isScreenOn);
@@ -109,7 +109,7 @@ public class ApplicationLoader extends Application {
             }
         }
 
-        ApplicationLoader app = (ApplicationLoader)ApplicationLoader.applicationContext;
+        ApplicationLoader app = (ApplicationLoader) ApplicationLoader.applicationContext;
         app.initPlayServices();
         if (BuildVars.LOGS_ENABLED) {
             FileLog.d("app initied");
@@ -155,7 +155,7 @@ public class ApplicationLoader extends Application {
         applicationContext.stopService(new Intent(applicationContext, NotificationsService.class));
 
         PendingIntent pintent = PendingIntent.getService(applicationContext, 0, new Intent(applicationContext, NotificationsService.class), 0);
-        AlarmManager alarm = (AlarmManager)applicationContext.getSystemService(Context.ALARM_SERVICE);
+        AlarmManager alarm = (AlarmManager) applicationContext.getSystemService(Context.ALARM_SERVICE);
         alarm.cancel(pintent);
     }
 

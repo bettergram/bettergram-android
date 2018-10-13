@@ -1482,7 +1482,7 @@ public class PassportActivity extends BaseFragment implements NotificationCenter
 
         FrameLayout frameLayout = (FrameLayout) fragmentView;
 
-        actionBar.setTitle(LocaleController.getString("TelegramPassport", R.string.BettergramPassport));
+        actionBar.setTitle(LocaleController.getString("BettergramPassport", R.string.BettergramPassport));
 
         emptyView = new EmptyTextProgressView(context);
         emptyView.showProgress();

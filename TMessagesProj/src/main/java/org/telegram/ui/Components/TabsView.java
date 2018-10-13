@@ -327,17 +327,17 @@ public class TabsView extends FrameLayout implements NotificationCenter.Notifica
             for (int a = 0; a < dialogs.size(); a++) {
                 TLRPC.TL_dialog dialg = dialogs.get(a);
                 if (dialg != null && dialg.unread_count > 0) {
-                    boolean isMuted = MessagesController.getInstance(currentAccount).isDialogMuted(dialg.id);
-                    if (!isMuted) {
-                        i = dialg.unread_count;
-                        if (i == 0 && plusPreferences.getInt("unread_" + dialg.id, 0) == 1) i = 1;
-                        if (i > 0) {
-                            if (position == 0 || (position == 1 && isDirect(dialg)) || (position == 2 && isGroup(dialg)) || (position == 3 && isAnnouncement(dialg)) || (position == 4 & isFavorite(dialg))) {
-                                unreadCount++;
-                            }
-                            allMuted = false;
-                        }
+                    //boolean isMuted = MessagesController.getInstance(currentAccount).isDialogMuted(dialg.id);
+                    //if (!isMuted) {
+                    i = dialg.unread_count;
+                    //if (i == 0 && plusPreferences.getInt("unread_" + dialg.id, 0) == 1) i = 1;
+                    //if (i > 0) {
+                    if (position == 0 || (position == 1 && isDirect(dialg)) || (position == 2 && isGroup(dialg)) || (position == 3 && isAnnouncement(dialg)) || (position == 4 & isFavorite(dialg))) {
+                        unreadCount++;
                     }
+                    allMuted = false;
+                    //}
+                    //}
                 }
             }
         }

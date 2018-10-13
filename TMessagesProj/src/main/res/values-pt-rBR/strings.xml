@@ -990,11 +990,11 @@
     <string name="BettergramFaq">Perguntas Frequentes</string>
     <string name="AddAccount">Adicionar&#160;Conta</string>
     <string name="SelectAccount">Select Account</string>
-    <string name="TelegramFaqUrl">https://Bettergram.org/faq/br</string>
+    <string name="BettergramFaqUrl">https://bettergram.io/#faq</string>
     <string name="PrivacyPolicy">Política de Privacidade</string>
     <string name="TermsOfService">Termos de Serviço</string>
     <string name="TermsOfServiceLogin">Ao se cadastrar,\nvocê concorda com os *Termos de Serviço*.</string>
-    <string name="PrivacyPolicyUrl">https://Bettergram.org/privacy</string>
+    <string name="PrivacyPolicyUrl">https://bettergram.io/#</string>
     <string name="DeleteLocalization">Apagar localização?</string>
     <string name="IncorrectLocalization">Arquivo de localização incorreto</string>
     <string name="NotificationsService">Manter Serviço Ativo</string>
