@@ -2,14 +2,10 @@ package io.bettergram.ui.adapters;
 
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
+import android.content.*;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +20,7 @@ import io.bettergram.messenger.R;
 import io.bettergram.service.ResourcesDataService;
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.support.widget.RecyclerView;
+import org.telegram.ui.Components.RecyclerListView;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -67,7 +64,10 @@ public class ResourcesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     ResourceGroup group = data.resources.groups.get(i);
                     objects.add(group.title);
                     for (int j = 0, size_j = group.items.size(); j < size_j; j++) {
-                        objects.add(group.items.get(j));
+                        ResourceItem item = group.items.get(j);
+                        if (!isEmpty(item.title) && !isEmpty(item.url) && !isEmpty(item.iconUrl)) {
+                            objects.add(item);
+                        }
                     }
                 }
                 AndroidUtilities.runOnUIThread(() -> setResources(objects));
@@ -88,6 +88,7 @@ public class ResourcesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     }
 
     class ContentViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        View layoutContent;
         ImageView imageResource;
         TextView textName, textDesc;
         ResourceItem item;
@@ -98,17 +99,21 @@ public class ResourcesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
         public ContentViewHolder(View itemView) {
             super(itemView);
-            itemView.setOnClickListener(this);
+            layoutContent = itemView.findViewById(R.id.layoutContent);
             imageResource = itemView.findViewById(R.id.imageResource);
             textName = itemView.findViewById(R.id.textName);
             textDesc = itemView.findViewById(R.id.textDesc);
+            layoutContent.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
-            Log.e("resources", "Point XXX");
             final Context context = v.getContext();
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(item.url));
+            if (item.url.contains("tg://")) {
+                ComponentName comp = new ComponentName(context.getPackageName(), "org.telegram.ui.LaunchActivity");
+                intent.setComponent(comp);
+            }
             context.startActivity(intent);
         }
     }
@@ -133,7 +138,7 @@ public class ResourcesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     @Override
     public int getItemCount() {
-        return objects.size();
+        return objects.size() + 1;
     }
 
 
@@ -142,6 +147,10 @@ public class ResourcesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         switch (viewType) {
+            case -1:
+                View footer = new View(parent.getContext());
+                footer.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, AndroidUtilities.dp(98)));
+                return new RecyclerListView.Holder(footer);
             case 0:
                 return new TitleViewHolder(inflater.inflate(R.layout.item_resource_header, parent, false));
             case 1:
@@ -155,6 +164,8 @@ public class ResourcesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         int type = getItemViewType(position);
         switch (type) {
+            case -1:
+                break;
             case 0:
                 TitleViewHolder tvh = (TitleViewHolder) holder;
                 String title = (String) objects.get(position);
@@ -193,4 +204,5 @@ public class ResourcesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     public void unregisterReceiver(Activity activity) {
         activity.unregisterReceiver(receiver);
     }
+
 }

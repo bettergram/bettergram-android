@@ -439,7 +439,7 @@ public class TabsView extends FrameLayout implements NotificationCenter.Notifica
 
         AnimatorSet animatorSet = new AnimatorSet();
         animatorSet.playTogether(marginAnimator, tabMarginAnimator);
-        animatorSet.setDuration(200);
+        animatorSet.setDuration(100);
         animatorSet.setInterpolator(interpolator);
         animatorSet.start();
     }

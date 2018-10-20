@@ -3,6 +3,7 @@ package io.bettergram.service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.util.Log;
 import com.rometools.rome.feed.synd.SyndEntry;
 import com.rometools.rome.feed.synd.SyndFeed;
 import com.rometools.rome.io.FeedException;
@@ -25,7 +26,9 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static android.text.TextUtils.isEmpty;
 import static io.bettergram.utils.AeSimpleSHA1.SHA1;
@@ -36,7 +39,7 @@ public class NewsDataService extends BaseDataService {
 
     public static final String NEWS_PREF = "NEWS_PREF";
 
-    public static final String KEY_FEED_XML = "KEY_FEED_XML";
+    public static final String KEY_FEED_XML_SET = "KEY_FEED_XML_SET";
 
     public static final String KEY_SAVED_LIST = "KEY_SAVED_LIST";
 
@@ -82,12 +85,16 @@ public class NewsDataService extends BaseDataService {
                     e.printStackTrace();
                 }
                 String xmlFetched = IOUtils.toString(in, "UTF-8");
-                String xmlSaved = pref.getString(KEY_FEED_XML + urlHash, null);
-
+                Set<String> savedStringSet = pref.getStringSet(KEY_FEED_XML_SET + urlHash, null);
+                String xmlSaveHash = savedStringSet != null ? savedStringSet.toArray(new String[0])[0] : null;
+                String xmlSaved = savedStringSet != null ? savedStringSet.toArray(new String[0])[1] : null;
                 String xmlFinal = null;
                 try {
-                    if (isEmpty(xmlSaved) || !SHA1(xmlFetched).equals(SHA1(xmlSaved))) {
-                        pref.edit().putString(KEY_FEED_XML + urlHash, xmlFetched).apply();
+                    if (isEmpty(xmlSaved) || !SHA1(xmlFetched).equals(xmlSaveHash)) {
+                        Set<String> stringSet = new HashSet<>();
+                        stringSet.add(SHA1(xmlFetched));
+                        stringSet.add(xmlFetched);
+                        pref.edit().putStringSet(KEY_FEED_XML_SET + urlHash, stringSet).apply();
                         xmlFinal = xmlFetched;
                     } else {
                         xmlFinal = xmlSaved;

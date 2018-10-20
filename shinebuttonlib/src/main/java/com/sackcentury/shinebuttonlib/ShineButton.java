@@ -38,7 +38,7 @@ public class ShineButton extends PorterShapeImageView {
     DisplayMetrics metrics = new DisplayMetrics();
 
 
-    Activity activity;
+    public Activity activity;
     ShineView shineView;
     ValueAnimator shakeAnimator;
     ShineView.ShineParams shineParams = new ShineView.ShineParams();

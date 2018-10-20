@@ -21,4 +21,6 @@ public class CryptoCurrencyInfo {
     public CryptoCurrencyInfoDelta delta;
     @JsonField(fieldName = "icon")
     public String icon;
+    @JsonField(fieldName = "favorite")
+    public boolean favorite;
 }
