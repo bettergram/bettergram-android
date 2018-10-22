@@ -2602,4 +2602,9 @@
     <string name="code">CODE</string>
     <string name="price">PRICE</string>
     <string name="_24h">24H</string>
+    <string name="enter_your_email">Enter your email</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="i_agree_to_the_terms">I agree to the terms of service</string>
+    <string name="free_crypto_newsletter">Get our free crypto newsletter</string>
+    <string name="you_must_accept_terms">* You must accept terms to use Bettergram</string>
 </resources>
