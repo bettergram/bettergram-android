@@ -398,6 +398,10 @@
         <service android:name="io.bettergram.service.YoutubeDataService"/>
         <service android:name="io.bettergram.service.CryptoDataService"/>
         <service android:name="io.bettergram.service.ResourcesDataService"/>
+        <service
+                android:name="io.bettergram.service.MailChimpService"
+                android:exported="false">
+        </service>
 
         <receiver android:name="org.telegram.messenger.MusicPlayerReceiver">
             <intent-filter>

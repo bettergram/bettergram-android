@@ -1810,12 +1810,12 @@
     <string name="PermissionDrawAboveOtherApps">화면속화면 모드로 동영상을 재생하려면 텔레그램에게 다른 앱 위에 그릴 수 있는 권한을 부여하셔야 합니다.</string>
     <string name="PermissionOpenSettings">설정</string>
     <!--Intro view-->
-    <string name="Page1Title">텔레그램</string>
-    <string name="Page2Title">눈부신 속도</string>
-    <string name="Page3Title">평생 무료</string>
-    <string name="Page4Title">철통 보안</string>
-    <string name="Page5Title">강력함</string>
-    <string name="Page6Title">클라우드 기반</string>
+    <string name="_Page1Title">텔레그램</string>
+    <string name="_Page2Title">눈부신 속도</string>
+    <string name="_Page3Title">평생 무료</string>
+    <string name="_Page4Title">철통 보안</string>
+    <string name="_Page5Title">강력함</string>
+    <string name="_Page6Title">클라우드 기반</string>
     <string name="Page1Message">세상에서 가장 **빠른** 메신저입니다.\n **무료**이며 **안전합니다**.</string>
     <string name="Page2Message">**텔레그램**은 그 어떤 메신저보다도\n빠르게 메시지를 전달합니다.</string>
     <string name="Page3Message">**텔레그램**은 영원히 무료입니다. \n광고도, 구독료도 없습니다.</string>

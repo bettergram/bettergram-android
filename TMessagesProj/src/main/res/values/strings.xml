@@ -2175,12 +2175,12 @@
     </string>
     <string name="PermissionOpenSettings">SETTINGS</string>
     <!--Intro view-->
-    <string name="Page1Title">Bettergram</string>
-    <string name="Page2Title">Fast</string>
-    <string name="Page3Title">Free</string>
-    <string name="Page4Title">Secure</string>
-    <string name="Page5Title">Powerful</string>
-    <string name="Page6Title">Cloud-Based</string>
+    <string name="_Page1Title">Bettergram</string>
+    <string name="_Page2Title">Fast</string>
+    <string name="_Page3Title">Free</string>
+    <string name="_Page4Title">Secure</string>
+    <string name="_Page5Title">Powerful</string>
+    <string name="_Page6Title">Cloud-Based</string>
     <string name="Page1Message">The world\'s **fastest** messaging app.\nIt is **free** and **secure**.</string>
     <string name="Page2Message">**Bettergram** delivers messages faster than\nany other application.</string>
     <string name="Page3Message">**Bettergram** is free forever. No ads.\nNo subscription fees.</string>
@@ -2607,4 +2607,9 @@
     <string name="i_agree_to_the_terms">I agree to the terms of service</string>
     <string name="free_crypto_newsletter">Get our free crypto newsletter</string>
     <string name="you_must_accept_terms">* You must accept terms to use Bettergram</string>
+    <string name="invalid_email">Invalid Email</string>
+    <string name="invalid_email_msg">Your email address is invalid.</string>
+    <string name="please_wait">Please wait…</string>
+    <string name="success">Success!</string>
+    <string name="please_check_email">Please check your email to confirm your sign up</string>
 </resources>

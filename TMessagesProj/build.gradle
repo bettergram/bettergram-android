@@ -249,6 +249,18 @@ android {
                 file(manifestPath).write(manifestContent)
             }
         }
+
+        Properties properties = new Properties()
+        properties.load(project.rootProject.file('local.properties').newDataInputStream())
+        def mailchimpApiKey = properties.getProperty("mailchimp.apikey")
+        def mailchimpDataCenter = mailchimpApiKey.split("-")[1]
+        def mailchimpBaseUrl = "https://<dc>.api.mailchimp.com/3.0".replace("<dc>", mailchimpDataCenter)
+        variant.buildConfigField 'String', 'MAILCHIMP_API_KEY', "\"$mailchimpApiKey\""
+        variant.buildConfigField 'String', 'MAILCHIMP_BASE_URL', "\"$mailchimpBaseUrl\""
+        def mailchimpBaseListId = properties.getProperty("bettergram.mailchimp.base-list-id")
+        def mailchimpNewsletterListId = properties.getProperty("bettergram.mailchimp.newsletter-list-id")
+        variant.buildConfigField 'String', 'MAILCHIMP_BASE_LIST_ID', "\"$mailchimpBaseListId\""
+        variant.buildConfigField 'String', 'MAILCHIMP_NEWSLETTER_LIST_ID', "\"$mailchimpNewsletterListId\""
     }
 
     defaultConfig {

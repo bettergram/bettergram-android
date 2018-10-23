@@ -128,15 +128,22 @@ public class LaunchActivity extends Activity implements ActionBarLayout.ActionBa
             long crashed_time = preferences.getLong("intro_crashed_time", 0);
             boolean fromIntro = intent.getBooleanExtra("fromIntro", false);
             if (fromIntro) {
-                preferences.edit().putLong("intro_crashed_time", 0).commit();
+                preferences.edit().putLong("intro_crashed_time", 0).apply();
             }
             if (!isProxy && Math.abs(crashed_time - System.currentTimeMillis()) >= 60 * 2 * 1000 && intent != null && !fromIntro) {
                 preferences = ApplicationLoader.applicationContext.getSharedPreferences("logininfo2", MODE_PRIVATE);
                 Map<String, ?> state = preferences.getAll();
                 if (state.isEmpty()) {
-                    Intent intent2 = new Intent(this, IntroActivity.class);
-                    intent2.setData(intent.getData());
-                    startActivity(intent2);
+                    preferences = ApplicationLoader.applicationContext.getSharedPreferences("mailchimp_subscribed", MODE_PRIVATE);
+                    if (preferences.getString("mailchimp_subscribed_email", null) == null) {
+                        Intent intent3 = new Intent(this, SplashActivity.class);
+                        intent3.setData(intent.getData());
+                        startActivity(intent3);
+                    } else {
+                        Intent intent2 = new Intent(this, IntroActivity.class);
+                        intent2.setData(intent.getData());
+                        startActivity(intent2);
+                    }
                     super.onCreate(savedInstanceState);
                     finish();
                     return;
@@ -363,7 +370,7 @@ public class LaunchActivity extends Activity implements ActionBarLayout.ActionBa
                         presentFragment(new ChannelCreateActivity(args));
                     } else {
                         presentFragment(new ChannelIntroActivity());
-                        preferences.edit().putBoolean("channel_intro", true).commit();
+                        preferences.edit().putBoolean("channel_intro", true).apply();
                     }
                     drawerLayoutContainer.closeDrawer(false);
                 } else if (id == 6) {
@@ -2489,7 +2496,7 @@ public class LaunchActivity extends Activity implements ActionBarLayout.ActionBa
                     } else {
                         freeSpace = statFs.getAvailableBlocksLong() * statFs.getBlockSizeLong();
                     }
-                    preferences.edit().putLong("last_space_check", System.currentTimeMillis()).commit();
+                    preferences.edit().putLong("last_space_check", System.currentTimeMillis()).apply();
                     if (freeSpace < 1024 * 1024 * 100) {
                         AndroidUtilities.runOnUIThread(() -> {
                             try {

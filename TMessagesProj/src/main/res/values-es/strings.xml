@@ -1810,12 +1810,12 @@
     <string name="PermissionDrawAboveOtherApps">Bettergram necesita acceso a mostrarse sobre otras aplicaciones para usar el modo Picture-in-Picture.</string>
     <string name="PermissionOpenSettings">AJUSTES</string>
     <!--Intro view-->
-    <string name="Page1Title">Bettergram</string>
-    <string name="Page2Title">Rápida</string>
-    <string name="Page3Title">Gratis</string>
-    <string name="Page4Title">Segura</string>
-    <string name="Page5Title">Poderosa</string>
-    <string name="Page6Title">Basada en la nube</string>
+    <string name="_Page1Title">Bettergram</string>
+    <string name="_Page2Title">Rápida</string>
+    <string name="_Page3Title">Gratis</string>
+    <string name="_Page4Title">Segura</string>
+    <string name="_Page5Title">Poderosa</string>
+    <string name="_Page6Title">Basada en la nube</string>
     <string name="Page1Message">La aplicación de mensajería más **veloz** del mundo.\nEs **gratis** y **segura**.</string>
     <string name="Page2Message">**Bettergram** entrega mensajes más rápido\nque cualquier otra aplicación.</string>
     <string name="Page3Message">**Bettergram** es gratis para siempre. Sin publicidad.\nSin suscripciones.</string>

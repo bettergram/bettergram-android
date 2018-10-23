@@ -1810,12 +1810,12 @@
     <string name="PermissionDrawAboveOtherApps">Bettergram precisa de acesso para sobrescrever outros apps para reproduzir vídeos no modo PiP.</string>
     <string name="PermissionOpenSettings">CONFIGURAÇÕES</string>
     <!--Intro view-->
-    <string name="Page1Title">Bettergram</string>
-    <string name="Page2Title">Rápido</string>
-    <string name="Page3Title">Grátis</string>
-    <string name="Page4Title">Seguro</string>
-    <string name="Page5Title">Poderoso</string>
-    <string name="Page6Title">Baseado em nuvem</string>
+    <string name="_Page1Title">Bettergram</string>
+    <string name="_Page2Title">Rápido</string>
+    <string name="_Page3Title">Grátis</string>
+    <string name="_Page4Title">Seguro</string>
+    <string name="_Page5Title">Poderoso</string>
+    <string name="_Page6Title">Baseado em nuvem</string>
     <string name="Page1Message">O aplicativo de mensagem mais **rápido** do mundo.\nÉ **gratuito** e **seguro**.</string>
     <string name="Page2Message">O **Bettergram** envia mensagens mais rápido que qualquer outro aplicativo.</string>
     <string name="Page3Message">**Bettergram** é grátis para sempre.\nSem anúncios. Sem taxas.</string>

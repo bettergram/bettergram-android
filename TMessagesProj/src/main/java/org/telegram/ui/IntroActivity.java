@@ -154,12 +154,12 @@ public class IntroActivity extends Activity implements NotificationCenter.Notifi
         preferences.edit().putLong("intro_crashed_time", System.currentTimeMillis()).commit();
 
         titles = new String[]{
-                LocaleController.getString("Page1Title", R.string.Page1Title),
-                LocaleController.getString("Page2Title", R.string.Page2Title),
-                LocaleController.getString("Page3Title", R.string.Page3Title),
-                LocaleController.getString("Page5Title", R.string.Page5Title),
-                LocaleController.getString("Page4Title", R.string.Page4Title),
-                LocaleController.getString("Page6Title", R.string.Page6Title)
+                LocaleController.getString("_Page1Title", R.string._Page1Title),
+                LocaleController.getString("_Page2Title", R.string._Page2Title),
+                LocaleController.getString("_Page3Title", R.string._Page3Title),
+                LocaleController.getString("_Page5Title", R.string._Page5Title),
+                LocaleController.getString("_Page4Title", R.string._Page4Title),
+                LocaleController.getString("_Page6Title", R.string._Page6Title)
         };
         messages = new String[]{
                 LocaleController.getString("Page1Message", R.string.Page1Message),

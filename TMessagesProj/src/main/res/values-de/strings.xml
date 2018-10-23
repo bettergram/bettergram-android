@@ -1810,12 +1810,12 @@
     <string name="PermissionDrawAboveOtherApps">Bettergram braucht Zugriff auf die Funktion \'Über andere Apps einblenden\'. Nur so können Videos im Bild in Bild Modus wiedergegeben werden.</string>
     <string name="PermissionOpenSettings">EINSTELLUNGEN</string>
     <!--Intro view-->
-    <string name="Page1Title">Bettergram</string>
-    <string name="Page2Title">Schnell</string>
-    <string name="Page3Title">Kostenlos</string>
-    <string name="Page4Title">Sicher</string>
-    <string name="Page5Title">Leistungsstark</string>
-    <string name="Page6Title">Cloud-basiert</string>
+    <string name="_Page1Title">Bettergram</string>
+    <string name="_Page2Title">Schnell</string>
+    <string name="_Page3Title">Kostenlos</string>
+    <string name="_Page4Title">Sicher</string>
+    <string name="_Page5Title">Leistungsstark</string>
+    <string name="_Page6Title">Cloud-basiert</string>
     <string name="Page1Message">Die **schnellste** Messaging App der Welt.\n**Kostenlos** und **sicher**.</string>
     <string name="Page2Message">**Bettergram** übermittelt Nachrichten\nschneller als jede andere Anwendung.</string>
     <string name="Page3Message">**Bettergram** bleibt immer gratis.\nKeine Werbung. Keine Abo-Gebühren.</string>
