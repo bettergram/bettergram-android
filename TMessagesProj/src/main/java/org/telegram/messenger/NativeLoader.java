@@ -13,8 +13,6 @@ import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.os.Build;
 
-import net.hockeyapp.android.Constants;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -36,7 +34,7 @@ public class NativeLoader {
         File f = null;
         if (context != null) {
             try {
-                f = new File((String)ApplicationInfo.class.getField("nativeLibraryDir").get(context.getApplicationInfo()));
+                f = new File((String) ApplicationInfo.class.getField("nativeLibraryDir").get(context.getApplicationInfo()));
             } catch (Throwable th) {
                 th.printStackTrace();
             }
@@ -116,8 +114,6 @@ public class NativeLoader {
         if (nativeLoaded) {
             return;
         }
-
-        Constants.loadFromContext(context);
 
         try {
             try {

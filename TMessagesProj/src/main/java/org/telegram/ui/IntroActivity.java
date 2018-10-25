@@ -361,7 +361,7 @@ public class IntroActivity extends Activity implements NotificationCenter.Notifi
             }
             justCreated = false;
         }
-        AndroidUtilities.checkForCrashes(this);
+        //AndroidUtilities.checkForCrashes(this);
         AndroidUtilities.checkForUpdates(this);
         ConnectionsManager.getInstance(currentAccount).setAppPaused(false, false);
     }

@@ -12,17 +12,27 @@ buildscript {
         igjsonVersion = 'master-SNAPSHOT'
         picassoVersion = '2.71828'
         romVersion = '1.11.0'
+        googleServicesVersion = '4.0.2'
+        fabricVersion = '1.26.1'
     }
     repositories {
         jcenter()
         mavenCentral()
         google()
+        maven {
+            url 'https://maven.fabric.io/public'
+        }
+
     }
     dependencies {
         classpath "com.android.tools.build:gradle:$gradleVersion"
-        classpath 'com.google.gms:google-services:4.0.2'
+        classpath "com.google.gms:google-services:$googleServicesVersion"
+        classpath "io.fabric.tools:gradle:$fabricVersion"
     }
 }
 repositories {
     google()
+    maven {
+        url 'https://maven.google.com/'
+    }
 }
