@@ -10,6 +10,7 @@ package org.telegram.messenger;
 
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.FirebaseInstanceIdService;
+import com.urbanairship.push.fcm.AirshipFirebaseInstanceIdService;
 
 public class GcmInstanceIDListenerService extends FirebaseInstanceIdService {
 
@@ -27,6 +28,7 @@ public class GcmInstanceIDListenerService extends FirebaseInstanceIdService {
         } catch (Throwable e) {
             FileLog.e(e);
         }
+        AirshipFirebaseInstanceIdService.processTokenRefresh(getBaseContext());
     }
 
     public static void sendRegistrationToServer(final String token) {
