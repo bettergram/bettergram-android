@@ -19,7 +19,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-core:16.0.4'
     implementation 'com.google.firebase:firebase-messaging:17.3.4'
     implementation 'com.google.firebase:firebase-config:16.1.0'
-    implementation 'com.urbanairship.android:urbanairship-fcm:9.1.0'
+    implementation 'com.urbanairship.android:urbanairship-fcm:9.5.1'
     implementation 'com.google.android.gms:play-services-maps:16.0.0'
     implementation 'com.google.android.gms:play-services-vision:17.0.2'
     implementation 'com.google.android.gms:play-services-wallet:16.0.1'

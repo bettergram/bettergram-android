@@ -495,7 +495,7 @@
         <meta-data
                 android:name="com.google.android.geo.API_KEY"
                 android:value="@string/google_maps_key"/>
-        
+
         <meta-data
                 android:name="com.google.android.gms.car.notification.SmallIcon"
                 android:resource="@drawable/ic_player"/>
@@ -511,6 +511,9 @@
         <meta-data
                 android:name="android.max_aspect"
                 android:value="2.5"/>
+
+        <meta-data android:name="com.urbanairship.autopilot"
+                   android:value="com.urbanairship.Autopilot"/>
 
         <activity android:name="org.telegram.ui.SplashActivity">
         </activity>
