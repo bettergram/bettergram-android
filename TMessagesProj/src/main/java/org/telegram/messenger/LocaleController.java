@@ -9,16 +9,12 @@
 package org.telegram.messenger;
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.SharedPreferences;
+import android.content.*;
 import android.content.res.Configuration;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.util.Xml;
-
+import io.bettergram.messenger.R;
 import org.telegram.messenger.time.FastDateFormat;
 import org.telegram.tgnet.ConnectionsManager;
 import org.telegram.tgnet.TLObject;
@@ -30,15 +26,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Currency;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.TimeZone;
+import java.util.*;
 
-import io.bettergram.messenger.R;
+import static android.text.TextUtils.isEmpty;
 
 public class LocaleController {
 
@@ -157,6 +147,7 @@ public class LocaleController {
     private ArrayList<LocaleInfo> otherLanguages = new ArrayList<>();
 
     private static volatile LocaleController Instance = null;
+
     public static LocaleController getInstance() {
         LocaleController localInstance = Instance;
         if (localInstance == null) {
@@ -1388,7 +1379,7 @@ public class LocaleController {
                     return getString("WithinAWeek", R.string.WithinAWeek);
                 } else if (user.status.expires == -102) {
                     return getString("WithinAMonth", R.string.WithinAMonth);
-                }  else {
+                } else {
                     return formatDateOnline(user.status.expires);
                 }
             }
@@ -1421,14 +1412,14 @@ public class LocaleController {
             for (int a = 0; a < difference.strings.size(); a++) {
                 TLRPC.LangPackString string = difference.strings.get(a);
                 if (string instanceof TLRPC.TL_langPackString) {
-                    values.put(string.key, escapeString(string.value));
+                    values.put(string.key, toBettergram(escapeString(string.value)));
                 } else if (string instanceof TLRPC.TL_langPackStringPluralized) {
-                    values.put(string.key + "_zero", string.zero_value != null ? escapeString(string.zero_value) : "");
-                    values.put(string.key + "_one", string.one_value != null ? escapeString(string.one_value) : "");
-                    values.put(string.key + "_two", string.two_value != null ? escapeString(string.two_value) : "");
-                    values.put(string.key + "_few", string.few_value != null ? escapeString(string.few_value) : "");
-                    values.put(string.key + "_many", string.many_value != null ? escapeString(string.many_value) : "");
-                    values.put(string.key + "_other", string.other_value != null ? escapeString(string.other_value) : "");
+                    values.put(string.key + "_zero", string.zero_value != null ? toBettergram(escapeString(string.zero_value)) : "");
+                    values.put(string.key + "_one", string.one_value != null ? toBettergram(escapeString(string.one_value)) : "");
+                    values.put(string.key + "_two", string.two_value != null ? toBettergram(escapeString(string.two_value)) : "");
+                    values.put(string.key + "_few", string.few_value != null ? toBettergram(escapeString(string.few_value)) : "");
+                    values.put(string.key + "_many", string.many_value != null ? toBettergram(escapeString(string.many_value)) : "");
+                    values.put(string.key + "_other", string.other_value != null ? toBettergram(escapeString(string.other_value)) : "");
                 } else if (string instanceof TLRPC.TL_langPackStringDeleted) {
                     values.remove(string.key);
                 }
@@ -1468,7 +1459,7 @@ public class LocaleController {
                         SharedPreferences preferences = MessagesController.getGlobalMainSettings();
                         SharedPreferences.Editor editor = preferences.edit();
                         editor.putString("language", localeInfo.getKey());
-                        editor.commit();
+                        editor.apply();
                     }
                     if (newLocale != null) {
                         localeValues = valuesToSet;
@@ -1495,6 +1486,10 @@ public class LocaleController {
         } catch (Exception ignore) {
 
         }
+    }
+
+    private String toBettergram(String value) {
+        return !isEmpty(value) ? value.replaceAll("telegram", "bettergram").replaceAll("Telegram", "Bettergram") : "";
     }
 
     public void loadRemoteLanguages(final int currentAccount) {
