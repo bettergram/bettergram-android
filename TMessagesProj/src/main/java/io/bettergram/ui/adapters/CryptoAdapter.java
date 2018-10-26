@@ -11,6 +11,8 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
@@ -35,9 +37,11 @@ import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.support.widget.RecyclerView;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Components.LayoutHelper;
+import org.telegram.ui.Components.TabStrip.SlidingTabLayout;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import static android.text.TextUtils.isEmpty;
@@ -94,17 +98,12 @@ public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
         MainViewHolder(@NonNull View itemView) {
             super(itemView);
-            //imageCrypto = itemView.findViewById(R.id.imageCrypto);
             imageCrypto = itemView.findViewWithTag("imageCrypto");
-            //textCryptoName = itemView.findViewById(R.id.textCryptoName);
             textCryptoName = itemView.findViewWithTag("textCryptoName");
-            //textCryptoPrice = itemView.findViewById(R.id.textCryptoPrice);
             textCryptoPrice = itemView.findViewWithTag("textCryptoPrice");
-            //textDayDelta = itemView.findViewById(R.id.textDayDelta);
             textDayDelta = itemView.findViewWithTag("textDayDelta");
 
             Activity activity = (Activity) itemView.getContext();
-            //ShineButton star = itemView.findViewById(R.id.star);
             star = itemView.findViewWithTag("star");
             if (star.activity == null) {
                 star.init(activity);
@@ -119,6 +118,16 @@ public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                     data.get(i).favorite = checked;
                     CryptoDataService.faveCrypto(checked, data.get(i));
                     break;
+                }
+            }
+            backup.clear();
+            backup.addAll(data);
+            favorites.clear();
+            favorites.addAll(data);
+            for (Iterator<CryptoCurrencyInfo> iterator = favorites.iterator(); iterator.hasNext(); ) {
+                CryptoCurrencyInfo value = iterator.next();
+                if (!value.favorite) {
+                    iterator.remove();
                 }
             }
         }
@@ -136,6 +145,12 @@ public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         }
     }
 
+    class TabsViewHolder extends RecyclerView.ViewHolder {
+        public TabsViewHolder(View itemView) {
+            super(itemView);
+        }
+    }
+
     class LabelViewHolder extends RecyclerView.ViewHolder {
         public LabelViewHolder(View itemView) {
             super(itemView);
@@ -145,11 +160,10 @@ public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     private CryptoCurrencyInfoResponse cryptoData;
 
     private List<CryptoCurrencyInfo> data = new ArrayList<>();
+    private List<CryptoCurrencyInfo> backup = new ArrayList<>();
+    private List<CryptoCurrencyInfo> favorites = new ArrayList<>();
 
     public CryptoAdapter() {
-        for (int i = 0; i < 100; i++) {
-            data.add(new CryptoCurrencyInfo());
-        }
     }
 
     public void setCryptoData(CryptoCurrencyInfoResponse cryptoData) {
@@ -159,14 +173,25 @@ public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 data.clear();
                 data.addAll(cryptoData.data.favorites);
                 data.addAll(cryptoData.data.list);
+                backup.clear();
+                backup.addAll(data);
+                favorites.clear();
+                favorites.addAll(data);
+                for (Iterator<CryptoCurrencyInfo> iterator = favorites.iterator(); iterator.hasNext(); ) {
+                    CryptoCurrencyInfo value = iterator.next();
+                    if (!value.favorite) {
+                        iterator.remove();
+                    }
+                }
             }
         }
     }
 
     @Override
     public int getItemViewType(int position) {
-        return position == 0 ? 0 : position == 1 ? 1 : 2;
+        return position == 0 ? 0 : position == 1 ? 1 : position == 2 ? 2 : 3;
     }
+
 
     @NonNull
     @Override
@@ -175,10 +200,36 @@ public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         LayoutInflater inflater = LayoutInflater.from(context);
         switch (viewType) {
             case 0:
-                return new HeaderViewHolder(inflater.inflate(R.layout.header_crypto, parent, false));
+                View header = inflater.inflate(R.layout.header_crypto, parent, false);
+                return new HeaderViewHolder(header);
             case 1:
-                return new LabelViewHolder(inflater.inflate(R.layout.item_crypto_top, parent, false));
+                SlidingTabLayout tabLayout = new SlidingTabLayout(context);
+                tabLayout.setAdapter(new TabsPagerAdapter());
+                tabLayout.setDividerColors(context.getResources().getColor(android.R.color.transparent));
+                tabLayout.setSelectedIndicatorColors(context.getResources().getColor(R.color.actionBarDefault));
+                tabLayout.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+                    @Override
+                    public void onPageSelected(int position) {
+                        super.onPageSelected(position);
+                        switch (position) {
+                            case 0:
+                                data.clear();
+                                data.addAll(backup);
+                                notifyDataSetChanged();
+                                break;
+                            case 1:
+                                data.clear();
+                                data.addAll(favorites);
+                                notifyDataSetChanged();
+                                break;
+                        }
+                    }
+                });
+                tabLayout.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                return new TabsViewHolder(tabLayout);
             case 2:
+                return new LabelViewHolder(inflater.inflate(R.layout.item_crypto_top, parent, false));
+            case 3:
                 LinearLayout content = new LinearLayout(context);
                 content.setOrientation(LinearLayout.HORIZONTAL);
                 content.setWeightSum(1);
@@ -249,7 +300,7 @@ public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         } else if (holder instanceof LabelViewHolder) {
 
         } else if (holder instanceof MainViewHolder) {
-            int realPosition = position - 2;
+            int realPosition = position - 3;
             CryptoCurrencyInfo info = data.get(realPosition);
 
             MainViewHolder main = (MainViewHolder) holder;
@@ -284,7 +335,7 @@ public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     @Override
     public int getItemCount() {
-        return data.size() + 2;
+        return data.size() + 3;
     }
 
     /**
@@ -325,5 +376,35 @@ public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
      */
     public void unregisterReceiver(Activity activity) {
         activity.unregisterReceiver(receiver);
+    }
+
+    class TabsPagerAdapter extends PagerAdapter {
+
+        final String[] ITEMS = {"All", "Favorites"};
+
+        /**
+         * @return the number of pages to display
+         */
+        @Override
+        public int getCount() {
+            return ITEMS.length;
+        }
+
+        @Override
+        public boolean isViewFromObject(View view, Object o) {
+            return o == view;
+        }
+
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return ITEMS[position];
+        }
+
+        @Override
+        public void destroyItem(ViewGroup container, int position, Object object) {
+            container.removeView((View) object);
+        }
+
     }
 }

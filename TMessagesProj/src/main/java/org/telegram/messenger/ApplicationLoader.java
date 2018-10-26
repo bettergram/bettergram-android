@@ -9,6 +9,7 @@
 package org.telegram.messenger;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.Application;
 import android.app.PendingIntent;
@@ -22,12 +23,15 @@ import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.firebase.iid.FirebaseInstanceId;
+import io.bettergram.service.CryptoDataService;
 import io.fabric.sdk.android.Fabric;
 import org.telegram.tgnet.ConnectionsManager;
 import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.Components.ForegroundDetector;
 
 import java.io.File;
+
+import static io.bettergram.service.CryptoDataService.EXTRA_LIMIT;
 
 public class ApplicationLoader extends Application {
 
@@ -124,7 +128,11 @@ public class ApplicationLoader extends Application {
     public void onCreate() {
         super.onCreate();
 
-        Fabric.with(this, Crashlytics.getInstance());
+        final Fabric fabric = new Fabric.Builder(this)
+                .kits(new Crashlytics())
+                .debuggable(true)  // Enables Crashlytics debugger
+                .build();
+        Fabric.with(fabric);
 
         applicationContext = getApplicationContext();
         NativeLoader.initNativeLibs(ApplicationLoader.applicationContext);
@@ -207,5 +215,11 @@ public class ApplicationLoader extends Application {
             FileLog.e(e);
         }
         return true;
+    }
+
+    public static void warmupCryptos(Activity activity) {
+        Intent intent = new Intent(activity, CryptoDataService.class);
+        intent.putExtra(EXTRA_LIMIT, 100);
+        activity.startService(intent);
     }
 }

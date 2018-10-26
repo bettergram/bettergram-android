@@ -106,6 +106,7 @@ public class LaunchActivity extends Activity implements ActionBarLayout.ActionBa
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         ApplicationLoader.postInitApplication();
+        ApplicationLoader.warmupCryptos(this);
         AndroidUtilities.checkDisplaySize(this, getResources().getConfiguration());
         currentAccount = UserConfig.selectedAccount;
         if (!UserConfig.getInstance(currentAccount).isClientActivated()) {

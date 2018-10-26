@@ -278,6 +278,8 @@
                 android:taskAffinity="${applicationId}.voip_feedback"
                 android:theme="@style/Theme.TMessages.TransparentWithAlerts"/>
 
+        <activity android:name="org.telegram.ui.SplashActivity"/>
+
         <receiver
                 android:name="org.telegram.messenger.AutoMessageHeardReceiver"
                 android:exported="false">
@@ -515,8 +517,10 @@
         <meta-data android:name="com.urbanairship.autopilot"
                    android:value="com.urbanairship.Autopilot"/>
 
-        <activity android:name="org.telegram.ui.SplashActivity">
-        </activity>
+        <meta-data
+                android:name="firebase_crashlytics_collection_enabled"
+                android:value="false" />
+
     </application>
 
 </manifest>

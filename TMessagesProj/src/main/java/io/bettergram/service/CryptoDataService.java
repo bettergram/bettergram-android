@@ -48,6 +48,7 @@ public class CryptoDataService extends BaseDataService {
 
     @Override
     public void onDestroy() {
+        mTimer.cancel();
         super.onDestroy();
     }
 
@@ -57,7 +58,11 @@ public class CryptoDataService extends BaseDataService {
             mTimer.cancel();
         else
             mTimer = new Timer();   //recreate new
-        mTimer.scheduleAtFixedRate(new TimeDisplay(intent), 0, notify);   //Schedule task
+        try {
+            mTimer.scheduleAtFixedRate(new TimeDisplay(intent), 0, notify);   //Schedule task
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+        }
     }
 
     private List<CryptoCurrencyInfo> addIcons(List<CryptoCurrencyInfo> list, List<CryptoCurrency> currencies) {
@@ -74,11 +79,11 @@ public class CryptoDataService extends BaseDataService {
         return list;
     }
 
-    interface Predicate<T> {
+    public interface Predicate<T> {
         boolean contains(T item);
     }
 
-    static class CollectionUtil {
+    public static class CollectionUtil {
 
         public static <T> T find(final Collection<T> collection, final Predicate<T> predicate) {
             for (T item : collection) {

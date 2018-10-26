@@ -98,7 +98,7 @@ public class YouTubePlayerAdapter extends RecyclerView.Adapter<YouTubePlayerAdap
                 .load(url)
                 .resize(width, height)
                 .centerCrop()
-                .placeholder(R.color.grey70)
+                .placeholder(R.drawable.photoview_placeholder)
                 .into(imageView);
     };
 
