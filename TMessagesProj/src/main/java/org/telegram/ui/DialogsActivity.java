@@ -68,6 +68,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
     private ActionBarMenuItem proxyItem;
     private ProxyDrawable proxyDrawable;
     private ImageView floatingButton;
+    private TabsView newTabsView;
 
     private ImageView unreadFloatingButton;
     private FrameLayout unreadFloatingButtonContainer;
@@ -233,6 +234,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         final ActionBarMenuItem item = menu.addItem(0, R.drawable.ic_ab_search).setIsSearchField(true).setActionBarMenuItemSearchListener(new ActionBarMenuItem.ActionBarMenuItemSearchListener() {
             @Override
             public void onSearchExpand() {
+                newTabsView.hide(true);
                 searching = true;
                 if (switchItem != null) {
                     switchItem.setVisibility(View.GONE);
@@ -270,6 +272,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
 
             @Override
             public void onSearchCollapse() {
+                newTabsView.hide(false);
                 searching = false;
                 searchWas = false;
                 if (listView != null) {
@@ -562,7 +565,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         listView.setLayoutManager(layoutManager);
         listView.setVerticalScrollbarPosition(LocaleController.isRTL ? RecyclerListView.SCROLLBAR_POSITION_LEFT : RecyclerListView.SCROLLBAR_POSITION_RIGHT);
 
-        TabsView newTabsView = new TabsView(context)
+        newTabsView = new TabsView(context)
                 .refreshAction((type, scroll) -> {
                     //todo: check for the same type?
                     int firstVisibleItem = layoutManager.findFirstVisibleItemPosition();
