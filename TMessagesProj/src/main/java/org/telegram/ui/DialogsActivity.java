@@ -1371,32 +1371,27 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                     switch (position) {
                         case 0:
                             if (!(listView.getAdapter() instanceof BetterDialogsAdapter)) {
-                                listView.setAdapter(dialogsAdapter);
-                                //handler.postDelayed(dialogsAdapter::notifyDataSetChanged, 1000);
+                                listView.postAndNotifyAdapter(() -> listView.setAdapter(dialogsAdapter));
                             }
                             break;
                         case 1:
                             if (!(listView.getAdapter() instanceof CryptoAdapter)) {
-                                listView.setAdapter(cryptoAdapter);
-                                //handler.postDelayed(cryptoAdapter::notifyDataSetChanged, 1000);
+                                listView.postAndNotifyAdapter(() -> listView.setAdapter(cryptoAdapter));
                             }
                             break;
                         case 2:
                             if (!(listView.getAdapter() instanceof NewsAdapter)) {
-                                listView.setAdapter(newsAdapter);
-                                //handler.postDelayed(newsAdapter::notifyDataSetChanged, 1000);
+                                listView.postAndNotifyAdapter(() -> listView.setAdapter(newsAdapter));
                             }
                             break;
                         case 3:
                             if (!(listView.getAdapter() instanceof YouTubePlayerAdapter)) {
-                                listView.setAdapter(videoAdapter);
-                                //handler.postDelayed(videoAdapter::notifyDataSetChanged, 1000);
+                                listView.postAndNotifyAdapter(() -> listView.setAdapter(videoAdapter));
                             }
                             break;
                         case 4:
                             if (!(listView.getAdapter() instanceof ResourcesAdapter)) {
-                                listView.setAdapter(resourcesAdapter);
-                                //handler.postDelayed(resourcesAdapter::notifyDataSetChanged, 1000);
+                                listView.postAndNotifyAdapter(() -> listView.setAdapter(resourcesAdapter));
                             }
                             break;
                     }

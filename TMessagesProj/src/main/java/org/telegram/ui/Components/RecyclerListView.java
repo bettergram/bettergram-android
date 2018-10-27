@@ -1327,12 +1327,13 @@ public class RecyclerListView extends RecyclerView {
         selectorRect.setEmpty();
     }
 
-    public void postAndNotifyAdapter() {
+    public void postAndNotifyAdapter(Callback callback) {
         post(() -> {
             if (!isComputingLayout()) {
+                if (callback != null) callback.call();
                 getAdapter().notifyDataSetChanged();
             } else {
-                postAndNotifyAdapter();
+                postAndNotifyAdapter(callback);
             }
         });
     }
@@ -1347,5 +1348,9 @@ public class RecyclerListView extends RecyclerView {
 
     public View getPinnedHeader() {
         return pinnedHeader;
+    }
+
+    public interface Callback {
+        void call();
     }
 }

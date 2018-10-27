@@ -54,15 +54,25 @@ public class CryptoDataService extends BaseDataService {
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
-        if (mTimer != null) // Cancel if already existed
-            mTimer.cancel();
-        else
-            mTimer = new Timer();   //recreate new
-        try {
-            mTimer.scheduleAtFixedRate(new TimeDisplay(intent), 0, notify);   //Schedule task
-        } catch (IllegalStateException e) {
-            e.printStackTrace();
+        mTimer = new Timer();   //recreate new
+        boolean canStart = true;
+        while (canStart) {
+            try {
+                startTimer(intent);
+                canStart = false;
+            } catch (IllegalStateException e) {
+                e.printStackTrace();
+                String savedCryptoInfoJson = preferences.getString(KEY_CRYPTO_CURRENCIES_SAVED, null);
+                if (!isEmpty(savedCryptoInfoJson)) {
+                    publishResults(savedCryptoInfoJson, NOTIFICATION, RESULT);
+                }
+                canStart = true;
+            }
         }
+    }
+
+    private void startTimer(Intent intent) {
+        mTimer.scheduleAtFixedRate(new TimeDisplay(intent), 0, notify);   //Schedule task
     }
 
     private List<CryptoCurrencyInfo> addIcons(List<CryptoCurrencyInfo> list, List<CryptoCurrency> currencies) {
@@ -106,24 +116,19 @@ public class CryptoDataService extends BaseDataService {
 
         @Override
         public void run() {
-
             String savedCryptoInfoJson = preferences.getString(KEY_CRYPTO_CURRENCIES_SAVED, null);
             if (!isEmpty(savedCryptoInfoJson)) {
                 publishResults(savedCryptoInfoJson, NOTIFICATION, RESULT);
             }
 
             boolean fetchCryptoCurrencies = intent.getBooleanExtra(KEY_CRYPTO_CURRENCIES, false);
-
             String savedCryptoJson = preferences.getString(KEY_CRYPTO_CURRENCIES, null);
-
             List<CryptoCurrency> currencies = new ArrayList<>();
 
             OkHttpClient client = new OkHttpClient();
 
             if (fetchCryptoCurrencies || isEmpty(savedCryptoJson)) {
-
                 Request request = new Request.Builder().url(CRYPTO_CURRENCIES_URL).build();
-
                 try {
                     Response response = client.newCall(request).execute();
 
@@ -160,7 +165,6 @@ public class CryptoDataService extends BaseDataService {
             urlBuilder.addQueryParameter("currency", currency);
 
             String url = urlBuilder.build().toString();
-
             Request request = new Request.Builder().url(url).build();
 
             try {
@@ -189,7 +193,6 @@ public class CryptoDataService extends BaseDataService {
                     }
 
                     String json = CryptoCurrencyInfoResponse__JsonHelper.serializeToJson(cryptoResponse);
-
                     preferences.edit().putString(KEY_CRYPTO_CURRENCIES_SAVED, json).apply();
 
                     publishResults(json, NOTIFICATION, RESULT);

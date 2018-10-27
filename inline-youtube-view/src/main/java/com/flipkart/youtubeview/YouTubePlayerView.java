@@ -29,9 +29,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -65,6 +65,8 @@ public class YouTubePlayerView extends FrameLayout {
     private String webViewUrl;
     private ImageLoader imageLoader;
 
+    private static int lastWidth, lastHeight;
+
     public boolean initted = false;
 
     public YouTubePlayerView(Context context) {
@@ -85,21 +87,28 @@ public class YouTubePlayerView extends FrameLayout {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        int newWidth;
-        int newHeight;
-        newWidth = getMeasuredWidth();
-        newHeight = (int) (newWidth * ASPECT_RATIO);
-        setMeasuredDimension(newWidth, newHeight);
-        if (playerContainer != null && playerContainer.getMeasuredHeight() != newHeight) {
-            ViewGroup.LayoutParams layoutParams = playerContainer.getLayoutParams();
-            layoutParams.height = newHeight;
-            playerContainer.setLayoutParams(layoutParams);
+        int newWidth = MeasureSpec.getSize(widthMeasureSpec);
+        int newHeight = (int) (newWidth * ASPECT_RATIO);
 
-            String url = "https://img.youtube.com/vi/" + videoId + "/0.jpg";
-            if (null != imageLoader) {
-                imageLoader.loadImage(thumbnailImageView, url, getMeasuredHeight(), getMeasuredWidth());
-            }
+        if (lastWidth != newWidth || lastHeight != newHeight) {
+            lastWidth = newWidth;
+            lastHeight = newHeight;
         }
+        Log.e("video", "Point A, getMeasuredWidth(): " + getMeasuredWidth());
+        Log.e("video", "lastWidth: " + lastWidth + ", lastHeight: " + lastHeight);
+        setMeasuredDimension(lastWidth, lastHeight);
+
+//        if (playerContainer != null && playerContainer.getMeasuredHeight() != lastHeight) {
+//            ViewGroup.LayoutParams layoutParams = playerContainer.getLayoutParams();
+//            layoutParams.height = lastHeight;
+//            playerContainer.setLayoutParams(layoutParams);
+
+
+        String url = "https://img.youtube.com/vi/" + videoId + "/0.jpg";
+        if (null != imageLoader) {
+            imageLoader.loadImage(thumbnailImageView, url, lastHeight, lastWidth);
+        }
+//        }
     }
 
     @MainThread
@@ -125,10 +134,14 @@ public class YouTubePlayerView extends FrameLayout {
         initted = true;
     }
 
-    public void load() {
+    public void load(String videoId) {
         String url = "https://img.youtube.com/vi/" + videoId + "/0.jpg";
         if (null != imageLoader) {
-            imageLoader.loadImage(thumbnailImageView, url, getMeasuredHeight(), getMeasuredWidth());
+            if (getMeasuredWidth() > 0 && getMeasuredHeight() > 0) {
+                lastWidth = getMeasuredWidth();
+                lastHeight = getMeasuredHeight();
+            }
+            imageLoader.loadImage(thumbnailImageView, url, lastHeight, lastWidth);
         }
     }
 

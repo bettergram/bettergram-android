@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +20,7 @@ import io.bettergram.data.VideoList;
 import io.bettergram.data.VideoList__JsonHelper;
 import io.bettergram.messenger.R;
 import io.bettergram.service.YoutubeDataService;
+import io.bettergram.utils.RoundedCornersTransform;
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.support.widget.RecyclerView;
 
@@ -92,13 +92,13 @@ public class YouTubePlayerAdapter extends RecyclerView.Adapter<YouTubePlayerAdap
     }
 
     private ImageLoader imageLoader = (imageView, url, height, width) -> {
-        Picasso.get().invalidate(url);// temporarily invalidated so the app wont load from memory as it shows blank image
-
+        //Picasso.get().invalidate(url);// temporarily invalidated so the app wont load from memory as it shows blank image
         Picasso.get()
                 .load(url)
-                .resize(width, height)
+                .resize((int) (width * 0.30f), (int) (height * 0.30f))
                 .centerCrop()
-                .placeholder(R.drawable.photoview_placeholder)
+                .placeholder(R.color.grey70)
+                .transform(RoundedCornersTransform.getInstance())
                 .into(imageView);
     };
 
@@ -146,7 +146,6 @@ public class YouTubePlayerAdapter extends RecyclerView.Adapter<YouTubePlayerAdap
         String channelTitle = video.channelTitle;
         String publishedAt = video.publishedAt;
         String viewCount = video.viewCount;
-        String duration = video.duration;
 
         holder.textTitle.setText(title);
         holder.textAccount.setText(channelTitle);
@@ -156,7 +155,7 @@ public class YouTubePlayerAdapter extends RecyclerView.Adapter<YouTubePlayerAdap
         if (!playerView.initted) {
             playerView.initPlayer(apiKey, videoId, webviewUrl, playerType, null, fragmentManager, imageLoader);
         } else {
-            playerView.load();
+            playerView.load(videoId);
         }
     }
 
