@@ -76,6 +76,8 @@ public class CryptoDataService extends BaseDataService {
     }
 
     private List<CryptoCurrencyInfo> addIcons(List<CryptoCurrencyInfo> list, List<CryptoCurrency> currencies) {
+        if (currencies == null) return new ArrayList<>();
+
         for (int i = 0, size = list.size(); i < size; i++) {
             final int index = i;
 
@@ -143,8 +145,10 @@ public class CryptoDataService extends BaseDataService {
             }
 
             try {
-                CryptoCurrencyData currencyData = CryptoCurrencyData__JsonHelper.parseFromJson(savedCryptoJson);
-                currencies.addAll(currencyData.data);
+                if (!isEmpty(savedCryptoJson)) {
+                    CryptoCurrencyData currencyData = CryptoCurrencyData__JsonHelper.parseFromJson(savedCryptoJson);
+                    currencies.addAll(currencyData.data);
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }

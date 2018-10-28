@@ -94,8 +94,7 @@ public class YouTubePlayerView extends FrameLayout {
             lastWidth = newWidth;
             lastHeight = newHeight;
         }
-        Log.e("video", "Point A, getMeasuredWidth(): " + getMeasuredWidth());
-        Log.e("video", "lastWidth: " + lastWidth + ", lastHeight: " + lastHeight);
+    
         setMeasuredDimension(lastWidth, lastHeight);
 
 //        if (playerContainer != null && playerContainer.getMeasuredHeight() != lastHeight) {
