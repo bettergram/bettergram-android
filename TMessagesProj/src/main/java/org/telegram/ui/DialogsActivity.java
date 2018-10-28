@@ -1359,42 +1359,43 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
 
         BottomNavigationBar bottomBar = new BottomNavigationBar(context)
                 .setOnSelectListener((position, title) -> {
-                    currentBottomTabPosition = position;
-                    actionBar.setTitle(title);
-                    boolean isChat = position == 0;
-                    hideFloatingButton(!isChat, true);
-                    newTabsView.hide(!isChat);
+                    listView.postAndNotifyAdapter(() -> {
+                        currentBottomTabPosition = position;
+                        actionBar.setTitle(title);
+                        boolean isChat = position == 0;
+                        hideFloatingButton(!isChat, true);
+                        newTabsView.hide(!isChat);
 
-                    ActionBarMenuItem itemSearch = menu.getItem(0);
-                    itemSearch.setVisibility(!isChat ? View.GONE : View.VISIBLE);
-                    //Handler handler = getParentActivity().getWindow().getDecorView().getHandler();
-                    switch (position) {
-                        case 0:
-                            if (!(listView.getAdapter() instanceof BetterDialogsAdapter)) {
-                                listView.postAndNotifyAdapter(() -> listView.setAdapter(dialogsAdapter));
-                            }
-                            break;
-                        case 1:
-                            if (!(listView.getAdapter() instanceof CryptoAdapter)) {
-                                listView.postAndNotifyAdapter(() -> listView.setAdapter(cryptoAdapter));
-                            }
-                            break;
-                        case 2:
-                            if (!(listView.getAdapter() instanceof NewsAdapter)) {
-                                listView.postAndNotifyAdapter(() -> listView.setAdapter(newsAdapter));
-                            }
-                            break;
-                        case 3:
-                            if (!(listView.getAdapter() instanceof YouTubePlayerAdapter)) {
-                                listView.postAndNotifyAdapter(() -> listView.setAdapter(videoAdapter));
-                            }
-                            break;
-                        case 4:
-                            if (!(listView.getAdapter() instanceof ResourcesAdapter)) {
-                                listView.postAndNotifyAdapter(() -> listView.setAdapter(resourcesAdapter));
-                            }
-                            break;
-                    }
+                        ActionBarMenuItem itemSearch = menu.getItem(0);
+                        itemSearch.setVisibility(!isChat ? View.GONE : View.VISIBLE);
+                        switch (position) {
+                            case 0:
+                                if (!(listView.getAdapter() instanceof BetterDialogsAdapter)) {
+                                    listView.setAdapter(dialogsAdapter);
+                                }
+                                break;
+                            case 1:
+                                if (!(listView.getAdapter() instanceof CryptoAdapter)) {
+                                    listView.setAdapter(cryptoAdapter);
+                                }
+                                break;
+                            case 2:
+                                if (!(listView.getAdapter() instanceof NewsAdapter)) {
+                                    listView.setAdapter(newsAdapter);
+                                }
+                                break;
+                            case 3:
+                                if (!(listView.getAdapter() instanceof YouTubePlayerAdapter)) {
+                                    listView.setAdapter(videoAdapter);
+                                }
+                                break;
+                            case 4:
+                                if (!(listView.getAdapter() instanceof ResourcesAdapter)) {
+                                    listView.setAdapter(resourcesAdapter);
+                                }
+                                break;
+                        }
+                    });
                 })
                 .setOnReselectListener((position, title) -> actionBar.setTitle(title))
                 .selectTabAndTriggerListener(0, true);
