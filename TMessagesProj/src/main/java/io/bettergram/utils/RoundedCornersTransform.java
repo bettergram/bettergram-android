@@ -28,7 +28,8 @@ public class RoundedCornersTransform implements Transformation {
             source.recycle();
         }
 
-        Bitmap bitmap = Bitmap.createBitmap(width, height, source.getConfig());
+        Bitmap.Config config = source.getConfig() != null ? source.getConfig() : Bitmap.Config.ARGB_8888;
+        Bitmap bitmap = Bitmap.createBitmap(width, height, config);
 
         Canvas canvas = new Canvas(bitmap);
         Paint paint = new Paint();
@@ -37,7 +38,7 @@ public class RoundedCornersTransform implements Transformation {
         paint.setAntiAlias(true);
 
         float r = Math.min(width, height) / 28f;
-        canvas.drawRoundRect(new RectF(0, 0, source.getWidth(), source.getHeight()), r, r, paint);
+        canvas.drawRoundRect(new RectF(0, 0, width, height), r, r, paint);
         squaredBitmap.recycle();
         return bitmap;
     }
