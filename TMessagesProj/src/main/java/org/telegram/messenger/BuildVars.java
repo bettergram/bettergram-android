@@ -10,6 +10,7 @@ package org.telegram.messenger;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import io.bettergram.messenger.BuildConfig;
 
 public class BuildVars {
 
@@ -19,10 +20,8 @@ public class BuildVars {
     public static boolean CHECK_UPDATES = false;
     public static int BUILD_VERSION = 1358;
     public static String BUILD_VERSION_STRING = "4.9.1";
-    public static int APP_ID = 436313; //obtain your own APP_ID at https://core.telegram.org/api/obtaining_api_id
-    public static String APP_HASH = "43af3c4dc641f5ceafaae8df515d12b6"; //obtain your own APP_HASH at https://core.telegram.org/api/obtaining_api_id
-    public static String HOCKEY_APP_HASH = "4d7564aeb85e403fb411eddd0f7351a6";
-    public static String HOCKEY_APP_HASH_DEBUG = "e380c7065f79d2cf220b46c728f65c9b";
+    public static int APP_ID = BuildConfig.API_ID; //obtain your own APP_ID at https://core.telegram.org/api/obtaining_api_id
+    public static String APP_HASH = BuildConfig.API_HASH; //obtain your own APP_HASH at https://core.telegram.org/api/obtaining_api_id
     public static String PLAYSTORE_APP_URL = "";
 
     static {

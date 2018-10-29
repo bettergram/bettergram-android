@@ -263,6 +263,10 @@ android {
         def mailchimpNewsletterListId = properties.getProperty("bettergram.mailchimp.newsletter-list-id")
         variant.buildConfigField 'String', 'MAILCHIMP_BASE_LIST_ID', "\"$mailchimpBaseListId\""
         variant.buildConfigField 'String', 'MAILCHIMP_NEWSLETTER_LIST_ID', "\"$mailchimpNewsletterListId\""
+        def apiId = properties.getProperty("api_id")
+        def apiHash = properties.getProperty("api_hash")
+        variant.buildConfigField 'int', 'API_ID', apiId
+        variant.buildConfigField 'String', 'API_HASH', "\"$apiHash\""
     }
 
     defaultConfig {
