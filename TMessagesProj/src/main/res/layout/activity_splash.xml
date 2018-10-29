@@ -5,7 +5,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/bettergram_gradient_bg"
-        tools:context="org.telegram.ui.SplashActivity">
+        tools:context="io.bettergram.telegram.ui.SplashActivity">
 
     <ImageView
             android:id="@+id/overlayImage"

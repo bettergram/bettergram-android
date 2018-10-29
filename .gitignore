@@ -9,7 +9,7 @@ local.properties
 gradle.properties
 airshipconfig.properties
 
-TMessagesProj/src/main/java/org/telegram/messenger/BuildVars.java
+TMessagesProj/src/main/java/io/bettergram/telegram/messenger/BuildVars.java
 TMessagesProj/.externalNativeBuild/
 TMessagesProj/google-services.json
 captures/

@@ -3,12 +3,12 @@
 -keepclassmembernames class * {
     @com.google.android.gms.common.annotation.KeepName *;
 }
--keep class org.telegram.** { *; }
+-keep class io.bettergram.telegram.** { *; }
 -keep class com.google.android.exoplayer2.** { *; }
 -keep class com.coremedia.** { *; }
 -keep class com.googlecode.mp4parser.** { *; }
 -dontwarn com.coremedia.**
--dontwarn org.telegram.**
+-dontwarn io.bettergram.telegram.**
 -dontwarn com.google.android.exoplayer2.**
 -dontwarn com.google.android.gms.**
 -dontwarn com.google.common.cache.**

@@ -1682,7 +1682,7 @@ void draw_safe(int32_t type, float alpha, float screw_alpha) {
     draw_textured_shape(&private_screw, private_matrix, NORMAL_ONE);
 }
 
-JNIEXPORT void Java_org_telegram_messenger_Intro_onDrawFrame(JNIEnv *env, jclass class) {
+JNIEXPORT void Java_io_bettergram_telegram_messenger_Intro_onDrawFrame(JNIEnv *env, jclass class) {
     time_local += 0.016f;
 
     if (current_page != prev_page) {
@@ -2569,11 +2569,11 @@ JNIEXPORT void Java_org_telegram_messenger_Intro_onDrawFrame(JNIEnv *env, jclass
     prev_page = current_page;
 }
 
-JNIEXPORT void Java_org_telegram_messenger_Intro_setScrollOffset(JNIEnv *env, jclass class, float a_offset) {
+JNIEXPORT void Java_io_bettergram_telegram_messenger_Intro_setScrollOffset(JNIEnv *env, jclass class, float a_offset) {
     scroll_offset = a_offset;
 }
 
-JNIEXPORT void Java_org_telegram_messenger_Intro_setPage(JNIEnv *env, jclass class, int32_t page) {
+JNIEXPORT void Java_io_bettergram_telegram_messenger_Intro_setPage(JNIEnv *env, jclass class, int32_t page) {
     if (current_page == page) {
         return;
     } else {
@@ -2585,11 +2585,11 @@ JNIEXPORT void Java_org_telegram_messenger_Intro_setPage(JNIEnv *env, jclass cla
     }
 }
 
-JNIEXPORT void Java_org_telegram_messenger_Intro_setDate(JNIEnv *env, jclass class, float a) {
+JNIEXPORT void Java_io_bettergram_telegram_messenger_Intro_setDate(JNIEnv *env, jclass class, float a) {
     date = a;
 }
 
-JNIEXPORT void Java_org_telegram_messenger_Intro_setIcTextures(JNIEnv *env, jclass class, GLuint a_ic_bubble_dot, GLuint a_ic_bubble, GLuint a_ic_cam_lens, GLuint a_ic_cam, GLuint a_ic_pencil, GLuint a_ic_pin, GLuint a_ic_smile_eye, GLuint a_ic_smile, GLuint a_ic_videocam) {
+JNIEXPORT void Java_io_bettergram_telegram_messenger_Intro_setIcTextures(JNIEnv *env, jclass class, GLuint a_ic_bubble_dot, GLuint a_ic_bubble, GLuint a_ic_cam_lens, GLuint a_ic_cam, GLuint a_ic_pencil, GLuint a_ic_pin, GLuint a_ic_smile_eye, GLuint a_ic_smile, GLuint a_ic_videocam) {
     ic_bubble_dot_texture = a_ic_bubble_dot;
     ic_bubble_texture = a_ic_bubble;
     ic_cam_lens_texture = a_ic_cam_lens;
@@ -2601,36 +2601,36 @@ JNIEXPORT void Java_org_telegram_messenger_Intro_setIcTextures(JNIEnv *env, jcla
     ic_videocam_texture = a_ic_videocam;
 }
 
-JNIEXPORT void Java_org_telegram_messenger_Intro_setTelegramTextures(JNIEnv *env, jclass class, GLuint a_telegram_sphere, GLuint a_telegram_plane) {
+JNIEXPORT void Java_io_bettergram_telegram_messenger_Intro_setTelegramTextures(JNIEnv *env, jclass class, GLuint a_telegram_sphere, GLuint a_telegram_plane) {
     telegram_sphere_texture = a_telegram_sphere;
     telegram_plane_texture = a_telegram_plane;
 }
 
-JNIEXPORT void Java_org_telegram_messenger_Intro_setFastTextures(JNIEnv *env, jclass class, GLuint a_fast_body, GLuint a_fast_spiral, GLuint a_fast_arrow, GLuint a_fast_arrow_shadow) {
+JNIEXPORT void Java_io_bettergram_telegram_messenger_Intro_setFastTextures(JNIEnv *env, jclass class, GLuint a_fast_body, GLuint a_fast_spiral, GLuint a_fast_arrow, GLuint a_fast_arrow_shadow) {
     fast_spiral_texture = a_fast_spiral;
     fast_body_texture = a_fast_body;
     fast_arrow_shadow_texture = a_fast_arrow_shadow;
     fast_arrow_texture = a_fast_arrow;
 }
 
-JNIEXPORT void Java_org_telegram_messenger_Intro_setFreeTextures(JNIEnv *env, jclass class, GLuint a_knot_up, GLuint a_knot_down) {
+JNIEXPORT void Java_io_bettergram_telegram_messenger_Intro_setFreeTextures(JNIEnv *env, jclass class, GLuint a_knot_up, GLuint a_knot_down) {
     free_knot_up_texture = a_knot_up;
     free_knot_down_texture = a_knot_down;
 }
 
-JNIEXPORT void Java_org_telegram_messenger_Intro_setPowerfulTextures(JNIEnv *env, jclass class, GLuint a_powerful_mask, GLuint a_powerful_star, GLuint a_powerful_infinity, GLuint a_powerful_infinity_white) {
+JNIEXPORT void Java_io_bettergram_telegram_messenger_Intro_setPowerfulTextures(JNIEnv *env, jclass class, GLuint a_powerful_mask, GLuint a_powerful_star, GLuint a_powerful_infinity, GLuint a_powerful_infinity_white) {
     powerful_mask_texture = a_powerful_mask;
     powerful_star_texture = a_powerful_star;
     powerful_infinity_texture = a_powerful_infinity;
     powerful_infinity_white_texture = a_powerful_infinity_white;
 }
 
-JNIEXPORT void Java_org_telegram_messenger_Intro_setPrivateTextures(JNIEnv *env, jclass class, GLuint a_private_door, GLuint a_private_screw) {
+JNIEXPORT void Java_io_bettergram_telegram_messenger_Intro_setPrivateTextures(JNIEnv *env, jclass class, GLuint a_private_door, GLuint a_private_screw) {
     private_door_texture = a_private_door;
     private_screw_texture = a_private_screw;
 }
 
-JNIEXPORT void Java_org_telegram_messenger_Intro_onSurfaceCreated(JNIEnv *env, jclass class) {
+JNIEXPORT void Java_io_bettergram_telegram_messenger_Intro_onSurfaceCreated(JNIEnv *env, jclass class) {
 
     ms0 = 0;
     date = 1;
@@ -2801,7 +2801,7 @@ JNIEXPORT void Java_org_telegram_messenger_Intro_onSurfaceCreated(JNIEnv *env, j
     cloud_bg = create_rectangle(CSizeMake(160 * 2, 160 * 2), cloud_color);
 }
 
-JNIEXPORT void Java_org_telegram_messenger_Intro_onSurfaceChanged(JNIEnv *env, jclass class, int32_t a_width_px, int32_t a_height_px, float a_scale_factor, int32_t a1) {
+JNIEXPORT void Java_io_bettergram_telegram_messenger_Intro_onSurfaceChanged(JNIEnv *env, jclass class, int32_t a_width_px, int32_t a_height_px, float a_scale_factor, int32_t a1) {
     glViewport(0, 0, a_width_px, a_height_px);
     width = (int32_t) (a_width_px / a_scale_factor);
     height = (int32_t) (a_height_px / a_scale_factor);

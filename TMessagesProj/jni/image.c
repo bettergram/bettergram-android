@@ -438,7 +438,7 @@ static void fastBlur565(int32_t w, int32_t h, int32_t stride, uint8_t *pix, int3
     free(rgb);
 }
 
-JNIEXPORT void Java_org_telegram_messenger_Utilities_blurBitmap(JNIEnv *env, jclass class, jobject bitmap, jint radius, jint unpin, jint width, jint height, jint stride) {
+JNIEXPORT void Java_io_bettergram_telegram_messenger_Utilities_blurBitmap(JNIEnv *env, jclass class, jobject bitmap, jint radius, jint unpin, jint width, jint height, jint stride) {
     if (!bitmap) {
         return;
     }
@@ -469,7 +469,7 @@ JNIEXPORT void Java_org_telegram_messenger_Utilities_blurBitmap(JNIEnv *env, jcl
     }
 }
 
-JNIEXPORT void Java_org_telegram_messenger_Utilities_calcCDT(JNIEnv *env, jclass class, jobject hsvBuffer, jint width, jint height, jobject buffer) {
+JNIEXPORT void Java_io_bettergram_telegram_messenger_Utilities_calcCDT(JNIEnv *env, jclass class, jobject hsvBuffer, jint width, jint height, jobject buffer) {
     float imageWidth = width;
     float imageHeight = height;
     float _clipLimit = 1.25f;
@@ -572,7 +572,7 @@ JNIEXPORT void Java_org_telegram_messenger_Utilities_calcCDT(JNIEnv *env, jclass
     free(cdfsMin);
 }
 
-JNIEXPORT jint Java_org_telegram_messenger_Utilities_pinBitmap(JNIEnv *env, jclass class, jobject bitmap) {
+JNIEXPORT jint Java_io_bettergram_telegram_messenger_Utilities_pinBitmap(JNIEnv *env, jclass class, jobject bitmap) {
     if (bitmap == NULL) {
         return 0;
     }
@@ -580,14 +580,14 @@ JNIEXPORT jint Java_org_telegram_messenger_Utilities_pinBitmap(JNIEnv *env, jcla
     return AndroidBitmap_lockPixels(env, bitmap, &pixels) >= 0 ? 1 : 0;
 }
 
-JNIEXPORT void Java_org_telegram_messenger_Utilities_unpinBitmap(JNIEnv *env, jclass class, jobject bitmap) {
+JNIEXPORT void Java_io_bettergram_telegram_messenger_Utilities_unpinBitmap(JNIEnv *env, jclass class, jobject bitmap) {
     if (bitmap == NULL) {
         return;
     }
     AndroidBitmap_unlockPixels(env, bitmap);
 }
 
-JNIEXPORT jboolean Java_org_telegram_messenger_Utilities_loadWebpImage(JNIEnv *env, jclass class, jobject outputBitmap, jobject buffer, jint len, jobject options, jboolean unpin) {
+JNIEXPORT jboolean Java_io_bettergram_telegram_messenger_Utilities_loadWebpImage(JNIEnv *env, jclass class, jobject outputBitmap, jobject buffer, jint len, jobject options, jboolean unpin) {
     if (!buffer) {
         (*env)->ThrowNew(env, jclass_NullPointerException, "Input buffer can not be null");
         return 0;

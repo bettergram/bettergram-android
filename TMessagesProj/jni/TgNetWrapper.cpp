@@ -121,7 +121,7 @@ void cancelLoadOperation(JNIEnv *env, jclass c, jint address) {
     }
 }
 
-static const char *FileLoadOperationClassPathName = "org/telegram/tgnet/FileLoadOperation";
+static const char *FileLoadOperationClassPathName = "io/bettergram/telegram/tgnet/FileLoadOperation";
 static JNINativeMethod FileLoadOperationMethods[] = {
         {"native_createLoadOpetation", "(IJJJI[B[BLjava/lang/String;IILjava/lang/String;Ljava/lang/String;Ljava/lang/Object;)I", (void *) createLoadOpetation},
         {"native_startLoadOperation", "(I)V", (void *) startLoadOperation},
@@ -152,7 +152,7 @@ jobject getJavaByteBuffer(JNIEnv *env, jclass c, jlong address) {
     return buffer->getJavaByteBuffer();
 }
 
-static const char *NativeByteBufferClassPathName = "org/telegram/tgnet/NativeByteBuffer";
+static const char *NativeByteBufferClassPathName = "io/bettergram/telegram/tgnet/NativeByteBuffer";
 static JNINativeMethod NativeByteBufferMethods[] = {
         {"native_getFreeBuffer", "(I)J", (void *) getFreeBuffer},
         {"native_limit", "(J)I", (void *) limit},
@@ -469,13 +469,13 @@ void setJava(JNIEnv *env, jclass c, jboolean useJavaByteBuffers) {
     }
 }
 
-static const char *ConnectionsManagerClassPathName = "org/telegram/tgnet/ConnectionsManager";
+static const char *ConnectionsManagerClassPathName = "io/bettergram/telegram/tgnet/ConnectionsManager";
 static JNINativeMethod ConnectionsManagerMethods[] = {
         {"native_getCurrentTimeMillis", "(I)J", (void *) getCurrentTimeMillis},
         {"native_getCurrentTime", "(I)I", (void *) getCurrentTime},
         {"native_isTestBackend", "(I)I", (void *) isTestBackend},
         {"native_getTimeDifference", "(I)I", (void *) getTimeDifference},
-        {"native_sendRequest", "(IJLorg/telegram/tgnet/RequestDelegateInternal;Lorg/telegram/tgnet/QuickAckDelegate;Lorg/telegram/tgnet/WriteToSocketDelegate;IIIZI)V", (void *) sendRequest},
+        {"native_sendRequest", "(IJLio/bettergram/telegram/tgnet/RequestDelegateInternal;Lio/bettergram/telegram/tgnet/QuickAckDelegate;Lio/bettergram/telegram/tgnet/WriteToSocketDelegate;IIIZI)V", (void *) sendRequest},
         {"native_cancelRequest", "(IIZ)V", (void *) cancelRequest},
         {"native_cleanUp", "(IZ)V", (void *) cleanUp},
         {"native_cancelRequestsForGuid", "(II)V", (void *) cancelRequestsForGuid},
@@ -495,7 +495,7 @@ static JNINativeMethod ConnectionsManagerMethods[] = {
         {"native_setPushConnectionEnabled", "(IZ)V", (void *) setPushConnectionEnabled},
         {"native_setJava", "(Z)V", (void *) setJava},
         {"native_applyDnsConfig", "(IJLjava/lang/String;)V", (void *) applyDnsConfig},
-        {"native_checkProxy", "(ILjava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Lorg/telegram/tgnet/RequestTimeDelegate;)J", (void *) checkProxy}
+        {"native_checkProxy", "(ILjava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/bettergram/telegram/tgnet/RequestTimeDelegate;)J", (void *) checkProxy}
 };
 
 inline int registerNativeMethods(JNIEnv *env, const char *className, JNINativeMethod *methods, int methodsCount) {
@@ -525,7 +525,7 @@ extern "C" int registerNativeTgNetFunctions(JavaVM *vm, JNIEnv *env) {
         return JNI_FALSE;
     }
     
-    jclass_RequestDelegateInternal = (jclass) env->NewGlobalRef(env->FindClass("org/telegram/tgnet/RequestDelegateInternal"));
+    jclass_RequestDelegateInternal = (jclass) env->NewGlobalRef(env->FindClass("io/bettergram/telegram/tgnet/RequestDelegateInternal"));
     if (jclass_RequestDelegateInternal == 0) {
         return JNI_FALSE;
     }
@@ -534,7 +534,7 @@ extern "C" int registerNativeTgNetFunctions(JavaVM *vm, JNIEnv *env) {
         return JNI_FALSE;
     }
 
-    jclass_RequestTimeDelegate = (jclass) env->NewGlobalRef(env->FindClass("org/telegram/tgnet/RequestTimeDelegate"));
+    jclass_RequestTimeDelegate = (jclass) env->NewGlobalRef(env->FindClass("io/bettergram/telegram/tgnet/RequestTimeDelegate"));
     if (jclass_RequestTimeDelegate == 0) {
         return JNI_FALSE;
     }
@@ -543,7 +543,7 @@ extern "C" int registerNativeTgNetFunctions(JavaVM *vm, JNIEnv *env) {
         return JNI_FALSE;
     }
 
-    jclass_QuickAckDelegate = (jclass) env->NewGlobalRef(env->FindClass("org/telegram/tgnet/QuickAckDelegate"));
+    jclass_QuickAckDelegate = (jclass) env->NewGlobalRef(env->FindClass("io/bettergram/telegram/tgnet/QuickAckDelegate"));
     if (jclass_RequestDelegateInternal == 0) {
         return JNI_FALSE;
     }
@@ -552,7 +552,7 @@ extern "C" int registerNativeTgNetFunctions(JavaVM *vm, JNIEnv *env) {
         return JNI_FALSE;
     }
 
-    jclass_WriteToSocketDelegate = (jclass) env->NewGlobalRef(env->FindClass("org/telegram/tgnet/WriteToSocketDelegate"));
+    jclass_WriteToSocketDelegate = (jclass) env->NewGlobalRef(env->FindClass("io/bettergram/telegram/tgnet/WriteToSocketDelegate"));
     if (jclass_WriteToSocketDelegate == 0) {
         return JNI_FALSE;
     }
@@ -561,7 +561,7 @@ extern "C" int registerNativeTgNetFunctions(JavaVM *vm, JNIEnv *env) {
         return JNI_FALSE;
     }
 
-    jclass_FileLoadOperationDelegate = (jclass) env->NewGlobalRef(env->FindClass("org/telegram/tgnet/FileLoadOperationDelegate"));
+    jclass_FileLoadOperationDelegate = (jclass) env->NewGlobalRef(env->FindClass("io/bettergram/telegram/tgnet/FileLoadOperationDelegate"));
     if (jclass_FileLoadOperationDelegate == 0) {
         return JNI_FALSE;
     }
@@ -581,7 +581,7 @@ extern "C" int registerNativeTgNetFunctions(JavaVM *vm, JNIEnv *env) {
         return JNI_FALSE;
     }
 
-    jclass_ConnectionsManager = (jclass) env->NewGlobalRef(env->FindClass("org/telegram/tgnet/ConnectionsManager"));
+    jclass_ConnectionsManager = (jclass) env->NewGlobalRef(env->FindClass("io/bettergram/telegram/tgnet/ConnectionsManager"));
     if (jclass_ConnectionsManager == 0) {
         return JNI_FALSE;
     }

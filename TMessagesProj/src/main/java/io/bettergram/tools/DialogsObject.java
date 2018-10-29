@@ -1,9 +1,9 @@
 package io.bettergram.tools;
 
-import org.telegram.messenger.DialogObject;
-import org.telegram.messenger.MessagesController;
-import org.telegram.messenger.UserConfig;
-import org.telegram.tgnet.TLRPC;
+import io.bettergram.telegram.messenger.DialogObject;
+import io.bettergram.telegram.messenger.MessagesController;
+import io.bettergram.telegram.messenger.UserConfig;
+import io.bettergram.telegram.tgnet.TLRPC;
 
 public class DialogsObject extends DialogObject {
 

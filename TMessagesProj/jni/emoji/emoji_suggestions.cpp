@@ -415,7 +415,7 @@ jmethodID jclass_Suggestion_constructor;
 extern "C" {
 
 jobjectArray
-Java_org_telegram_messenger_Emoji_getSuggestion(JNIEnv *env, jobject object, jstring query) {
+Java_io_bettergram_telegram_messenger_Emoji_getSuggestion(JNIEnv *env, jobject object, jstring query) {
     const jchar *raw = env->GetStringChars(query, 0);
     jsize len = env->GetStringLength(query);
     std::vector<Suggestion> suggestions = GetSuggestions(utf16string(raw, len));
@@ -426,7 +426,7 @@ Java_org_telegram_messenger_Emoji_getSuggestion(JNIEnv *env, jobject object, jst
     }
 
     if (jclass_Suggestion == nullptr) {
-        jclass_Suggestion = (jclass) env->NewGlobalRef(env->FindClass("org/telegram/messenger/EmojiSuggestion"));
+        jclass_Suggestion = (jclass) env->NewGlobalRef(env->FindClass("io/bettergram/telegram/messenger/EmojiSuggestion"));
         jclass_Suggestion_constructor = env->GetMethodID(jclass_Suggestion, "<init>",
                                                          "(Ljava/lang/String;Ljava/lang/String;)V");
     }

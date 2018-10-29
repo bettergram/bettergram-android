@@ -83,18 +83,18 @@
             tools:node="replace"/>
 
     <application
-            android:name="org.telegram.messenger.ApplicationLoader"
+            android:name="io.bettergram.telegram.messenger.ApplicationLoader"
             android:allowBackup="false"
             android:hardwareAccelerated="@bool/useHardwareAcceleration"
             android:icon="@drawable/ic_launcher"
             android:largeHeap="true"
-            android:manageSpaceActivity="org.telegram.ui.ExternalActionActivity"
+            android:manageSpaceActivity="io.bettergram.telegram.ui.ExternalActionActivity"
             android:roundIcon="@drawable/ic_launcher"
             android:supportsRtl="false"
             android:theme="@style/Theme.TMessages.Start"
             tools:replace="android:supportsRtl">
         <activity
-                android:name="org.telegram.ui.LaunchActivity"
+                android:name="io.bettergram.telegram.ui.LaunchActivity"
                 android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
                 android:hardwareAccelerated="@bool/useHardwareAcceleration"
                 android:launchMode="singleTask"
@@ -152,7 +152,7 @@
 
                 <category android:name="android.intent.category.DEFAULT"/>
 
-                <data android:mimeType="vnd.android.cursor.item/vnd.org.telegram.messenger.android.profile"/>
+                <data android:mimeType="vnd.android.cursor.item/vnd.io.bettergram.messenger.android.profile"/>
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
@@ -201,7 +201,7 @@
                     android:value=".TgChooserTargetService"/>
         </activity>
         <activity
-                android:name="org.telegram.ui.ShareActivity"
+                android:name="io.bettergram.telegram.ui.ShareActivity"
                 android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
                 android:excludeFromRecents="true"
                 android:hardwareAccelerated="@bool/useHardwareAcceleration"
@@ -220,28 +220,28 @@
             </intent-filter>
         </activity>
         <activity
-                android:name="org.telegram.ui.ExternalActionActivity"
+                android:name="io.bettergram.telegram.ui.ExternalActionActivity"
                 android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
                 android:hardwareAccelerated="@bool/useHardwareAcceleration"
                 android:windowSoftInputMode="adjustPan">
             <intent-filter android:icon="@drawable/ic_launcher">
-                <action android:name="org.telegram.passport.AUTHORIZE"/>
+                <action android:name="io.bettergram.passport.AUTHORIZE"/>
 
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <activity
-                android:name="org.telegram.ui.IntroActivity"
+                android:name="io.bettergram.telegram.ui.IntroActivity"
                 android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
                 android:launchMode="singleTask">
         </activity>
         <activity
-                android:name="org.telegram.messenger.OpenChatReceiver"
+                android:name="io.bettergram.telegram.messenger.OpenChatReceiver"
                 android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
                 android:exported="true">
         </activity>
         <activity
-                android:name="org.telegram.ui.PopupNotificationActivity"
+                android:name="io.bettergram.telegram.ui.PopupNotificationActivity"
                 android:configChanges="keyboard|keyboardHidden|navigation|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
                 android:excludeFromRecents="true"
                 android:launchMode="singleTask"
@@ -252,54 +252,54 @@
                 tools:targetApi="n">
         </activity>
         <activity
-                android:name="org.telegram.ui.VoIPActivity"
+                android:name="io.bettergram.telegram.ui.VoIPActivity"
                 android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
                 android:excludeFromRecents="true"
                 android:taskAffinity="${applicationId}.voip"
                 android:windowSoftInputMode="adjustNothing">
         </activity>
         <!-- <activity -->
-        <!-- android:name="org.telegram.ui.VoIPGroupActivity" -->
+        <!-- android:name="io.bettergram.telegram.ui.VoIPGroupActivity" -->
         <!-- android:configChanges="keyboard|keyboardHidden|orientation|screenSize" -->
         <!-- android:excludeFromRecents="true" -->
         <!-- android:windowSoftInputMode="adjustNothing" -->
         <!-- android:taskAffinity="${applicationId}.voip"> -->
         <!-- </activity> -->
         <activity
-                android:name="org.telegram.ui.VoIPPermissionActivity"
+                android:name="io.bettergram.telegram.ui.VoIPPermissionActivity"
                 android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
                 android:excludeFromRecents="true"
                 android:taskAffinity="${applicationId}.voip"
                 android:theme="@style/Theme.TMessages.Transparent"/>
         <activity
-                android:name="org.telegram.ui.VoIPFeedbackActivity"
+                android:name="io.bettergram.telegram.ui.VoIPFeedbackActivity"
                 android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
                 android:excludeFromRecents="true"
                 android:taskAffinity="${applicationId}.voip_feedback"
                 android:theme="@style/Theme.TMessages.TransparentWithAlerts"/>
 
-        <activity android:name="org.telegram.ui.SplashActivity"/>
+        <activity android:name="io.bettergram.telegram.ui.SplashActivity"/>
 
         <receiver
-                android:name="org.telegram.messenger.AutoMessageHeardReceiver"
+                android:name="io.bettergram.telegram.messenger.AutoMessageHeardReceiver"
                 android:exported="false">
             <intent-filter>
-                <action android:name="org.telegram.messenger.ACTION_MESSAGE_HEARD"/>
+                <action android:name="io.bettergram.messenger.ACTION_MESSAGE_HEARD"/>
             </intent-filter>
         </receiver>
         <receiver
-                android:name="org.telegram.messenger.AutoMessageReplyReceiver"
+                android:name="io.bettergram.telegram.messenger.AutoMessageReplyReceiver"
                 android:exported="false">
             <intent-filter>
-                <action android:name="org.telegram.messenger.ACTION_MESSAGE_REPLY"/>
+                <action android:name="io.bettergram.messenger.ACTION_MESSAGE_REPLY"/>
             </intent-filter>
         </receiver>
-        <receiver android:name="org.telegram.messenger.CallReceiver">
+        <receiver android:name="io.bettergram.telegram.messenger.CallReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.PHONE_STATE"/>
             </intent-filter>
         </receiver>
-        <receiver android:name="org.telegram.messenger.SmsListener">
+        <receiver android:name="io.bettergram.telegram.messenger.SmsListener">
             <intent-filter>
                 <action android:name="android.provider.Telephony.SMS_RECEIVED"/>
                 <action android:name="android.provider.Telephony.NEW_OUTGOING_SMS"/>
@@ -307,7 +307,7 @@
         </receiver>
 
         <service
-                android:name="org.telegram.messenger.AuthenticatorService"
+                android:name="io.bettergram.telegram.messenger.AuthenticatorService"
                 android:exported="true">
             <intent-filter>
                 <action android:name="android.accounts.AccountAuthenticator"/>
@@ -318,7 +318,7 @@
                     android:resource="@xml/auth"/>
         </service>
         <service
-                android:name="org.telegram.messenger.ContactsSyncAdapterService"
+                android:name="io.bettergram.telegram.messenger.ContactsSyncAdapterService"
                 android:exported="true">
             <intent-filter>
                 <action android:name="android.content.SyncAdapter"/>
@@ -332,7 +332,7 @@
                     android:resource="@xml/contacts"/>
         </service>
         <service
-                android:name="org.telegram.messenger.TgChooserTargetService"
+                android:name="io.bettergram.telegram.messenger.TgChooserTargetService"
                 android:label="@string/AppName"
                 android:permission="android.permission.BIND_CHOOSER_TARGET_SERVICE">
             <intent-filter>
@@ -340,42 +340,42 @@
             </intent-filter>
         </service>
         <service
-                android:name="org.telegram.messenger.KeepAliveJob"
+                android:name="io.bettergram.telegram.messenger.KeepAliveJob"
                 android:exported="false"
                 android:permission="android.permission.BIND_JOB_SERVICE"/>
         <service
-                android:name="org.telegram.messenger.BringAppForegroundService"
+                android:name="io.bettergram.telegram.messenger.BringAppForegroundService"
                 android:enabled="true"/>
         <service
-                android:name="org.telegram.messenger.NotificationsService"
+                android:name="io.bettergram.telegram.messenger.NotificationsService"
                 android:enabled="true"/>
         <service
-                android:name="org.telegram.messenger.NotificationRepeat"
+                android:name="io.bettergram.telegram.messenger.NotificationRepeat"
                 android:exported="false"/>
         <service
-                android:name="org.telegram.messenger.ClearCacheService"
+                android:name="io.bettergram.telegram.messenger.ClearCacheService"
                 android:exported="false"/>
         <service
-                android:name="org.telegram.messenger.VideoEncodingService"
+                android:name="io.bettergram.telegram.messenger.VideoEncodingService"
                 android:enabled="true"/>
         <service
-                android:name="org.telegram.messenger.LocationSharingService"
+                android:name="io.bettergram.telegram.messenger.LocationSharingService"
                 android:enabled="true"/>
         <service
-                android:name="org.telegram.messenger.voip.VoIPService"
+                android:name="io.bettergram.telegram.messenger.voip.VoIPService"
                 android:enabled="true"/>
         <service
-                android:name="org.telegram.messenger.MusicPlayerService"
+                android:name="io.bettergram.telegram.messenger.MusicPlayerService"
                 android:enabled="true"
                 android:exported="true"/>
         <service
-                android:name="org.telegram.messenger.MusicBrowserService"
+                android:name="io.bettergram.telegram.messenger.MusicBrowserService"
                 android:exported="true">
             <intent-filter>
                 <action android:name="android.media.browse.MediaBrowserService"/>
             </intent-filter>
         </service>
-        <service android:name="org.telegram.messenger.WearDataLayerListenerService">
+        <service android:name="io.bettergram.telegram.messenger.WearDataLayerListenerService">
             <intent-filter>
 
                 <!-- listeners receive events that match the action and data filters -->
@@ -390,7 +390,7 @@
             </intent-filter>
         </service>
         <service
-                android:name="org.telegram.messenger.voip.TelegramConnectionService"
+                android:name="io.bettergram.telegram.messenger.voip.TelegramConnectionService"
                 android:permission="android.permission.BIND_TELECOM_CONNECTION_SERVICE">
             <intent-filter>
                 <action android:name="android.telecom.ConnectionService"/>
@@ -405,32 +405,32 @@
                 android:exported="false">
         </service>
 
-        <receiver android:name="org.telegram.messenger.MusicPlayerReceiver">
+        <receiver android:name="io.bettergram.telegram.messenger.MusicPlayerReceiver">
             <intent-filter>
-                <action android:name="org.telegram.android.musicplayer.close"/>
-                <action android:name="org.telegram.android.musicplayer.pause"/>
-                <action android:name="org.telegram.android.musicplayer.next"/>
-                <action android:name="org.telegram.android.musicplayer.play"/>
-                <action android:name="org.telegram.android.musicplayer.previous"/>
+                <action android:name="io.bettergram.android.musicplayer.close"/>
+                <action android:name="io.bettergram.android.musicplayer.pause"/>
+                <action android:name="io.bettergram.android.musicplayer.next"/>
+                <action android:name="io.bettergram.android.musicplayer.play"/>
+                <action android:name="io.bettergram.android.musicplayer.previous"/>
                 <action android:name="android.intent.action.MEDIA_BUTTON"/>
                 <action android:name="android.media.AUDIO_BECOMING_NOISY"/>
             </intent-filter>
         </receiver>
-        <receiver android:name="org.telegram.messenger.voip.VoIPMediaButtonReceiver">
+        <receiver android:name="io.bettergram.telegram.messenger.voip.VoIPMediaButtonReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.MEDIA_BUTTON"/>
             </intent-filter>
         </receiver>
         <receiver
-                android:name="org.telegram.messenger.AppStartReceiver"
+                android:name="io.bettergram.telegram.messenger.AppStartReceiver"
                 android:enabled="true">
             <intent-filter>
-                <action android:name="org.telegram.start"/>
+                <action android:name="io.bettergram.start"/>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>
         </receiver>
         <receiver
-                android:name="org.telegram.messenger.RefererReceiver"
+                android:name="io.bettergram.telegram.messenger.RefererReceiver"
                 android:exported="true"
                 android:permission="android.permission.INSTALL_PACKAGES">
             <intent-filter>
@@ -438,29 +438,29 @@
             </intent-filter>
         </receiver>
         <receiver
-                android:name="org.telegram.messenger.WearReplyReceiver"
+                android:name="io.bettergram.telegram.messenger.WearReplyReceiver"
                 android:enabled="true"/>
         <receiver
-                android:name="org.telegram.messenger.StopLiveLocationReceiver"
+                android:name="io.bettergram.telegram.messenger.StopLiveLocationReceiver"
                 android:enabled="true"/>
         <receiver
-                android:name="org.telegram.messenger.PopupReplyReceiver"
+                android:name="io.bettergram.telegram.messenger.PopupReplyReceiver"
                 android:enabled="true"/>
         <receiver
-                android:name="org.telegram.messenger.NotificationCallbackReceiver"
+                android:name="io.bettergram.telegram.messenger.NotificationCallbackReceiver"
                 android:enabled="true"
                 android:exported="false"/>
         <receiver
-                android:name="org.telegram.messenger.ShareBroadcastReceiver"
+                android:name="io.bettergram.telegram.messenger.ShareBroadcastReceiver"
                 android:enabled="true"/>
         <receiver
-                android:name="org.telegram.messenger.CustomTabsCopyReceiver"
+                android:name="io.bettergram.telegram.messenger.CustomTabsCopyReceiver"
                 android:enabled="true"/>
         <receiver
-                android:name="org.telegram.messenger.NotificationDismissReceiver"
+                android:name="io.bettergram.telegram.messenger.NotificationDismissReceiver"
                 android:exported="false"/>
         <receiver
-                android:name="org.telegram.messenger.voip.VoIPActionsReceiver"
+                android:name="io.bettergram.telegram.messenger.voip.VoIPActionsReceiver"
                 android:exported="false"/>
 
         <provider

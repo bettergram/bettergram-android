@@ -119,7 +119,7 @@ int decode_packet(VideoInfo *info, int *got_frame) {
     return decoded;
 }
 
-jlong Java_org_telegram_ui_Components_AnimatedFileDrawable_createDecoder(JNIEnv *env, jclass clazz, jstring src, jintArray data) {
+jlong Java_io_bettergram_telegram_ui_Components_AnimatedFileDrawable_createDecoder(JNIEnv *env, jclass clazz, jstring src, jintArray data) {
     VideoInfo *info = new VideoInfo();
     
     char const *srcString = env->GetStringUTFChars(src, 0);
@@ -187,7 +187,7 @@ jlong Java_org_telegram_ui_Components_AnimatedFileDrawable_createDecoder(JNIEnv 
     return (jlong) (intptr_t) info;
 }
 
-void Java_org_telegram_ui_Components_AnimatedFileDrawable_destroyDecoder(JNIEnv *env, jclass clazz, jlong ptr) {
+void Java_io_bettergram_telegram_ui_Components_AnimatedFileDrawable_destroyDecoder(JNIEnv *env, jclass clazz, jlong ptr) {
     if (ptr == NULL) {
         return;
     }
@@ -196,7 +196,7 @@ void Java_org_telegram_ui_Components_AnimatedFileDrawable_destroyDecoder(JNIEnv 
 }
 
     
-jint Java_org_telegram_ui_Components_AnimatedFileDrawable_getVideoFrame(JNIEnv *env, jclass clazz, jlong ptr, jobject bitmap, jintArray data) {
+jint Java_io_bettergram_telegram_ui_Components_AnimatedFileDrawable_getVideoFrame(JNIEnv *env, jclass clazz, jlong ptr, jobject bitmap, jintArray data) {
     if (ptr == NULL || bitmap == nullptr) {
         return 0;
     }

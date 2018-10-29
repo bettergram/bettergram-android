@@ -8,7 +8,7 @@ bool callback(const google_breakpad::MinidumpDescriptor &descriptor, void *conte
 }*/
 
 extern "C" {
-    void Java_org_telegram_messenger_NativeLoader_init(JNIEnv* env, jobject obj, jstring filepath, jboolean enable) {
+    void Java_io_bettergram_telegram_messenger_NativeLoader_init(JNIEnv* env, jobject obj, jstring filepath, jboolean enable) {
         return;
         /*if (enable) {
             const char *path = env->GetStringUTFChars(filepath, 0);
