@@ -12,14 +12,12 @@ import android.animation.AnimatorSet;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
-
 import io.bettergram.telegram.messenger.FileLog;
 import io.bettergram.telegram.messenger.UserConfig;
 import io.bettergram.telegram.tgnet.ConnectionsManager;
@@ -39,6 +37,12 @@ public class BaseFragment {
     protected Bundle arguments;
     protected boolean swipeBackEnabled = true;
     protected boolean hasOwnBackground = false;
+
+    protected ActivityEnabledListener activityListener;
+
+    protected interface ActivityEnabledListener {
+        void onActivityEnabled(Activity activity);
+    }
 
     public BaseFragment() {
         classGuid = ConnectionsManager.generateClassGuid();
@@ -74,6 +78,14 @@ public class BaseFragment {
 
     public int getCurrentAccount() {
         return currentAccount;
+    }
+
+    protected void getAvailableActivity(ActivityEnabledListener listener) {
+        if (getParentActivity() == null) {
+            activityListener = listener;
+        } else {
+            listener.onActivityEnabled(getParentActivity());
+        }
     }
 
     protected void setInPreviewMode(boolean value) {
@@ -216,6 +228,13 @@ public class BaseFragment {
 
     public boolean needDelayOpenAnimation() {
         return false;
+    }
+
+    public void onAttach(Activity activity) {
+        if (activityListener != null) {
+            activityListener.onActivityEnabled(activity);
+            activityListener = null;
+        }
     }
 
     public void onResume() {

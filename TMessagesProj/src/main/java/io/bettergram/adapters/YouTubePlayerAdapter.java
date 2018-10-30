@@ -20,9 +20,9 @@ import io.bettergram.data.VideoList;
 import io.bettergram.data.VideoList__JsonHelper;
 import io.bettergram.messenger.R;
 import io.bettergram.service.YoutubeDataService;
-import io.bettergram.utils.RoundedCornersTransform;
 import io.bettergram.telegram.messenger.AndroidUtilities;
 import io.bettergram.telegram.messenger.support.widget.RecyclerView;
+import io.bettergram.utils.RoundedCornersTransform;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -175,6 +175,10 @@ public class YouTubePlayerAdapter extends RecyclerView.Adapter<YouTubePlayerAdap
      * Unregister {@link BroadcastReceiver} of {@link YoutubeDataService}
      */
     public void unregisterReceiver(Activity activity) {
-        activity.unregisterReceiver(receiver);
+        try {
+            activity.unregisterReceiver(receiver);
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -173,7 +173,11 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
      * Unregister {@link BroadcastReceiver} of {@link NewsDataService}
      */
     public void unregisterReceiver(Activity activity) {
-        activity.unregisterReceiver(receiver);
+        try {
+            activity.unregisterReceiver(receiver);
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        }
     }
 
 }

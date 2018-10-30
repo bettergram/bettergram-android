@@ -202,7 +202,11 @@ public class ResourcesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
      * Unregister {@link BroadcastReceiver} of {@link ResourcesDataService}
      */
     public void unregisterReceiver(Activity activity) {
-        activity.unregisterReceiver(receiver);
+        try {
+            activity.unregisterReceiver(receiver);
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        }
     }
 
 }

@@ -25,6 +25,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.annotation.Keep;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.HapticFeedbackConstants;
 import android.view.KeyEvent;
@@ -51,9 +52,13 @@ public class ActionBarLayout extends FrameLayout {
 
     public interface ActionBarLayoutDelegate {
         boolean onPreIme();
+
         boolean needPresentFragment(BaseFragment fragment, boolean removeLast, boolean forceWithoutAnimation, ActionBarLayout layout);
+
         boolean needAddFragmentToStack(BaseFragment fragment, ActionBarLayout layout);
+
         boolean needCloseLastFragment(ActionBarLayout layout);
+
         void onRebuildAllFragments(ActionBarLayout layout, boolean last);
     }
 
@@ -349,7 +354,7 @@ public class ActionBarLayout extends FrameLayout {
                 layerShadowDrawable.setAlpha((int) (0xff * alpha));
                 layerShadowDrawable.draw(canvas);
             } else if (child == containerViewBack) {
-                float opacity = Math.min(0.8f, (width - translationX) / (float)width);
+                float opacity = Math.min(0.8f, (width - translationX) / (float) width);
                 if (opacity < 0) {
                     opacity = 0;
                 }
@@ -1512,6 +1517,14 @@ public class ActionBarLayout extends FrameLayout {
 
     public boolean extendActionMode(Menu menu) {
         return !fragmentsStack.isEmpty() && fragmentsStack.get(fragmentsStack.size() - 1).extendActionMode(menu);
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        for (BaseFragment fragment : fragmentsStack) {
+            fragment.onAttach(parentActivity);
+        }
     }
 
     @Override

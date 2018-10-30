@@ -31,13 +31,13 @@ import io.bettergram.data.CryptoCurrencyInfoResponse;
 import io.bettergram.data.CryptoCurrencyInfoResponse__JsonHelper;
 import io.bettergram.messenger.R;
 import io.bettergram.service.CryptoDataService;
-import io.bettergram.utils.Number;
-import io.bettergram.utils.SpanBuilder;
 import io.bettergram.telegram.messenger.AndroidUtilities;
 import io.bettergram.telegram.messenger.support.widget.RecyclerView;
 import io.bettergram.telegram.ui.ActionBar.Theme;
 import io.bettergram.telegram.ui.Components.LayoutHelper;
 import io.bettergram.telegram.ui.Components.TabStrip.SlidingTabLayout;
+import io.bettergram.utils.Number;
+import io.bettergram.utils.SpanBuilder;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -375,7 +375,11 @@ public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
      * Unregister {@link BroadcastReceiver} of {@link CryptoDataService}
      */
     public void unregisterReceiver(Activity activity) {
-        activity.unregisterReceiver(receiver);
+        try {
+            activity.unregisterReceiver(receiver);
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        }
     }
 
     class TabsPagerAdapter extends PagerAdapter {

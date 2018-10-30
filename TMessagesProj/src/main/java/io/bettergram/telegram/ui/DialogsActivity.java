@@ -34,8 +34,8 @@ import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.*;
-import io.bettergram.messenger.R;
 import io.bettergram.adapters.*;
+import io.bettergram.messenger.R;
 import io.bettergram.telegram.messenger.*;
 import io.bettergram.telegram.messenger.support.widget.LinearLayoutManager;
 import io.bettergram.telegram.messenger.support.widget.LinearSmoothScrollerMiddle;
@@ -1341,21 +1341,17 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             });
         }
 
-        Activity activity = getParentActivity();
-        if (activity != null) {
-
-            cryptoAdapter.startService(activity);
-
-            newsAdapter.startService(getParentActivity());
-
-            if (videoAdapter == null) {
-                videoAdapter = new YouTubePlayerAdapter(activity);
+        getAvailableActivity(activity -> {
+            if (activity != null) {
+                cryptoAdapter.startService(activity);
+                newsAdapter.startService(getParentActivity());
+                if (videoAdapter == null) {
+                    videoAdapter = new YouTubePlayerAdapter(activity);
+                }
+                videoAdapter.startService(activity);
+                resourcesAdapter.startService(activity);
             }
-
-            videoAdapter.startService(activity);
-
-            resourcesAdapter.startService(activity);
-        }
+        });
 
         BottomNavigationBar bottomBar = new BottomNavigationBar(context)
                 .setOnSelectListener((position, title) -> {
@@ -1447,21 +1443,22 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             }
         }
 
-        Activity activity = getParentActivity();
-        if (activity != null) {
-            if (cryptoAdapter != null) {
-                cryptoAdapter.registerReceiver(activity);
+        getAvailableActivity(activity -> {
+            if (activity != null) {
+                if (cryptoAdapter != null) {
+                    cryptoAdapter.registerReceiver(activity);
+                }
+                if (newsAdapter != null) {
+                    newsAdapter.registerReceiver(activity);
+                }
+                if (videoAdapter != null) {
+                    videoAdapter.registerReceiver(activity);
+                }
+                if (resourcesAdapter != null) {
+                    resourcesAdapter.registerReceiver(activity);
+                }
             }
-            if (newsAdapter != null) {
-                newsAdapter.registerReceiver(activity);
-            }
-            if (videoAdapter != null) {
-                videoAdapter.registerReceiver(activity);
-            }
-            if (resourcesAdapter != null) {
-                resourcesAdapter.registerReceiver(activity);
-            }
-        }
+        });
     }
 
     @Override
@@ -1470,21 +1467,22 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         if (commentView != null) {
             commentView.onResume();
         }
-        Activity activity = getParentActivity();
-        if (activity != null) {
-            if (cryptoAdapter != null) {
-                cryptoAdapter.unregisterReceiver(activity);
+        getAvailableActivity(activity -> {
+            if (activity != null) {
+                if (cryptoAdapter != null) {
+                    cryptoAdapter.unregisterReceiver(activity);
+                }
+                if (newsAdapter != null) {
+                    newsAdapter.unregisterReceiver(activity);
+                }
+                if (videoAdapter != null) {
+                    videoAdapter.unregisterReceiver(activity);
+                }
+                if (resourcesAdapter != null) {
+                    resourcesAdapter.unregisterReceiver(activity);
+                }
             }
-            if (newsAdapter != null) {
-                newsAdapter.unregisterReceiver(activity);
-            }
-            if (videoAdapter != null) {
-                videoAdapter.unregisterReceiver(activity);
-            }
-            if (resourcesAdapter != null) {
-                resourcesAdapter.unregisterReceiver(activity);
-            }
-        }
+        });
     }
 
     private void checkUnreadCount(boolean animated) {
