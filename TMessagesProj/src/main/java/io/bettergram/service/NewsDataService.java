@@ -3,7 +3,6 @@ package io.bettergram.service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.util.Log;
 import com.rometools.rome.feed.synd.SyndEntry;
 import com.rometools.rome.feed.synd.SyndFeed;
 import com.rometools.rome.io.FeedException;
@@ -12,6 +11,9 @@ import com.rometools.rome.io.XmlReader;
 import io.bettergram.data.*;
 import io.bettergram.service.api.NewsApi;
 import io.bettergram.utils.io.IOUtils;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import org.json.JSONException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -29,22 +31,24 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import static android.text.TextUtils.isEmpty;
 import static io.bettergram.utils.AeSimpleSHA1.SHA1;
 
 public class NewsDataService extends BaseDataService {
 
-    private static final String TAG = NewsDataService.class.getName();
+    private static final OkHttpClient CLIENT = new OkHttpClient.Builder()
+            .connectTimeout(5, TimeUnit.MINUTES)
+            .writeTimeout(5, TimeUnit.MINUTES)
+            .readTimeout(5, TimeUnit.MINUTES)
+            .build();
 
     public static final String NEWS_PREF = "NEWS_PREF";
-
     public static final String KEY_FEED_XML_SET = "KEY_FEED_XML_SET";
-
     public static final String KEY_SAVED_LIST = "KEY_SAVED_LIST";
 
     public static final String RESULT = "result";
-
     public static final String NOTIFICATION = "io.bettergram.service.NewsDataService";
 
     private SharedPreferences pref;
@@ -141,19 +145,32 @@ public class NewsDataService extends BaseDataService {
         }
 
         if (!articles.isEmpty()) {
+
+
             for (int i = 0, size = articles.size(); i < size; i++) {
                 try {
                     if (isEmpty(articles.get(i).urlToImage)) {
-                        Document document = Jsoup.parse(new URL(articles.get(i).url), 10000);
-                        Elements metas = document.head().getElementsByTag("meta");
-                        for (Element meta : metas) {
-                            Elements attribute = meta.getElementsByAttributeValue("property", "og:image");
-                            String content = attribute.attr("content");
-                            if (!isEmpty(content)) {
-                                articles.get(i).urlToImage = content;
-                                break;
+
+                        Request request = new Request.Builder()
+                                .url(articles.get(i).url)
+                                .build();
+
+                        Response response = CLIENT.newCall(request).execute();
+
+                        if (response.body() != null && response.isSuccessful()) {
+                            String result = response.body().string();
+                            Document document = Jsoup.parse(result);
+                            Elements metas = document.head().getElementsByTag("meta");
+                            for (Element meta : metas) {
+                                Elements attribute = meta.getElementsByAttributeValue("property", "og:image");
+                                String content = attribute.attr("content");
+                                if (!isEmpty(content)) {
+                                    articles.get(i).urlToImage = content;
+                                    break;
+                                }
                             }
                         }
+
                     }
                 } catch (IOException e) {
                     e.printStackTrace();

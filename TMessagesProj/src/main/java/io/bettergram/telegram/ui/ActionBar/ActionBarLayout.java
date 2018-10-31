@@ -16,33 +16,19 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Outline;
-import android.graphics.Paint;
-import android.graphics.Rect;
+import android.graphics.*;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.annotation.Keep;
-import android.util.Log;
-import android.view.Gravity;
-import android.view.HapticFeedbackConstants;
-import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MotionEvent;
-import android.view.VelocityTracker;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewOutlineProvider;
+import android.view.*;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-
+import io.bettergram.messenger.R;
 import io.bettergram.telegram.messenger.AndroidUtilities;
 import io.bettergram.telegram.messenger.MessagesController;
-import io.bettergram.messenger.R;
 import io.bettergram.telegram.ui.Components.CubicBezierInterpolator;
 import io.bettergram.telegram.ui.Components.LayoutHelper;
 
@@ -1522,8 +1508,10 @@ public class ActionBarLayout extends FrameLayout {
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        for (BaseFragment fragment : fragmentsStack) {
-            fragment.onAttach(parentActivity);
+        if (fragmentsStack != null) {
+            for (BaseFragment fragment : fragmentsStack) {
+                fragment.onAttach(parentActivity);
+            }
         }
     }
 

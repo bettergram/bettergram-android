@@ -178,7 +178,7 @@ public class BottomNavigationBar extends LinearLayout implements NotificationCen
         TextView tabTitle = new TextView(context);
         tabTitle.setMaxLines(1);
         tabTitle.setIncludeFontPadding(false);
-        tabTitle.setTextSize(AndroidUtilities.sp(9));
+        tabTitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, 12);
 
         addViewOnUIThread(tabView, tabTitle, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER));
 
