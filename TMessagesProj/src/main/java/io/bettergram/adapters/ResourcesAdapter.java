@@ -1,8 +1,15 @@
 package io.bettergram.adapters;
 
 
+import static android.text.TextUtils.isEmpty;
+import static io.bettergram.telegram.messenger.ApplicationLoader.picasso;
+
 import android.app.Activity;
-import android.content.*;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -11,7 +18,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import com.squareup.picasso.Picasso;
 import io.bettergram.data.ResourceGroup;
 import io.bettergram.data.ResourceItem;
 import io.bettergram.data.ResourcesData;
@@ -21,12 +27,9 @@ import io.bettergram.service.ResourcesDataService;
 import io.bettergram.telegram.messenger.AndroidUtilities;
 import io.bettergram.telegram.messenger.support.widget.RecyclerView;
 import io.bettergram.telegram.ui.Components.RecyclerListView;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import static android.text.TextUtils.isEmpty;
 
 public class ResourcesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -78,6 +81,7 @@ public class ResourcesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     }
 
     class TitleViewHolder extends RecyclerView.ViewHolder {
+
         TextView textTitle;
 
         TitleViewHolder(View itemView) {
@@ -88,6 +92,7 @@ public class ResourcesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     }
 
     class ContentViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+
         View layoutContent;
         ImageView imageResource;
         TextView textName, textDesc;
@@ -111,7 +116,8 @@ public class ResourcesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             final Context context = v.getContext();
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(item.url));
             if (item.url.contains("tg://")) {
-                ComponentName comp = new ComponentName(context.getPackageName(), "io.bettergram.telegram.ui.LaunchActivity");
+                ComponentName comp = new ComponentName(context.getPackageName(),
+                        "io.bettergram.telegram.ui.LaunchActivity");
                 intent.setComponent(comp);
             }
             context.startActivity(intent);
@@ -129,8 +135,12 @@ public class ResourcesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     public int getItemViewType(int position) {
         for (int i = 0, size_i = objects.size(); i < size_i; i++) {
             if (i == position) {
-                if (objects.get(i) instanceof String) return 0;
-                if (objects.get(i) instanceof ResourceItem) return 1;
+                if (objects.get(i) instanceof String) {
+                    return 0;
+                }
+                if (objects.get(i) instanceof ResourceItem) {
+                    return 1;
+                }
             }
         }
         return -1;
@@ -149,12 +159,16 @@ public class ResourcesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         switch (viewType) {
             case -1:
                 View footer = new View(parent.getContext());
-                footer.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, AndroidUtilities.dp(98)));
+                footer.setLayoutParams(
+                        new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                                AndroidUtilities.dp(98)));
                 return new RecyclerListView.Holder(footer);
             case 0:
-                return new TitleViewHolder(inflater.inflate(R.layout.item_resource_header, parent, false));
+                return new TitleViewHolder(
+                        inflater.inflate(R.layout.item_resource_header, parent, false));
             case 1:
-                return new ContentViewHolder(inflater.inflate(R.layout.item_resource_content, parent, false));
+                return new ContentViewHolder(
+                        inflater.inflate(R.layout.item_resource_content, parent, false));
             default:
                 throw new IllegalStateException("Unrecognizable view type");
         }
@@ -178,7 +192,7 @@ public class ResourcesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 if (!isEmpty(item.title) && !isEmpty(item.url) && !isEmpty(item.description)) {
                     cvh.textName.setText(item.title);
                     cvh.textDesc.setText(item.description);
-                    Picasso.get().load(item.thumbnail()).into(cvh.imageResource);
+                    picasso().load(item.thumbnail()).into(cvh.imageResource);
                 }
                 break;
             default:

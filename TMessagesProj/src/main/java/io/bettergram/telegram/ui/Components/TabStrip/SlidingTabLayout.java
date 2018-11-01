@@ -17,6 +17,7 @@
 package io.bettergram.telegram.ui.Components.TabStrip;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.support.v4.view.PagerAdapter;
@@ -74,6 +75,8 @@ public class SlidingTabLayout extends HorizontalScrollView {
 
     private int mTabViewLayoutId;
     private int mTabViewTextViewId;
+
+    private int prev_position = 0;
 
     private ViewPager mViewPager;
     private ViewPager.OnPageChangeListener mViewPagerPageChangeListener;
@@ -179,14 +182,14 @@ public class SlidingTabLayout extends HorizontalScrollView {
      * Create a default view to be used for tabs. This is called if a custom tab view is not set via
      * {@link #setCustomTabView(int, int)}.
      */
-    protected TextView createDefaultTabView(Context context) {
+    protected TextView createDefaultTabView(Context context, int index) {
         TextView textView = new TextView(context);
         textView.setGravity(Gravity.CENTER);
         textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, TAB_VIEW_TEXT_SIZE_SP);
         textView.setTypeface(Typeface.DEFAULT_BOLD);
         textView.setAllCaps(false);
         textView.setTypeface(textView.getTypeface(), Typeface.BOLD);
-        textView.setTextColor(getResources().getColor(android.R.color.black));
+        textView.setTextColor(index == 0 ? Color.BLACK : Color.parseColor("#979797"));
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             // If we're running on Honeycomb or newer, then we can use the Theme's
@@ -220,11 +223,11 @@ public class SlidingTabLayout extends HorizontalScrollView {
                 // If there is a custom tab view layout id set, try and inflate it
                 tabView = LayoutInflater.from(getContext()).inflate(mTabViewLayoutId, mTabStrip,
                         false);
-                tabTitleView = (TextView) tabView.findViewById(mTabViewTextViewId);
+                tabTitleView = tabView.findViewById(mTabViewTextViewId);
             }
 
             if (tabView == null) {
-                tabView = createDefaultTabView(getContext());
+                tabView = createDefaultTabView(getContext(), i);
             }
 
             if (tabTitleView == null && TextView.class.isInstance(tabView)) {
@@ -305,6 +308,14 @@ public class SlidingTabLayout extends HorizontalScrollView {
                 mTabStrip.onViewPagerPageChanged(position, 0f);
                 scrollToTab(position, 0);
             }
+
+            TextView prev_textView = (TextView) mTabStrip.getChildAt(prev_position);
+            prev_textView.setTextColor(Color.parseColor("#979797"));
+
+            TextView curr_textView = (TextView) mTabStrip.getChildAt(position);
+            curr_textView.setTextColor(Color.BLACK);
+
+            prev_position = position;
 
             if (mViewPagerPageChangeListener != null) {
                 mViewPagerPageChangeListener.onPageSelected(position);

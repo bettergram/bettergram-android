@@ -1,11 +1,15 @@
 package io.bettergram.adapters;
 
+import static com.flipkart.youtubeview.models.YouTubePlayerType.STRICT_NATIVE;
+import static io.bettergram.telegram.messenger.ApplicationLoader.picasso;
+
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap.Config;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
@@ -14,7 +18,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import com.flipkart.youtubeview.YouTubePlayerView;
 import com.flipkart.youtubeview.models.ImageLoader;
-import com.squareup.picasso.Picasso;
 import io.bettergram.data.Video;
 import io.bettergram.data.VideoList;
 import io.bettergram.data.VideoList__JsonHelper;
@@ -22,15 +25,12 @@ import io.bettergram.messenger.R;
 import io.bettergram.service.YoutubeDataService;
 import io.bettergram.telegram.messenger.AndroidUtilities;
 import io.bettergram.telegram.messenger.support.widget.RecyclerView;
-import io.bettergram.utils.RoundedCornersTransform;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.flipkart.youtubeview.models.YouTubePlayerType.STRICT_NATIVE;
-
-public class YouTubePlayerAdapter extends RecyclerView.Adapter<YouTubePlayerAdapter.YouTubePlayerViewHolder> {
+public class YouTubePlayerAdapter extends
+        RecyclerView.Adapter<YouTubePlayerAdapter.YouTubePlayerViewHolder> {
 
     /**
      * Receives data from {@link YoutubeDataService}
@@ -93,17 +93,19 @@ public class YouTubePlayerAdapter extends RecyclerView.Adapter<YouTubePlayerAdap
 
     private ImageLoader imageLoader = (imageView, url, height, width) -> {
         //Picasso.get().invalidate(url);// temporarily invalidated so the app wont load from memory as it shows blank image
-        Picasso.get()
+        picasso()
                 .load(url)
+                .config(Config.RGB_565)
                 .resize((int) (width * 0.30f), (int) (height * 0.30f))
                 .centerCrop()
                 .placeholder(R.color.grey70)
-                .transform(RoundedCornersTransform.getInstance())
                 .into(imageView);
     };
 
     public void setVideos(List<Video> videos) {
-        if (videos == null || videos.isEmpty()) return;
+        if (videos == null || videos.isEmpty()) {
+            return;
+        }
         this.videos.clear();
         this.videos.addAll(videos);
         notifyDataSetChanged();
@@ -115,7 +117,6 @@ public class YouTubePlayerAdapter extends RecyclerView.Adapter<YouTubePlayerAdap
         this.playerType = STRICT_NATIVE;
         this.apiKey = context.getString(R.string.youtube_api_key);
         this.webviewUrl = context.getString(R.string.youtube_webview_url);
-        Picasso.get().setLoggingEnabled(true);
     }
 
     @Override
@@ -153,7 +154,8 @@ public class YouTubePlayerAdapter extends RecyclerView.Adapter<YouTubePlayerAdap
         holder.textViewCount.setText(String.format("%s views", viewCount));
 
         if (!playerView.initted) {
-            playerView.initPlayer(apiKey, videoId, webviewUrl, playerType, null, fragmentManager, imageLoader);
+            playerView.initPlayer(apiKey, videoId, webviewUrl, playerType, null, fragmentManager,
+                    imageLoader);
         } else {
             playerView.load(videoId);
         }

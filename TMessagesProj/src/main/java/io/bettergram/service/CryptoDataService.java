@@ -1,20 +1,31 @@
 package io.bettergram.service;
 
+import static android.text.TextUtils.isEmpty;
+import static io.bettergram.telegram.messenger.ApplicationLoader.okhttp_client;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.annotation.Nullable;
-import io.bettergram.data.*;
+import io.bettergram.data.CryptoCurrency;
+import io.bettergram.data.CryptoCurrencyData;
+import io.bettergram.data.CryptoCurrencyData__JsonHelper;
+import io.bettergram.data.CryptoCurrencyInfo;
+import io.bettergram.data.CryptoCurrencyInfoData;
+import io.bettergram.data.CryptoCurrencyInfoData__JsonHelper;
+import io.bettergram.data.CryptoCurrencyInfoResponse;
+import io.bettergram.data.CryptoCurrencyInfoResponse__JsonHelper;
+import io.bettergram.telegram.messenger.ApplicationLoader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+import java.util.Timer;
+import java.util.TimerTask;
 import okhttp3.HttpUrl;
-import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import io.bettergram.telegram.messenger.ApplicationLoader;
-
-import java.io.IOException;
-import java.util.*;
-
-import static android.text.TextUtils.isEmpty;
 
 public class CryptoDataService extends BaseDataService {
 
@@ -40,7 +51,8 @@ public class CryptoDataService extends BaseDataService {
     public static final int notify = 60000;
     private Timer mTimer = null;
 
-    private static SharedPreferences preferences = ApplicationLoader.applicationContext.getSharedPreferences(CRYPTO_PREF, Context.MODE_PRIVATE);
+    private static SharedPreferences preferences = ApplicationLoader.applicationContext
+            .getSharedPreferences(CRYPTO_PREF, Context.MODE_PRIVATE);
 
     public CryptoDataService() {
         super("CryptoDataService");
@@ -62,7 +74,8 @@ public class CryptoDataService extends BaseDataService {
                 canStart = false;
             } catch (IllegalStateException e) {
                 e.printStackTrace();
-                String savedCryptoInfoJson = preferences.getString(KEY_CRYPTO_CURRENCIES_SAVED, null);
+                String savedCryptoInfoJson = preferences
+                        .getString(KEY_CRYPTO_CURRENCIES_SAVED, null);
                 if (!isEmpty(savedCryptoInfoJson)) {
                     publishResults(savedCryptoInfoJson, NOTIFICATION, RESULT);
                 }
@@ -75,13 +88,17 @@ public class CryptoDataService extends BaseDataService {
         mTimer.scheduleAtFixedRate(new TimeDisplay(intent), 0, notify);   //Schedule task
     }
 
-    private List<CryptoCurrencyInfo> addIcons(List<CryptoCurrencyInfo> list, List<CryptoCurrency> currencies) {
-        if (currencies == null) return new ArrayList<>();
+    private List<CryptoCurrencyInfo> addIcons(List<CryptoCurrencyInfo> list,
+            List<CryptoCurrency> currencies) {
+        if (currencies == null) {
+            return new ArrayList<>();
+        }
 
         for (int i = 0, size = list.size(); i < size; i++) {
             final int index = i;
 
-            CryptoCurrency foundCurrency = CollectionUtil.find(currencies, (CryptoCurrency item) -> list.get(index).code.equals(item.code));
+            CryptoCurrency foundCurrency = CollectionUtil.find(currencies,
+                    (CryptoCurrency item) -> list.get(index).code.equals(item.code));
 
             if (foundCurrency != null) {
                 list.get(index).icon = foundCurrency.icon;
@@ -92,6 +109,7 @@ public class CryptoDataService extends BaseDataService {
     }
 
     public interface Predicate<T> {
+
         boolean contains(T item);
     }
 
@@ -127,16 +145,15 @@ public class CryptoDataService extends BaseDataService {
             String savedCryptoJson = preferences.getString(KEY_CRYPTO_CURRENCIES, null);
             List<CryptoCurrency> currencies = new ArrayList<>();
 
-            OkHttpClient client = new OkHttpClient();
-
             if (fetchCryptoCurrencies || isEmpty(savedCryptoJson)) {
                 Request request = new Request.Builder().url(CRYPTO_CURRENCIES_URL).build();
                 try {
-                    Response response = client.newCall(request).execute();
+                    Response response = okhttp_client().newCall(request).execute();
 
                     if (response.isSuccessful() && response.body() != null) {
                         String fetchedCryptoJson = response.body().string();
-                        preferences.edit().putString(KEY_CRYPTO_CURRENCIES, fetchedCryptoJson).apply();
+                        preferences.edit().putString(KEY_CRYPTO_CURRENCIES, fetchedCryptoJson)
+                                .apply();
                         savedCryptoJson = fetchedCryptoJson;
                     }
                 } catch (IOException e) {
@@ -146,7 +163,8 @@ public class CryptoDataService extends BaseDataService {
 
             try {
                 if (!isEmpty(savedCryptoJson)) {
-                    CryptoCurrencyData currencyData = CryptoCurrencyData__JsonHelper.parseFromJson(savedCryptoJson);
+                    CryptoCurrencyData currencyData = CryptoCurrencyData__JsonHelper
+                            .parseFromJson(savedCryptoJson);
                     currencies.addAll(currencyData.data);
                 }
             } catch (IOException e) {
@@ -160,43 +178,53 @@ public class CryptoDataService extends BaseDataService {
             String favorites = intent.getStringExtra(EXTRA_FAVORITE);
             String currency = intent.getStringExtra(EXTRA__CURRENCY);
 
-            HttpUrl.Builder urlBuilder = Objects.requireNonNull(HttpUrl.parse(CRYPTO_COINS_URL)).newBuilder();
+            HttpUrl.Builder urlBuilder = Objects.requireNonNull(HttpUrl.parse(CRYPTO_COINS_URL))
+                    .newBuilder();
             urlBuilder.addQueryParameter("sort", !isEmpty(sortBy) ? sortBy : "rank");
             urlBuilder.addQueryParameter("order", !isEmpty(orderBy) ? orderBy : "ascending");
             urlBuilder.addQueryParameter("offset", String.valueOf(offset));
             urlBuilder.addQueryParameter("limit", String.valueOf(limit));
-            urlBuilder.addQueryParameter("favorites", !isEmpty(favorites) ? favorites : String.valueOf(false));
+            urlBuilder.addQueryParameter("favorites",
+                    !isEmpty(favorites) ? favorites : String.valueOf(false));
             urlBuilder.addQueryParameter("currency", currency);
 
             String url = urlBuilder.build().toString();
             Request request = new Request.Builder().url(url).build();
 
             try {
-                Response response = client.newCall(request).execute();
+                Response response = okhttp_client().newCall(request).execute();
 
                 if (response.isSuccessful() && response.body() != null) {
                     String fetchedCurrencyJson = response.body().string();
-                    CryptoCurrencyInfoResponse cryptoResponse = CryptoCurrencyInfoResponse__JsonHelper.parseFromJson(fetchedCurrencyJson);
-                    cryptoResponse.data.favorites = addIcons(cryptoResponse.data.favorites, currencies);
+                    CryptoCurrencyInfoResponse cryptoResponse = CryptoCurrencyInfoResponse__JsonHelper
+                            .parseFromJson(fetchedCurrencyJson);
+                    cryptoResponse.data.favorites = addIcons(cryptoResponse.data.favorites,
+                            currencies);
                     cryptoResponse.data.list = addIcons(cryptoResponse.data.list, currencies);
                     if (!cryptoResponse.data.favorites.isEmpty()) {
-                        for (int i = 0, size = cryptoResponse.data.favorites.size(); i < size; i++) {
+                        for (int i = 0, size = cryptoResponse.data.favorites.size(); i < size;
+                                i++) {
                             cryptoResponse.data.favorites.get(i).favorite = true;
                         }
                     }
-                    String savedFaveCryptoJson = preferences.getString(KEY_CRYPTO_CURRENCIES_FAVORITE, null);
+                    String savedFaveCryptoJson = preferences
+                            .getString(KEY_CRYPTO_CURRENCIES_FAVORITE, null);
                     if (!isEmpty(savedFaveCryptoJson)) {
-                        CryptoCurrencyInfoData data = CryptoCurrencyInfoData__JsonHelper.parseFromJson(savedFaveCryptoJson);
+                        CryptoCurrencyInfoData data = CryptoCurrencyInfoData__JsonHelper
+                                .parseFromJson(savedFaveCryptoJson);
                         if (data != null && !data.favorites.isEmpty()) {
                             for (int i = 0, size = cryptoResponse.data.list.size(); i < size; i++) {
                                 final int index = i;
-                                CryptoCurrencyInfo inf = CollectionUtil.find(data.favorites, (CryptoCurrencyInfo item) -> cryptoResponse.data.list.get(index).code.equals(item.code));
+                                CryptoCurrencyInfo inf = CollectionUtil.find(data.favorites,
+                                        (CryptoCurrencyInfo item) -> cryptoResponse.data.list
+                                                .get(index).code.equals(item.code));
                                 cryptoResponse.data.list.get(index).favorite = inf != null;
                             }
                         }
                     }
 
-                    String json = CryptoCurrencyInfoResponse__JsonHelper.serializeToJson(cryptoResponse);
+                    String json = CryptoCurrencyInfoResponse__JsonHelper
+                            .serializeToJson(cryptoResponse);
                     preferences.edit().putString(KEY_CRYPTO_CURRENCIES_SAVED, json).apply();
 
                     publishResults(json, NOTIFICATION, RESULT);
@@ -230,7 +258,8 @@ public class CryptoDataService extends BaseDataService {
             data.favorites.remove(crypto);
         }
         try {
-            preferences.edit().putString(KEY_CRYPTO_CURRENCIES_FAVORITE, CryptoCurrencyInfoData__JsonHelper.serializeToJson(data)).apply();
+            preferences.edit().putString(KEY_CRYPTO_CURRENCIES_FAVORITE,
+                    CryptoCurrencyInfoData__JsonHelper.serializeToJson(data)).apply();
             return true;
         } catch (IOException e) {
             e.printStackTrace();

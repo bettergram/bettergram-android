@@ -1050,6 +1050,8 @@ public class Theme {
     public static final String key_topbar_activeColor = "topbar_activeColor";
     public static final String key_topbar_unreadCounterColor = "topbar_unreadCounterColor";
 
+    public static final String key_crypto_dividerColor = "crypto_dividerColor";
+
     public static final String key_dialog_activeStateBorderColor = "dialog_activeStateBorderColor";
     public static final String key_dialog_activeStateOnlineColor = "dialog_activeStateOnlineColor";
     public static final String key_dialog_activeStateOfflineColor = "dialog_activeStateOfflineColor";
@@ -1689,6 +1691,8 @@ public class Theme {
         defaultColors.put(key_topbar_inactiveColor, 0xffa5ebc5);
         defaultColors.put(key_topbar_activeColor, 0xffffffff);
         defaultColors.put(key_topbar_unreadCounterColor, 0xFFEB3E4A);
+
+        defaultColors.put(key_crypto_dividerColor, 0xffd7d7d7);
 
         defaultColors.put(key_dialog_activeStateBorderColor, 0xFFFFFFFF);
         defaultColors.put(key_dialog_activeStateOnlineColor, 0xff69bc35);

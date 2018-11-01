@@ -14,7 +14,6 @@ public class BaseDataService extends IntentService {
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
-
     }
 
     protected void publishResults(String jsonResult, String action, String extraKey) {
@@ -22,5 +21,4 @@ public class BaseDataService extends IntentService {
         intent.putExtra(extraKey, jsonResult);
         sendBroadcast(intent);
     }
-
 }

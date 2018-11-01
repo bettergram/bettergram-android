@@ -1,12 +1,18 @@
 package io.bettergram.adapters;
 
+import static android.text.TextUtils.isEmpty;
+import static io.bettergram.service.CryptoDataService.EXTRA_LIMIT;
+import static io.bettergram.telegram.messenger.ApplicationLoader.picasso;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -25,7 +31,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.sackcentury.shinebuttonlib.ShineButton;
-import com.squareup.picasso.Picasso;
 import io.bettergram.data.CryptoCurrencyInfo;
 import io.bettergram.data.CryptoCurrencyInfoResponse;
 import io.bettergram.data.CryptoCurrencyInfoResponse__JsonHelper;
@@ -38,14 +43,10 @@ import io.bettergram.telegram.ui.Components.LayoutHelper;
 import io.bettergram.telegram.ui.Components.TabStrip.SlidingTabLayout;
 import io.bettergram.utils.Number;
 import io.bettergram.utils.SpanBuilder;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import static android.text.TextUtils.isEmpty;
-import static io.bettergram.service.CryptoDataService.EXTRA_LIMIT;
 
 public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -77,7 +78,8 @@ public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         public void run() {
             android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
             try {
-                CryptoCurrencyInfoResponse res = CryptoCurrencyInfoResponse__JsonHelper.parseFromJson(json);
+                CryptoCurrencyInfoResponse res = CryptoCurrencyInfoResponse__JsonHelper
+                        .parseFromJson(json);
                 AndroidUtilities.runOnUIThread(() -> setCryptoData(res));
             } catch (IOException e) {
                 e.printStackTrace();
@@ -85,7 +87,8 @@ public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         }
     }
 
-    class MainViewHolder extends RecyclerView.ViewHolder implements ShineButton.OnCheckedChangeListener {
+    class MainViewHolder extends RecyclerView.ViewHolder implements
+            ShineButton.OnCheckedChangeListener {
 
         ImageView imageCrypto;
         TextView textCryptoName, textCryptoPrice, textDayDelta;
@@ -124,7 +127,8 @@ public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             backup.addAll(data);
             favorites.clear();
             favorites.addAll(data);
-            for (Iterator<CryptoCurrencyInfo> iterator = favorites.iterator(); iterator.hasNext(); ) {
+            for (Iterator<CryptoCurrencyInfo> iterator = favorites.iterator();
+                    iterator.hasNext(); ) {
                 CryptoCurrencyInfo value = iterator.next();
                 if (!value.favorite) {
                     iterator.remove();
@@ -146,12 +150,14 @@ public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     }
 
     class TabsViewHolder extends RecyclerView.ViewHolder {
+
         public TabsViewHolder(View itemView) {
             super(itemView);
         }
     }
 
     class LabelViewHolder extends RecyclerView.ViewHolder {
+
         public LabelViewHolder(View itemView) {
             super(itemView);
         }
@@ -177,7 +183,8 @@ public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 backup.addAll(data);
                 favorites.clear();
                 favorites.addAll(data);
-                for (Iterator<CryptoCurrencyInfo> iterator = favorites.iterator(); iterator.hasNext(); ) {
+                for (Iterator<CryptoCurrencyInfo> iterator = favorites.iterator();
+                        iterator.hasNext(); ) {
                     CryptoCurrencyInfo value = iterator.next();
                     if (!value.favorite) {
                         iterator.remove();
@@ -205,8 +212,10 @@ public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             case 1:
                 SlidingTabLayout tabLayout = new SlidingTabLayout(context);
                 tabLayout.setAdapter(new TabsPagerAdapter());
-                tabLayout.setDividerColors(context.getResources().getColor(android.R.color.transparent));
-                tabLayout.setSelectedIndicatorColors(context.getResources().getColor(R.color.actionBarDefault));
+                tabLayout.setDividerColors(
+                        context.getResources().getColor(android.R.color.transparent));
+                tabLayout.setSelectedIndicatorColors(
+                        context.getResources().getColor(R.color.actionBarDefault));
                 tabLayout.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
                     @Override
                     public void onPageSelected(int position) {
@@ -225,21 +234,18 @@ public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                         }
                     }
                 });
-                tabLayout.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                tabLayout.setLayoutParams(
+                        new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                                ViewGroup.LayoutParams.WRAP_CONTENT));
                 return new TabsViewHolder(tabLayout);
             case 2:
-                return new LabelViewHolder(inflater.inflate(R.layout.item_crypto_top, parent, false));
+                return new LabelViewHolder(
+                        inflater.inflate(R.layout.item_crypto_top, parent, false));
             case 3:
-                LinearLayout content = new LinearLayout(context);
-                content.setOrientation(LinearLayout.HORIZONTAL);
-                content.setWeightSum(1);
-                LinearLayout.MarginLayoutParams margin = LayoutHelper.createMargin(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT);
-                margin.topMargin = margin.bottomMargin = AndroidUtilities.dp(2);
-                content.setLayoutParams(margin);
-
                 LinearLayout container = new LinearLayout(context);
                 container.setOrientation(LinearLayout.HORIZONTAL);
-                container.setPadding(AndroidUtilities.dp(8), AndroidUtilities.dp(8), AndroidUtilities.dp(8), AndroidUtilities.dp(8));
+                container.setPadding(AndroidUtilities.dp(8), AndroidUtilities.dp(8),
+                        AndroidUtilities.dp(8), AndroidUtilities.dp(8));
 
                 ShineButton star = new ShineButton(context);
                 star.setBtnColor(context.getResources().getColor(android.R.color.darker_gray));
@@ -248,11 +254,13 @@ public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 star.setShineSize(AndroidUtilities.dp(14));
                 star.setShapeResource(R.raw.star);
                 star.setTag("star");
-                container.addView(star, LayoutHelper.createLinear(22, 22, Gravity.CENTER, 0, 0, 8, 0));
+                container.addView(star,
+                        LayoutHelper.createLinear(22, 22, Gravity.CENTER, 0, 0, 8, 0));
 
                 ImageView cryptoImage = new ImageView(context);
                 cryptoImage.setTag("imageCrypto");
-                container.addView(cryptoImage, LayoutHelper.createLinear(32, 32, Gravity.CENTER, 16, 0, 4, 0));
+                container.addView(cryptoImage,
+                        LayoutHelper.createLinear(32, 32, Gravity.CENTER, 16, 0, 4, 0));
 
                 TextView cryptoName = new TextView(context);
                 cryptoName.setTypeface(Typeface.DEFAULT_BOLD);
@@ -262,21 +270,49 @@ public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 cryptoName.setGravity(Gravity.CENTER);
                 cryptoName.setEllipsize(TextUtils.TruncateAt.END);
                 cryptoName.setTag("textCryptoName");
-                container.addView(cryptoName, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.CENTER, 8, 0, 0, 0));
+                container.addView(cryptoName, LayoutHelper
+                        .createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT,
+                                Gravity.CENTER, 8, 0, 0, 0));
 
-                content.addView(container, LayoutHelper.createLinear(0, LayoutHelper.WRAP_CONTENT, 0.5f));
+                final Paint divider_paint = new Paint();
+                divider_paint.setColor(Theme.getColor(Theme.key_crypto_dividerColor));
+                divider_paint.setStrokeWidth(1); // set stroke so you can actually see the lines
+
+                LinearLayout content = new LinearLayout(context) {
+                    @Override
+                    protected void onDraw(Canvas canvas) {
+                        super.onDraw(canvas);
+                        final int width = getMeasuredWidth();
+                        final int height = getMeasuredHeight();
+                        final float offset_y = height - 1;
+                        final float offset_x = cryptoName.getX();
+                        canvas.drawLine(offset_x, offset_y, width, offset_y, divider_paint);
+                    }
+                };
+                content.setWillNotDraw(false);
+                content.setOrientation(LinearLayout.HORIZONTAL);
+                content.setWeightSum(1);
+                LinearLayout.MarginLayoutParams margin = LayoutHelper
+                        .createMargin(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT);
+                margin.topMargin = margin.bottomMargin = AndroidUtilities.dp(2);
+                content.setLayoutParams(margin);
+                content.addView(container,
+                        LayoutHelper.createLinear(0, LayoutHelper.WRAP_CONTENT, 0.5f));
 
                 TextView cryptoPrice = new TextView(context);
                 cryptoPrice.setGravity(Gravity.CENTER);
                 cryptoPrice.setTextSize(14);
                 cryptoPrice.setTag("textCryptoPrice");
-                content.addView(cryptoPrice, LayoutHelper.createLinear(0, LayoutHelper.WRAP_CONTENT, 0.25f, Gravity.CENTER));
+                content.addView(cryptoPrice, LayoutHelper
+                        .createLinear(0, LayoutHelper.WRAP_CONTENT, 0.25f, Gravity.CENTER));
 
                 TextView cryptoDelta = new TextView(context);
                 cryptoDelta.setTextSize(14);
                 cryptoDelta.setGravity(Gravity.CENTER | Gravity.END);
                 cryptoDelta.setTag("textDayDelta");
-                content.addView(cryptoDelta, LayoutHelper.createLinear(0, LayoutHelper.WRAP_CONTENT, 0.25f, Gravity.CENTER, 0, 0, 8, 0));
+                content.addView(cryptoDelta, LayoutHelper
+                        .createLinear(0, LayoutHelper.WRAP_CONTENT, 0.25f, Gravity.CENTER, 0, 0, 8,
+                                0));
 
                 return new MainViewHolder(content);
             default:
@@ -292,16 +328,27 @@ public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         if (holder instanceof HeaderViewHolder) {
             HeaderViewHolder header = (HeaderViewHolder) holder;
             double cap = cryptoData.cap;
-            header.textCap.setText(formatHeaderValue(context, "MARKET CAP($)", Number.truncateNumber(cap)));
+            header.textCap.setText(
+                    formatHeaderValue(context, "MARKET CAP($)", Number.truncateNumber(cap)));
             double dom = cryptoData.btcDominance;
-            header.textDom.setText(formatHeaderValue(context, "BTC DOM.", String.format("%.2f%%", (dom * 100))));
+            header.textDom.setText(
+                    formatHeaderValue(context, "BTC DOM.", String.format("%.2f%%", (dom * 100))));
             double vol = cryptoData.volume;
-            header.textVol.setText(formatHeaderValue(context, "24H VOL($)", Number.truncateNumber(vol)));
-        } else if (holder instanceof LabelViewHolder) {
-
+            header.textVol
+                    .setText(formatHeaderValue(context, "24H VOL($)", Number.truncateNumber(vol)));
         } else if (holder instanceof MainViewHolder) {
-            int realPosition = position - 3;
-            CryptoCurrencyInfo info = data.get(realPosition);
+
+            int real_position = position - 3;
+
+            if (real_position < 0 || real_position > data.size()) {
+                return;
+            }
+
+            CryptoCurrencyInfo info = data.get(real_position);
+
+            if (info == null) {
+                return;
+            }
 
             MainViewHolder main = (MainViewHolder) holder;
             main.setCrypto(info.code);
@@ -310,21 +357,26 @@ public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             if (price > 0) {
                 boolean isGreaterZero = Math.floor(price) > 0;
                 double deltaMinute = -1 * ((1 - info.delta.minute) * 100);
-                main.textCryptoPrice.setTextColor(deltaMinute > 0 ? Color.parseColor("#ff69bc35") : Color.RED);
-                main.textCryptoPrice.setText(String.format(isGreaterZero ? "$%,.2f" : "$%.4f", price));
+                main.textCryptoPrice
+                        .setTextColor(deltaMinute > 0 ? Color.parseColor("#ff69bc35") : Color.RED);
+                main.textCryptoPrice
+                        .setText(String.format(isGreaterZero ? "$%,.2f" : "$%.4f", price));
             }
             if (!isEmpty(info.icon)) {
-                Picasso.get().load(info.icon).into(main.imageCrypto);
+                picasso().load(info.icon).into(main.imageCrypto);
             }
             if (info.delta != null) {
                 double deltaDay = -1 * ((1 - info.delta.day) * 100);
-                main.textDayDelta.setTextColor(deltaDay > 0 ? Color.parseColor("#ff69bc35") : Color.RED);
-                main.textDayDelta.setText(String.format(deltaDay > 0 ? "+%s%%" : "%s%%", Number.truncateNumber(deltaDay)));
+                main.textDayDelta
+                        .setTextColor(deltaDay > 0 ? Color.parseColor("#ff69bc35") : Color.RED);
+                main.textDayDelta.setText(String.format(deltaDay > 0 ? "+%s%%" : "%s%%",
+                        Number.truncateNumber(deltaDay)));
 
                 main.textDayDelta.setCompoundDrawablesWithIntrinsicBounds(
                         null,
                         null,
-                        deltaDay > 0 ? Theme.crypto_priceUpDrawable : Theme.crypto_priceDownDrawable,
+                        deltaDay > 0 ? Theme.crypto_priceUpDrawable
+                                : Theme.crypto_priceDownDrawable,
                         null
                 );
                 main.textDayDelta.setCompoundDrawablePadding(2);
