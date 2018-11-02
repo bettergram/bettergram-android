@@ -34,6 +34,7 @@ import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.*;
+
 import io.bettergram.adapters.*;
 import io.bettergram.messenger.R;
 import io.bettergram.telegram.messenger.*;
@@ -1359,8 +1360,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                         currentBottomTabPosition = position;
                         actionBar.setTitle(title);
                         boolean isChat = position == 0;
-                        hideFloatingButton(!isChat, true);
-                        newTabsView.hide(!isChat);
+                        floatingButton.post(() -> hideFloatingButton(!isChat, true));
+                        newTabsView.post(() -> newTabsView.hide(!isChat));
 
                         ActionBarMenuItem itemSearch = menu.getItem(0);
                         itemSearch.setVisibility(!isChat ? View.GONE : View.VISIBLE);

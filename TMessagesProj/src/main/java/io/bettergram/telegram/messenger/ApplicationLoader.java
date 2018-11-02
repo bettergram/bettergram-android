@@ -8,8 +8,6 @@
 
 package io.bettergram.telegram.messenger;
 
-import static io.bettergram.service.CryptoDataService.EXTRA_LIMIT;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlarmManager;
@@ -26,6 +24,7 @@ import android.os.Handler;
 import android.os.PowerManager;
 import android.text.TextUtils;
 import android.util.Log;
+
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
@@ -35,11 +34,7 @@ import com.google.android.gms.security.ProviderInstaller;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.squareup.picasso.OkHttp3Downloader;
 import com.squareup.picasso.Picasso;
-import io.bettergram.service.CryptoDataService;
-import io.bettergram.telegram.tgnet.ConnectionsManager;
-import io.bettergram.telegram.tgnet.TLRPC;
-import io.bettergram.telegram.ui.Components.ForegroundDetector;
-import io.fabric.sdk.android.Fabric;
+
 import java.io.File;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
@@ -47,11 +42,21 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
 import javax.net.ssl.SSLContext;
+
+import io.bettergram.service.CryptoDataService;
+import io.bettergram.service.NewsDataService;
+import io.bettergram.telegram.tgnet.ConnectionsManager;
+import io.bettergram.telegram.tgnet.TLRPC;
+import io.bettergram.telegram.ui.Components.ForegroundDetector;
+import io.fabric.sdk.android.Fabric;
 import okhttp3.CipherSuite;
 import okhttp3.ConnectionSpec;
 import okhttp3.OkHttpClient;
 import okhttp3.TlsVersion;
+
+import static io.bettergram.service.CryptoDataService.EXTRA_LIMIT;
 
 public class ApplicationLoader extends Application {
 
@@ -278,10 +283,13 @@ public class ApplicationLoader extends Application {
         return Arrays.asList(legacyTls, ConnectionSpec.CLEARTEXT);
     }
 
-    public static void warmupCryptos(Activity activity) {
+    public static void warmupCryptosData(Activity activity) {
         Intent intent = new Intent(activity, CryptoDataService.class);
         intent.putExtra(EXTRA_LIMIT, 100);
         activity.startService(intent);
+
+        Intent intent2 = new Intent(activity, NewsDataService.class);
+        activity.startService(intent2);
     }
 
     public static OkHttpClient okhttp_client() {

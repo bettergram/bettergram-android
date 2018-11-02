@@ -1,7 +1,5 @@
 package io.bettergram.adapters;
 
-import static io.bettergram.telegram.messenger.ApplicationLoader.picasso;
-
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -15,7 +13,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.squareup.picasso.Callback;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import io.bettergram.data.News;
 import io.bettergram.data.NewsList;
 import io.bettergram.data.NewsList__JsonHelper;
@@ -23,9 +27,8 @@ import io.bettergram.messenger.R;
 import io.bettergram.service.NewsDataService;
 import io.bettergram.telegram.messenger.AndroidUtilities;
 import io.bettergram.telegram.messenger.support.widget.RecyclerView;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+
+import static io.bettergram.telegram.messenger.ApplicationLoader.picasso;
 
 public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder> {
 
@@ -107,28 +110,13 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
     public void onBindViewHolder(NewsViewHolder holder, int position) {
         final News news = newsList.get(position);
 
-        holder.imageThumb.post(() -> {
-            int width = (int) (holder.imageThumb.getMeasuredWidth() * 0.5f);
-            int height = (int) (holder.imageThumb.getMeasuredHeight() * 0.5f);
-
-            if (width > 0 && height > 0) {
-                picasso().load(news.urlToImage).resize(width, height).centerCrop()
-                        .into(holder.imageThumb, new Callback.EmptyCallback() {
-                            @Override
-                            public void onSuccess() {
-                                holder.imageThumb.requestLayout();
-                            }
-                        });
-            } else {
-                picasso().load(news.urlToImage)
-                        .into(holder.imageThumb, new Callback.EmptyCallback() {
-                            @Override
-                            public void onSuccess() {
-                                holder.imageThumb.requestLayout();
-                            }
-                        });
-            }
-        });
+        picasso().load(news.urlToImage)
+                .into(holder.imageThumb, new Callback.EmptyCallback() {
+                    @Override
+                    public void onSuccess() {
+                        //holder.imageThumb.requestLayout();
+                    }
+                });
 
         holder.textTitle.setText(news.title);
         holder.textTitle.setOnClickListener(v -> {
@@ -141,12 +129,6 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
 
         //TODO: proper format
         holder.textDatePosted.setText(news.publishedAt.substring(0, 10));
-//    try {
-//      holder.textDatePosted.setText(NewsApi.getFormattedDate(news.publishedAt));
-//    } catch (ParseException e) {
-//      e.printStackTrace();
-//    }
-
     }
 
     @Override
