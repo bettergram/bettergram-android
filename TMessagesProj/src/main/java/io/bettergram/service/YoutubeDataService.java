@@ -3,27 +3,29 @@ package io.bettergram.service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.util.Log;
-import com.rometools.rome.feed.synd.SyndEntry;
-import com.rometools.rome.feed.synd.SyndFeed;
-import com.rometools.rome.io.FeedException;
-import com.rometools.rome.io.SyndFeedInput;
-import com.rometools.rome.io.XmlReader;
-import io.bettergram.data.VideoData;
-import io.bettergram.data.VideoData__JsonHelper;
-import io.bettergram.messenger.R;
-import io.bettergram.service.api.VideosApi;
-import org.json.JSONArray;
+
 import org.json.JSONException;
-import org.json.JSONObject;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.parser.Parser;
 
 import java.io.IOException;
-import java.net.URL;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.bettergram.data.Video;
+import io.bettergram.data.VideoData;
+import io.bettergram.data.VideoData__JsonHelper;
+import io.bettergram.data.VideoList;
+import io.bettergram.data.VideoList__JsonHelper;
+import io.bettergram.service.api.VideosApi;
+import io.bettergram.utils.Counter;
+import okhttp3.Request;
+import okhttp3.Response;
+
 import static android.text.TextUtils.isEmpty;
+import static io.bettergram.telegram.messenger.ApplicationLoader.okhttp_client;
 
 public class YoutubeDataService extends BaseDataService {
 
@@ -55,34 +57,57 @@ public class YoutubeDataService extends BaseDataService {
             publishResults(jsonRaw, NOTIFICATION, RESULT);
         }
 
-        String apiKey = getString(R.string.youtube_api_key);
+        //String apiKey = getString(R.string.youtube_api_key);
         try {
             VideoData videoData = VideoData__JsonHelper.parseFromJson(VideosApi.getYoutubeRSSFeed());
 
-            for (String video : videoData.videos) {
-                SyndFeed feed = new SyndFeedInput().build(new XmlReader(new URL(video)));
-                for (SyndEntry entry : feed.getEntries()) {
-                    videoIds.add(entry.getUri().replace("yt:video:", ""));
+            VideoList videoList = new VideoList();
+            videoList.videos = new ArrayList<>();
+
+            for (String videoUrl : videoData.videos) {
+                Request request = new Request.Builder()
+                        .url(videoUrl)
+                        .build();
+
+                Response response = okhttp_client().newCall(request).execute();
+
+                if (response.body() != null && response.isSuccessful()) {
+                    String result = response.body().string();
+                    Document document = Jsoup.parse(result, "", Parser.xmlParser());
+                    for (Element element : document.getElementsByTag("entry")) {
+
+                        Video video = new Video();
+                        video.id = element
+                                .getElementsByTag("yt:videoId")
+                                .html();
+                        video.title = element
+                                .getElementsByTag("title")
+                                .html();
+                        video.channelTitle = element
+                                .getElementsByTag("author")
+                                .get(0)
+                                .getElementsByTag("name")
+                                .html();
+                        video.viewCount = Counter.format(element
+                                .getElementsByTag("media:group")
+                                .get(0)
+                                .getElementsByTag("media:community")
+                                .get(0)
+                                .getElementsByTag("media:statistics")
+                                .attr("views"));
+                        video.publishedAt = VideosApi.formatDate(element
+                                .getElementsByTag("published")
+                                .html());
+                        videoList.videos.add(video);
+                    }
                 }
             }
 
-            JSONArray jsonArray = new JSONArray();
-
-            for (String videoId : videoIds) {
-                JSONObject jsonObject = new JSONObject(VideosApi.getDataQuietly(videoId, apiKey));
-                jsonArray.put(jsonObject);
-            }
-
-            JSONObject jsonObject = new JSONObject();
-
-            jsonObject.put("videos", jsonArray);
-            String jsonResult = jsonObject.toString();
-            Log.i(TAG, "json: " + jsonResult);
-
+            String jsonResult = VideoList__JsonHelper.serializeToJson(videoList);
             pref.edit().putString(KEY_VIDEO_JSON, jsonResult).apply();
 
             publishResults(jsonResult, NOTIFICATION, RESULT);
-        } catch (IOException | JSONException | FeedException | ParseException e) {
+        } catch (IOException | JSONException e) {
             e.printStackTrace();
         }
     }

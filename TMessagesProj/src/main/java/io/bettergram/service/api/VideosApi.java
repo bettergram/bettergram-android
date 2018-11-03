@@ -4,8 +4,7 @@ import android.annotation.SuppressLint;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import io.bettergram.utils.Counter;
-import io.bettergram.utils.io.IOUtils;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -19,6 +18,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import io.bettergram.utils.Counter;
+import io.bettergram.utils.io.IOUtils;
+
 public class VideosApi {
 
     @SuppressLint("SimpleDateFormat")
@@ -26,6 +28,8 @@ public class VideosApi {
     //@formatter:off
     @SuppressLint("SimpleDateFormat")
     private static final SimpleDateFormat FROM_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+    @SuppressLint("SimpleDateFormat")
+    private static final SimpleDateFormat FROM_FORMAT2 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
     //@formatter:on
     @SuppressLint("SimpleDateFormat")
     private static final SimpleDateFormat TO_FORMAT = new SimpleDateFormat("MMM dd, yyyy");
@@ -119,4 +123,14 @@ public class VideosApi {
         return DURATION_FORMAT.format(date);
     }
 
+    @SuppressLint("SimpleDateFormat")
+    public static String formatDate(String publishedAt) {
+        try {
+            Date date = FROM_FORMAT2.parse(publishedAt);
+            return TO_FORMAT.format(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return "";
+        }
+    }
 }

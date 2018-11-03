@@ -276,7 +276,7 @@ public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                         LayoutHelper.createLinear(32, 32, Gravity.CENTER, 16, 0, 4, 0));
 
                 TextView cryptoName = new TextView(context);
-                cryptoName.setTypeface(Typeface.DEFAULT_BOLD);
+                cryptoName.setTypeface(Typeface.DEFAULT);
                 cryptoName.setMaxLines(1);
                 cryptoName.setTextColor(Theme.getColor(Theme.key_crypto_page_labelColor));
                 cryptoName.setTextSize(14);

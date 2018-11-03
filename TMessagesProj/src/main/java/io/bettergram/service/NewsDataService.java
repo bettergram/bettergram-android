@@ -4,24 +4,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 
-import com.rometools.rome.feed.synd.SyndEntry;
-import com.rometools.rome.feed.synd.SyndFeed;
-import com.rometools.rome.io.FeedException;
-import com.rometools.rome.io.SyndFeedInput;
-import com.rometools.rome.io.XmlReader;
-
 import org.json.JSONException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.parser.Parser;
 import org.jsoup.select.Elements;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -120,31 +113,31 @@ public class NewsDataService extends BaseDataService {
                         break;
                     }
 
-                    InputStream stream = new ByteArrayInputStream(xmlFinal.getBytes(StandardCharsets.UTF_8));
-
-                    SyndFeed feed = new SyndFeedInput().build(new XmlReader(stream, "text/xml"));
-
                     List<News> temp = new ArrayList<>();
 
-                    for (int j = 0, size_j = feed.getEntries().size(); j < size_j; j++) {
-                        SyndEntry entry = feed.getEntries().get(j);
-                        News newsItem = new News();
-                        newsItem.title = entry.getTitle();
-
-                        Source newsSource = new Source();
-                        newsSource.name = feed.getTitle();
-                        newsItem.source = newsSource;
-
-                        SyndFeed source = entry.getSource();
-
-                        newsItem.url = entry.getLink();
-                        newsItem.urlToImage = source != null ? source.getImage().getUrl() : null;
-
-                        newsItem.publishedAt = entry.getPublishedDate().toString();
-
-                        temp.add(newsItem);
+                    Document document = Jsoup.parse(xmlFinal, "", Parser.xmlParser());
+                    Elements channelElements = document.getElementsByTag("channel");
+                    if (channelElements != null && channelElements.size() > 0) {
+                        Elements itemElements = channelElements.get(0).getElementsByTag("item");
+                        for (Element itemElement : itemElements) {
+                            News newsItem = new News();
+                            newsItem.title = itemElement
+                                    .getElementsByTag("title")
+                                    .html();
+                            newsItem.url = itemElement
+                                    .getElementsByTag("link")
+                                    .html();
+                            newsItem.source = new Source();
+                            newsItem.source.name = channelElements
+                                    .get(0)
+                                    .getElementsByTag("title")
+                                    .html();
+                            newsItem.publishedAt = itemElement
+                                    .getElementsByTag("pubDate")
+                                    .html();
+                            temp.add(newsItem);
+                        }
                     }
-
                     articles.addAll(temp);
                 }
 
@@ -153,7 +146,7 @@ public class NewsDataService extends BaseDataService {
                 if (isEmpty(jsonRaw)) {
                     publishResults(NewsList__JsonHelper.serializeToJson(newsList), NOTIFICATION, RESULT);
                 }
-            } catch (IOException | JSONException | FeedException e) {
+            } catch (IOException | JSONException e) {
                 e.printStackTrace();
             }
 
