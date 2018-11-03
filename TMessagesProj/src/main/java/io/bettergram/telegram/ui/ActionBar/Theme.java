@@ -14,8 +14,25 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
-import android.graphics.*;
-import android.graphics.drawable.*;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.Paint;
+import android.graphics.Path;
+import android.graphics.PixelFormat;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.RectF;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.NinePatchDrawable;
+import android.graphics.drawable.RippleDrawable;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.StateListDrawable;
 import android.graphics.drawable.shapes.OvalShape;
 import android.graphics.drawable.shapes.RoundRectShape;
 import android.hardware.Sensor;
@@ -27,13 +44,9 @@ import android.os.SystemClock;
 import android.text.TextPaint;
 import android.text.TextUtils;
 import android.util.StateSet;
-import io.bettergram.messenger.R;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
-import io.bettergram.telegram.messenger.*;
-import io.bettergram.telegram.messenger.time.SunDate;
-import io.bettergram.telegram.ui.Components.CombinedDrawable;
-import io.bettergram.telegram.ui.Components.ThemeEditorView;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -45,6 +58,21 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
+
+import io.bettergram.messenger.R;
+import io.bettergram.telegram.messenger.AndroidUtilities;
+import io.bettergram.telegram.messenger.ApplicationLoader;
+import io.bettergram.telegram.messenger.BuildVars;
+import io.bettergram.telegram.messenger.FileLog;
+import io.bettergram.telegram.messenger.LocaleController;
+import io.bettergram.telegram.messenger.MediaController;
+import io.bettergram.telegram.messenger.MessagesController;
+import io.bettergram.telegram.messenger.NotificationCenter;
+import io.bettergram.telegram.messenger.SharedConfig;
+import io.bettergram.telegram.messenger.Utilities;
+import io.bettergram.telegram.messenger.time.SunDate;
+import io.bettergram.telegram.ui.Components.CombinedDrawable;
+import io.bettergram.telegram.ui.Components.ThemeEditorView;
 
 public class Theme {
 
@@ -1050,7 +1078,20 @@ public class Theme {
     public static final String key_topbar_activeColor = "topbar_activeColor";
     public static final String key_topbar_unreadCounterColor = "topbar_unreadCounterColor";
 
+    public static final String key_panel_backgroundColor = "panel_backgroundColor";
+    public static final String key_panel_labelColor = "panel_labelColor";
+    public static final String key_panel_subLabelColor = "panel_subLabelColor";
+
     public static final String key_crypto_dividerColor = "crypto_dividerColor";
+    public static final String key_crypto_topTab_activeColor = "crypto_topTab_activeColor";
+    public static final String key_crypto_topTab_inactiveColor = "crypto_topTab_inactiveColor";
+    public static final String key_crypto_topTab_stripColor = "crypto_topTab_stripColor";
+    public static final String key_crypto_topTab_nameActiveColor = "crypto_topTab_nameActiveColor";
+    public static final String key_crypto_topTab_nameInactiveColor = "crypto_topTab_nameInactiveColor";
+    public static final String key_crypto_page_labelColor = "crypto_page_labelColor";
+    public static final String key_resources_itemTitleColor = "resources_itemTitleColor";
+    public static final String key_resources_subItemTitleColor = "resources_subItemTitleColor";
+    public static final String key_resources_subItemDescriptionColor = "resources_subItemDescriptionColor";
 
     public static final String key_dialog_activeStateBorderColor = "dialog_activeStateBorderColor";
     public static final String key_dialog_activeStateOnlineColor = "dialog_activeStateOnlineColor";
@@ -1692,7 +1733,20 @@ public class Theme {
         defaultColors.put(key_topbar_activeColor, 0xffffffff);
         defaultColors.put(key_topbar_unreadCounterColor, 0xFFEB3E4A);
 
+        defaultColors.put(key_panel_backgroundColor, 0xffffffff);
+        defaultColors.put(key_panel_labelColor, 0xff000000);
+        defaultColors.put(key_panel_subLabelColor, 0xFFC9C9C9);
+
         defaultColors.put(key_crypto_dividerColor, 0xffd7d7d7);
+        defaultColors.put(key_crypto_topTab_activeColor, 0xFF1FCD6D);
+        defaultColors.put(key_crypto_topTab_inactiveColor, 0xFFC9C9C9);
+        defaultColors.put(key_crypto_topTab_stripColor, 0xFF1FCD6D);
+        defaultColors.put(key_crypto_topTab_nameActiveColor, 0xFF1FCD6D);
+        defaultColors.put(key_crypto_topTab_nameInactiveColor, 0xFFC9C9C9);
+        defaultColors.put(key_crypto_page_labelColor, 0xFF000000);
+        defaultColors.put(key_resources_itemTitleColor, 0xFF000000);
+        defaultColors.put(key_resources_subItemTitleColor, 0xFF000000);
+        defaultColors.put(key_resources_subItemDescriptionColor, 0xFFaeaeae);
 
         defaultColors.put(key_dialog_activeStateBorderColor, 0xFFFFFFFF);
         defaultColors.put(key_dialog_activeStateOnlineColor, 0xff69bc35);

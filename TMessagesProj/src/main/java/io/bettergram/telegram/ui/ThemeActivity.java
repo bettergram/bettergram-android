@@ -9,6 +9,7 @@
 package io.bettergram.telegram.ui;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.TimePickerDialog;
@@ -40,15 +41,22 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+
+import io.bettergram.messenger.BuildConfig;
+import io.bettergram.messenger.R;
 import io.bettergram.telegram.messenger.AndroidUtilities;
 import io.bettergram.telegram.messenger.ApplicationLoader;
-import io.bettergram.messenger.BuildConfig;
 import io.bettergram.telegram.messenger.FileLoader;
 import io.bettergram.telegram.messenger.FileLog;
 import io.bettergram.telegram.messenger.LocaleController;
 import io.bettergram.telegram.messenger.MessagesController;
 import io.bettergram.telegram.messenger.NotificationCenter;
-import io.bettergram.messenger.R;
 import io.bettergram.telegram.messenger.Utilities;
 import io.bettergram.telegram.messenger.support.widget.DefaultItemAnimator;
 import io.bettergram.telegram.messenger.support.widget.LinearLayoutManager;
@@ -72,13 +80,6 @@ import io.bettergram.telegram.ui.Components.EditTextBoldCursor;
 import io.bettergram.telegram.ui.Components.LayoutHelper;
 import io.bettergram.telegram.ui.Components.RecyclerListView;
 import io.bettergram.telegram.ui.Components.ThemeEditorView;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
 
 public class ThemeActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate {
 
@@ -667,6 +668,7 @@ public class ThemeActivity extends BaseFragment implements NotificationCenter.No
         showDialog(builder.create());
     }
 
+    @SuppressLint("DefaultLocale")
     private String getLocationSunString() {
         int currentHour = Theme.autoNightSunriseTime / 60;
         int currentMinute = (Theme.autoNightSunriseTime - currentHour * 60);

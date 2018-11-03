@@ -14,8 +14,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.squareup.picasso.Callback;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +25,8 @@ import io.bettergram.messenger.R;
 import io.bettergram.service.NewsDataService;
 import io.bettergram.telegram.messenger.AndroidUtilities;
 import io.bettergram.telegram.messenger.support.widget.RecyclerView;
+import io.bettergram.telegram.ui.ActionBar.Theme;
+import io.bettergram.telegram.ui.Components.CardView.CardView;
 
 import static io.bettergram.telegram.messenger.ApplicationLoader.picasso;
 
@@ -82,6 +82,21 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
             textTitle = itemView.findViewById(R.id.textTitle);
             textAccount = itemView.findViewById(R.id.textAccount);
             textDatePosted = itemView.findViewById(R.id.textDatePosted);
+
+            AndroidUtilities.setTextViewsColor(Theme.getColor(Theme.key_panel_labelColor),
+                    textTitle);
+
+            AndroidUtilities.setTextViewsColor(Theme.getColor(Theme.key_panel_subLabelColor),
+                    textAccount,
+                    textDatePosted);
+
+            AndroidUtilities.setTextViewsRelativeDrawableColor(
+                    Theme.getColor(Theme.key_panel_subLabelColor),
+                    textAccount,
+                    textDatePosted);
+
+            CardView cardView = (CardView) itemView;
+            cardView.setCardBackgroundColor(Theme.getColor(Theme.key_panel_backgroundColor));
         }
     }
 
@@ -110,13 +125,12 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
     public void onBindViewHolder(NewsViewHolder holder, int position) {
         final News news = newsList.get(position);
 
-        picasso().load(news.urlToImage)
-                .into(holder.imageThumb, new Callback.EmptyCallback() {
-                    @Override
-                    public void onSuccess() {
-                        //holder.imageThumb.requestLayout();
-                    }
-                });
+        picasso()
+                .load(news.urlToImage)
+                .fit()
+                .centerCrop()
+                .placeholder(R.drawable.drawable_picasso_placeholder)
+                .into(holder.imageThumb);
 
         holder.textTitle.setText(news.title);
         holder.textTitle.setOnClickListener(v -> {

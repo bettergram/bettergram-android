@@ -1,9 +1,6 @@
 package io.bettergram.adapters;
 
 
-import static android.text.TextUtils.isEmpty;
-import static io.bettergram.telegram.messenger.ApplicationLoader.picasso;
-
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -18,6 +15,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import io.bettergram.data.ResourceGroup;
 import io.bettergram.data.ResourceItem;
 import io.bettergram.data.ResourcesData;
@@ -26,10 +28,11 @@ import io.bettergram.messenger.R;
 import io.bettergram.service.ResourcesDataService;
 import io.bettergram.telegram.messenger.AndroidUtilities;
 import io.bettergram.telegram.messenger.support.widget.RecyclerView;
+import io.bettergram.telegram.ui.ActionBar.Theme;
 import io.bettergram.telegram.ui.Components.RecyclerListView;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+
+import static android.text.TextUtils.isEmpty;
+import static io.bettergram.telegram.messenger.ApplicationLoader.picasso;
 
 public class ResourcesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -87,6 +90,7 @@ public class ResourcesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         TitleViewHolder(View itemView) {
             super(itemView);
             textTitle = itemView.findViewById(R.id.textTitle);
+            textTitle.setTextColor(Theme.getColor(Theme.key_resources_itemTitleColor));
         }
 
     }
@@ -109,6 +113,8 @@ public class ResourcesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             textName = itemView.findViewById(R.id.textName);
             textDesc = itemView.findViewById(R.id.textDesc);
             layoutContent.setOnClickListener(this);
+            textName.setTextColor(Theme.getColor(Theme.key_resources_subItemTitleColor));
+            textDesc.setTextColor(Theme.getColor(Theme.key_resources_subItemDescriptionColor));
         }
 
         @Override

@@ -1,15 +1,12 @@
 package io.bettergram.adapters;
 
-import static android.text.TextUtils.isEmpty;
-import static io.bettergram.service.CryptoDataService.EXTRA_LIMIT;
-import static io.bettergram.telegram.messenger.ApplicationLoader.picasso;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -30,7 +27,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import com.sackcentury.shinebuttonlib.ShineButton;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import io.bettergram.data.CryptoCurrencyInfo;
 import io.bettergram.data.CryptoCurrencyInfoResponse;
 import io.bettergram.data.CryptoCurrencyInfoResponse__JsonHelper;
@@ -39,14 +43,15 @@ import io.bettergram.service.CryptoDataService;
 import io.bettergram.telegram.messenger.AndroidUtilities;
 import io.bettergram.telegram.messenger.support.widget.RecyclerView;
 import io.bettergram.telegram.ui.ActionBar.Theme;
+import io.bettergram.telegram.ui.Components.CardView.CardView;
 import io.bettergram.telegram.ui.Components.LayoutHelper;
 import io.bettergram.telegram.ui.Components.TabStrip.SlidingTabLayout;
 import io.bettergram.utils.Number;
 import io.bettergram.utils.SpanBuilder;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+
+import static android.text.TextUtils.isEmpty;
+import static io.bettergram.service.CryptoDataService.EXTRA_LIMIT;
+import static io.bettergram.telegram.messenger.ApplicationLoader.picasso;
 
 public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -128,7 +133,7 @@ public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             favorites.clear();
             favorites.addAll(data);
             for (Iterator<CryptoCurrencyInfo> iterator = favorites.iterator();
-                    iterator.hasNext(); ) {
+                 iterator.hasNext(); ) {
                 CryptoCurrencyInfo value = iterator.next();
                 if (!value.favorite) {
                     iterator.remove();
@@ -146,6 +151,9 @@ public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             textCap = itemView.findViewById(R.id.textCap);
             textDom = itemView.findViewById(R.id.textDom);
             textVol = itemView.findViewById(R.id.textVol);
+
+            CardView cardView = (CardView) itemView;
+            cardView.setCardBackgroundColor(Theme.getColor(Theme.key_panel_backgroundColor));
         }
     }
 
@@ -157,9 +165,17 @@ public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     }
 
     class LabelViewHolder extends RecyclerView.ViewHolder {
+        TextView textCode, textPrice, text24H;
 
         public LabelViewHolder(View itemView) {
             super(itemView);
+            textCode = itemView.findViewById(R.id.textCode);
+            textPrice = itemView.findViewById(R.id.textPrice);
+            text24H = itemView.findViewById(R.id.text24H);
+
+            textCode.setTextColor(Theme.getColor(Theme.key_crypto_topTab_nameInactiveColor));
+            textPrice.setTextColor(Theme.getColor(Theme.key_crypto_topTab_nameInactiveColor));
+            text24H.setTextColor(Theme.getColor(Theme.key_crypto_topTab_nameInactiveColor));
         }
     }
 
@@ -184,7 +200,7 @@ public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 favorites.clear();
                 favorites.addAll(data);
                 for (Iterator<CryptoCurrencyInfo> iterator = favorites.iterator();
-                        iterator.hasNext(); ) {
+                     iterator.hasNext(); ) {
                     CryptoCurrencyInfo value = iterator.next();
                     if (!value.favorite) {
                         iterator.remove();
@@ -212,10 +228,7 @@ public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             case 1:
                 SlidingTabLayout tabLayout = new SlidingTabLayout(context);
                 tabLayout.setAdapter(new TabsPagerAdapter());
-                tabLayout.setDividerColors(
-                        context.getResources().getColor(android.R.color.transparent));
-                tabLayout.setSelectedIndicatorColors(
-                        context.getResources().getColor(R.color.actionBarDefault));
+                tabLayout.setDividerColors(context.getResources().getColor(android.R.color.transparent));
                 tabLayout.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
                     @Override
                     public void onPageSelected(int position) {
@@ -234,13 +247,13 @@ public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                         }
                     }
                 });
-                tabLayout.setLayoutParams(
-                        new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                                ViewGroup.LayoutParams.WRAP_CONTENT));
+                tabLayout.setLayoutParams(new ViewGroup.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT));
                 return new TabsViewHolder(tabLayout);
             case 2:
-                return new LabelViewHolder(
-                        inflater.inflate(R.layout.item_crypto_top, parent, false));
+                View labelView = inflater.inflate(R.layout.item_crypto_top, parent, false);
+                return new LabelViewHolder(labelView);
             case 3:
                 LinearLayout container = new LinearLayout(context);
                 container.setOrientation(LinearLayout.HORIZONTAL);
@@ -265,7 +278,7 @@ public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 TextView cryptoName = new TextView(context);
                 cryptoName.setTypeface(Typeface.DEFAULT_BOLD);
                 cryptoName.setMaxLines(1);
-                cryptoName.setTextColor(context.getResources().getColor(android.R.color.black));
+                cryptoName.setTextColor(Theme.getColor(Theme.key_crypto_page_labelColor));
                 cryptoName.setTextSize(14);
                 cryptoName.setGravity(Gravity.CENTER);
                 cryptoName.setEllipsize(TextUtils.TruncateAt.END);
@@ -363,7 +376,10 @@ public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                         .setText(String.format(isGreaterZero ? "$%,.2f" : "$%.4f", price));
             }
             if (!isEmpty(info.icon)) {
-                picasso().load(info.icon).into(main.imageCrypto);
+                picasso()
+                        .load(info.icon)
+                        .config(Bitmap.Config.RGB_565)
+                        .into(main.imageCrypto);
             }
             if (info.delta != null) {
                 double deltaDay = -1 * ((1 - info.delta.day) * 100);
@@ -395,7 +411,7 @@ public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
      */
     public SpannableStringBuilder formatHeaderValue(Context context, String s1, String s2) {
         int grey73 = ContextCompat.getColor(context, R.color.grey73);
-        int grey2c = ContextCompat.getColor(context, R.color.grey2c);
+        int bigColor = Theme.getColor(Theme.key_panel_labelColor);
 
         SpanBuilder spanBuilder = new SpanBuilder();
         spanBuilder
@@ -405,7 +421,7 @@ public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 )
                 .append(s2,
                         new RelativeSizeSpan(1.2f),
-                        new ForegroundColorSpan(grey2c)
+                        new ForegroundColorSpan(bigColor)
                 );
         return spanBuilder.build();
     }

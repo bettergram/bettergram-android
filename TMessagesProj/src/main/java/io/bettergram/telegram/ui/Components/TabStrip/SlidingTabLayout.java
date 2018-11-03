@@ -17,7 +17,6 @@
 package io.bettergram.telegram.ui.Components.TabStrip;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.support.v4.view.PagerAdapter;
@@ -30,6 +29,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.HorizontalScrollView;
 import android.widget.TextView;
+
+import io.bettergram.telegram.ui.ActionBar.Theme;
 
 /**
  * To be used with ViewPager to provide a tab indicator component which give constant feedback as to
@@ -117,14 +118,6 @@ public class SlidingTabLayout extends HorizontalScrollView {
     }
 
     /**
-     * Sets the colors to be used for indicating the selected tab. These colors are treated as a
-     * circular array. Providing one color will mean that all tabs are indicated with the same color.
-     */
-    public void setSelectedIndicatorColors(int... colors) {
-        mTabStrip.setSelectedIndicatorColors(colors);
-    }
-
-    /**
      * Sets the colors to be used for tab dividers. These colors are treated as a circular array.
      * Providing one color will mean that all tabs are indicated with the same color.
      */
@@ -189,7 +182,7 @@ public class SlidingTabLayout extends HorizontalScrollView {
         textView.setTypeface(Typeface.DEFAULT_BOLD);
         textView.setAllCaps(false);
         textView.setTypeface(textView.getTypeface(), Typeface.BOLD);
-        textView.setTextColor(index == 0 ? Color.BLACK : Color.parseColor("#979797"));
+        textView.setTextColor(Theme.getColor(index == 0 ? Theme.key_crypto_topTab_nameActiveColor : Theme.key_crypto_topTab_nameInactiveColor));
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             // If we're running on Honeycomb or newer, then we can use the Theme's
@@ -310,10 +303,10 @@ public class SlidingTabLayout extends HorizontalScrollView {
             }
 
             TextView prev_textView = (TextView) mTabStrip.getChildAt(prev_position);
-            prev_textView.setTextColor(Color.parseColor("#979797"));
+            prev_textView.setTextColor(Theme.getColor(Theme.key_crypto_topTab_inactiveColor));
 
             TextView curr_textView = (TextView) mTabStrip.getChildAt(position);
-            curr_textView.setTextColor(Color.BLACK);
+            curr_textView.setTextColor(Theme.getColor(Theme.key_crypto_topTab_activeColor));
 
             prev_position = position;
 

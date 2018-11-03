@@ -1,8 +1,5 @@
 package io.bettergram.adapters;
 
-import static com.flipkart.youtubeview.models.YouTubePlayerType.STRICT_NATIVE;
-import static io.bettergram.telegram.messenger.ApplicationLoader.picasso;
-
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.content.BroadcastReceiver;
@@ -16,8 +13,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
 import com.flipkart.youtubeview.YouTubePlayerView;
 import com.flipkart.youtubeview.models.ImageLoader;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import io.bettergram.data.Video;
 import io.bettergram.data.VideoList;
 import io.bettergram.data.VideoList__JsonHelper;
@@ -25,9 +28,11 @@ import io.bettergram.messenger.R;
 import io.bettergram.service.YoutubeDataService;
 import io.bettergram.telegram.messenger.AndroidUtilities;
 import io.bettergram.telegram.messenger.support.widget.RecyclerView;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import io.bettergram.telegram.ui.ActionBar.Theme;
+import io.bettergram.telegram.ui.Components.CardView.CardView;
+
+import static com.flipkart.youtubeview.models.YouTubePlayerType.STRICT_NATIVE;
+import static io.bettergram.telegram.messenger.ApplicationLoader.picasso;
 
 public class YouTubePlayerAdapter extends
         RecyclerView.Adapter<YouTubePlayerAdapter.YouTubePlayerViewHolder> {
@@ -88,17 +93,38 @@ public class YouTubePlayerAdapter extends
             textAccount = view.findViewById(R.id.textAccount);
             textDatePosted = view.findViewById(R.id.textDatePosted);
             textViewCount = view.findViewById(R.id.textViewCount);
+
+            AndroidUtilities.setTextViewsColor(Theme.getColor(Theme.key_panel_labelColor),
+                    textTitle);
+
+            AndroidUtilities.setTextViewsColor(Theme.getColor(Theme.key_panel_subLabelColor),
+                    textAccount,
+                    textDatePosted,
+                    textViewCount);
+
+            AndroidUtilities.setTextViewsRelativeDrawableColor(
+                    Theme.getColor(Theme.key_panel_subLabelColor),
+                    textAccount,
+                    textDatePosted,
+                    textViewCount);
+
+            //ImageView thumbnailImage = playerView.findViewById(R.id.video_thumbnail_image);
+            //thumbnailImage.setBackgroundColor(Theme.getColor(Theme.key_panel_backgroundColor));
+
+            CardView cardView = (CardView) itemView;
+            cardView.setCardBackgroundColor(Theme.getColor(Theme.key_panel_backgroundColor));
         }
+
+
     }
 
     private ImageLoader imageLoader = (imageView, url, height, width) -> {
-        //Picasso.get().invalidate(url);// temporarily invalidated so the app wont load from memory as it shows blank image
         picasso()
                 .load(url)
                 .config(Config.RGB_565)
-                .resize((int) (width * 0.30f), (int) (height * 0.30f))
-                .centerCrop()
-                .placeholder(R.color.grey70)
+                //.resize((int) (width * 0.70f), (int) (height * 0.70f))
+                //.centerCrop()
+                .placeholder(R.drawable.drawable_picasso_placeholder)
                 .into(imageView);
     };
 

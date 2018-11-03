@@ -24,12 +24,15 @@ import android.util.TypedValue;
 import android.view.View;
 import android.widget.LinearLayout;
 
-public class SlidingTabStrip extends LinearLayout {
+import io.bettergram.telegram.messenger.NotificationCenter;
+import io.bettergram.telegram.ui.ActionBar.Theme;
+
+public class SlidingTabStrip extends LinearLayout implements NotificationCenter.NotificationCenterDelegate {
 
     private static final int DEFAULT_BOTTOM_BORDER_THICKNESS_DIPS = 1;
     private static final byte DEFAULT_BOTTOM_BORDER_COLOR_ALPHA = 0x26;
     private static final int SELECTED_INDICATOR_THICKNESS_DIPS = 8;
-    private static final int DEFAULT_SELECTED_INDICATOR_COLOR = 0xFF33B5E5;
+    private static final int DEFAULT_SELECTED_INDICATOR_COLOR = Theme.getColor(Theme.key_crypto_topTab_stripColor); //0xFF33B5E5;
 
     private static final int DEFAULT_DIVIDER_THICKNESS_DIPS = 1;
     private static final byte DEFAULT_DIVIDER_COLOR_ALPHA = 0x20;
@@ -86,6 +89,19 @@ public class SlidingTabStrip extends LinearLayout {
         mDividerPaint.setStrokeWidth((int) (DEFAULT_DIVIDER_THICKNESS_DIPS * density));
     }
 
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        NotificationCenter.getGlobalInstance().addObserver(this, NotificationCenter.didSetNewTheme);
+    }
+
+    @Override
+    public void didReceivedNotification(int id, int account, Object... args) {
+        if (id == NotificationCenter.didSetNewTheme) {
+            invalidate();
+        }
+    }
+
     void setCustomTabColorizer(SlidingTabLayout.TabColorizer customTabColorizer) {
         mCustomTabColorizer = customTabColorizer;
         invalidate();
@@ -125,7 +141,8 @@ public class SlidingTabStrip extends LinearLayout {
             View selectedTitle = getChildAt(mSelectedPosition);
             int left = selectedTitle.getLeft();
             int right = selectedTitle.getRight();
-            int color = tabColorizer.getIndicatorColor(mSelectedPosition);
+            //int color = tabColorizer.getIndicatorColor(mSelectedPosition);
+            int color = Theme.getColor(Theme.key_crypto_topTab_stripColor);
 
             if (mSelectionOffset > 0f && mSelectedPosition < (getChildCount() - 1)) {
                 int nextColor = tabColorizer.getIndicatorColor(mSelectedPosition + 1);
