@@ -310,6 +310,8 @@ public class Theme {
 
     public static Drawable dialog_favoriteDrawable;
 
+    public static Drawable circle_placeholderDrawable;
+
     public static Drawable moveUpDrawable;
 
     public static Paint dialogs_tabletSeletedPaint;
@@ -1082,7 +1084,6 @@ public class Theme {
     public static final String key_panel_labelColor = "panel_labelColor";
     public static final String key_panel_subLabelColor = "panel_subLabelColor";
 
-    public static final String key_crypto_dividerColor = "crypto_dividerColor";
     public static final String key_crypto_topTab_activeColor = "crypto_topTab_activeColor";
     public static final String key_crypto_topTab_inactiveColor = "crypto_topTab_inactiveColor";
     public static final String key_crypto_topTab_stripColor = "crypto_topTab_stripColor";
@@ -1737,7 +1738,6 @@ public class Theme {
         defaultColors.put(key_panel_labelColor, 0xff000000);
         defaultColors.put(key_panel_subLabelColor, 0xFFC9C9C9);
 
-        defaultColors.put(key_crypto_dividerColor, 0xffd7d7d7);
         defaultColors.put(key_crypto_topTab_activeColor, 0xFF1FCD6D);
         defaultColors.put(key_crypto_topTab_inactiveColor, 0xFFC9C9C9);
         defaultColors.put(key_crypto_topTab_stripColor, 0xFF1FCD6D);
@@ -2814,6 +2814,8 @@ public class Theme {
 
             crypto_priceDownDrawable = resources.getDrawable(R.drawable.ic_arrow_price_down);
             crypto_priceUpDrawable = resources.getDrawable(R.drawable.ic_arrow_price_up);
+
+            circle_placeholderDrawable = resources.getDrawable(R.drawable.drawable_placeholder_circle);
 
             applyCommonTheme();
         }

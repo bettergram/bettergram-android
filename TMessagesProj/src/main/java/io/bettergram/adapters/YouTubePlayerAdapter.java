@@ -6,16 +6,16 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Bitmap.Config;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.flipkart.youtubeview.YouTubePlayerView;
-import com.flipkart.youtubeview.models.ImageLoader;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -27,12 +27,12 @@ import io.bettergram.data.VideoList__JsonHelper;
 import io.bettergram.messenger.R;
 import io.bettergram.service.YoutubeDataService;
 import io.bettergram.telegram.messenger.AndroidUtilities;
+import io.bettergram.telegram.messenger.ImageReceiver;
 import io.bettergram.telegram.messenger.support.widget.RecyclerView;
 import io.bettergram.telegram.ui.ActionBar.Theme;
 import io.bettergram.telegram.ui.Components.CardView.CardView;
 
 import static com.flipkart.youtubeview.models.YouTubePlayerType.STRICT_NATIVE;
-import static io.bettergram.telegram.messenger.ApplicationLoader.picasso;
 
 public class YouTubePlayerAdapter extends
         RecyclerView.Adapter<YouTubePlayerAdapter.YouTubePlayerViewHolder> {
@@ -80,10 +80,10 @@ public class YouTubePlayerAdapter extends
     private String apiKey;
     private String webviewUrl;
 
-    class YouTubePlayerViewHolder extends RecyclerView.ViewHolder {
-
+    class YouTubePlayerViewHolder extends RecyclerView.ViewHolder implements ImageReceiver.ImageReceiverDelegate {
+        ImageReceiver videoPhoto;
         YouTubePlayerView playerView;
-
+        ImageView thumbnailImage;
         TextView textTitle, textAccount, textDatePosted, textViewCount;
 
         YouTubePlayerViewHolder(View view) {
@@ -108,25 +108,21 @@ public class YouTubePlayerAdapter extends
                     textDatePosted,
                     textViewCount);
 
-            //ImageView thumbnailImage = playerView.findViewById(R.id.video_thumbnail_image);
-            //thumbnailImage.setBackgroundColor(Theme.getColor(Theme.key_panel_backgroundColor));
+            thumbnailImage = playerView.findViewById(R.id.video_thumbnail_image);
+            videoPhoto = new ImageReceiver(thumbnailImage);
+            videoPhoto.setNeedsQualityThumb(true);
+            videoPhoto.setDelegate(this);
 
             CardView cardView = (CardView) itemView;
             cardView.setCardBackgroundColor(Theme.getColor(Theme.key_panel_backgroundColor));
         }
 
-
+        @Override
+        public void didSetImage(ImageReceiver imageReceiver, boolean set, boolean thumb) {
+            Bitmap bitmap = imageReceiver.getBitmap();
+            thumbnailImage.setImageBitmap(bitmap);
+        }
     }
-
-    private ImageLoader imageLoader = (imageView, url, height, width) -> {
-        picasso()
-                .load(url)
-                .config(Config.RGB_565)
-                //.resize((int) (width * 0.70f), (int) (height * 0.70f))
-                //.centerCrop()
-                .placeholder(R.drawable.drawable_picasso_placeholder)
-                .into(imageView);
-    };
 
     public void setVideos(List<Video> videos) {
         if (videos == null || videos.isEmpty()) {
@@ -180,8 +176,21 @@ public class YouTubePlayerAdapter extends
         holder.textViewCount.setText(String.format("%s views", viewCount));
 
         if (!playerView.initted) {
-            playerView.initPlayer(apiKey, videoId, webviewUrl, playerType, null, fragmentManager,
-                    imageLoader);
+            playerView.initPlayer(
+                    apiKey,
+                    videoId,
+                    webviewUrl,
+                    playerType,
+                    null,
+                    fragmentManager,
+                    (imageView, url, height, width) -> {
+                        holder.videoPhoto.setImage(
+                                url,
+                                null,
+                                null,
+                                null,
+                                width);
+                    });
         } else {
             playerView.load(videoId);
         }

@@ -23,7 +23,6 @@ import android.content.res.Configuration;
 import android.os.Handler;
 import android.os.PowerManager;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.common.ConnectionResult;
@@ -32,8 +31,6 @@ import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.security.ProviderInstaller;
 import com.google.firebase.iid.FirebaseInstanceId;
-import com.squareup.picasso.OkHttp3Downloader;
-import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.security.KeyManagementException;
@@ -61,7 +58,6 @@ import static io.bettergram.service.CryptoDataService.EXTRA_LIMIT;
 public class ApplicationLoader extends Application {
 
     public static OkHttpClient okhttp_singleton;
-    private static Picasso picasso_singleton;
 
     @SuppressLint("StaticFieldLeak")
     public static volatile Context applicationContext;
@@ -308,24 +304,4 @@ public class ApplicationLoader extends Application {
         }
         return okhttp_singleton;
     }
-
-    public static Picasso picasso() {
-        if (picasso_singleton == null) {
-            synchronized (Picasso.class) {
-                if (picasso_singleton == null) {
-                    picasso_singleton = new Picasso
-                            .Builder(applicationContext)
-                            .downloader(new OkHttp3Downloader(okhttp_client()))
-                            .loggingEnabled(true)
-                            .listener((picasso1, uri, exception) -> {
-                                Log.e("Picasso", exception.getMessage());
-                            })
-                            .build();
-                }
-            }
-        }
-        return picasso_singleton;
-    }
-
-
 }

@@ -9,7 +9,6 @@ import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -41,6 +40,7 @@ import io.bettergram.data.CryptoCurrencyInfoResponse__JsonHelper;
 import io.bettergram.messenger.R;
 import io.bettergram.service.CryptoDataService;
 import io.bettergram.telegram.messenger.AndroidUtilities;
+import io.bettergram.telegram.messenger.ImageReceiver;
 import io.bettergram.telegram.messenger.support.widget.RecyclerView;
 import io.bettergram.telegram.ui.ActionBar.Theme;
 import io.bettergram.telegram.ui.Components.CardView.CardView;
@@ -51,7 +51,6 @@ import io.bettergram.utils.SpanBuilder;
 
 import static android.text.TextUtils.isEmpty;
 import static io.bettergram.service.CryptoDataService.EXTRA_LIMIT;
-import static io.bettergram.telegram.messenger.ApplicationLoader.picasso;
 
 public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -92,8 +91,9 @@ public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         }
     }
 
-    class MainViewHolder extends RecyclerView.ViewHolder implements
-            ShineButton.OnCheckedChangeListener {
+    class MainViewHolder extends RecyclerView.ViewHolder implements ShineButton.OnCheckedChangeListener, ImageReceiver.ImageReceiverDelegate {
+
+        ImageReceiver cryptoPhoto;
 
         ImageView imageCrypto;
         TextView textCryptoName, textCryptoPrice, textDayDelta;
@@ -110,6 +110,10 @@ public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             textCryptoName = itemView.findViewWithTag("textCryptoName");
             textCryptoPrice = itemView.findViewWithTag("textCryptoPrice");
             textDayDelta = itemView.findViewWithTag("textDayDelta");
+
+            cryptoPhoto = new ImageReceiver(imageCrypto);
+            cryptoPhoto.setNeedsQualityThumb(false);
+            cryptoPhoto.setDelegate(this);
 
             Activity activity = (Activity) itemView.getContext();
             star = itemView.findViewWithTag("star");
@@ -139,6 +143,12 @@ public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                     iterator.remove();
                 }
             }
+        }
+
+        @Override
+        public void didSetImage(ImageReceiver imageReceiver, boolean set, boolean thumb) {
+            Bitmap bitmap = imageReceiver.getBitmap();
+            imageCrypto.setImageBitmap(bitmap);
         }
     }
 
@@ -287,10 +297,6 @@ public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                         .createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT,
                                 Gravity.CENTER, 8, 0, 0, 0));
 
-                final Paint divider_paint = new Paint();
-                divider_paint.setColor(Theme.getColor(Theme.key_crypto_dividerColor));
-                divider_paint.setStrokeWidth(1); // set stroke so you can actually see the lines
-
                 LinearLayout content = new LinearLayout(context) {
                     @Override
                     protected void onDraw(Canvas canvas) {
@@ -299,7 +305,7 @@ public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                         final int height = getMeasuredHeight();
                         final float offset_y = height - 1;
                         final float offset_x = cryptoName.getX();
-                        canvas.drawLine(offset_x, offset_y, width, offset_y, divider_paint);
+                        canvas.drawLine(offset_x, offset_y, width, offset_y, Theme.dividerPaint);
                     }
                 };
                 content.setWillNotDraw(false);
@@ -341,14 +347,11 @@ public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         if (holder instanceof HeaderViewHolder) {
             HeaderViewHolder header = (HeaderViewHolder) holder;
             double cap = cryptoData.cap;
-            header.textCap.setText(
-                    formatHeaderValue(context, "MARKET CAP($)", Number.truncateNumber(cap)));
+            header.textCap.setText(formatHeaderValue(context, "MARKET CAP($)", Number.truncateNumber(cap)));
             double dom = cryptoData.btcDominance;
-            header.textDom.setText(
-                    formatHeaderValue(context, "BTC DOM.", String.format("%.2f%%", (dom * 100))));
+            header.textDom.setText(formatHeaderValue(context, "BTC DOM.", String.format("%.2f%%", (dom * 100))));
             double vol = cryptoData.volume;
-            header.textVol
-                    .setText(formatHeaderValue(context, "24H VOL($)", Number.truncateNumber(vol)));
+            header.textVol.setText(formatHeaderValue(context, "24H VOL($)", Number.truncateNumber(vol)));
         } else if (holder instanceof MainViewHolder) {
 
             int real_position = position - 3;
@@ -370,23 +373,22 @@ public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             if (price > 0) {
                 boolean isGreaterZero = Math.floor(price) > 0;
                 double deltaMinute = -1 * ((1 - info.delta.minute) * 100);
-                main.textCryptoPrice
-                        .setTextColor(deltaMinute > 0 ? Color.parseColor("#ff69bc35") : Color.RED);
-                main.textCryptoPrice
-                        .setText(String.format(isGreaterZero ? "$%,.2f" : "$%.4f", price));
+                main.textCryptoPrice.setTextColor(deltaMinute > 0 ? Color.parseColor("#ff69bc35") : Color.RED);
+                main.textCryptoPrice.setText(String.format(isGreaterZero ? "$%,.2f" : "$%.4f", price));
             }
             if (!isEmpty(info.icon)) {
-                picasso()
-                        .load(info.icon)
-                        .config(Bitmap.Config.RGB_565)
-                        .into(main.imageCrypto);
+                main.cryptoPhoto.setImage(
+                        info.icon,
+                        null,
+                        Theme.circle_placeholderDrawable,
+                        null,
+                        AndroidUtilities.dp(24)
+                );
             }
             if (info.delta != null) {
                 double deltaDay = -1 * ((1 - info.delta.day) * 100);
-                main.textDayDelta
-                        .setTextColor(deltaDay > 0 ? Color.parseColor("#ff69bc35") : Color.RED);
-                main.textDayDelta.setText(String.format(deltaDay > 0 ? "+%s%%" : "%s%%",
-                        Number.truncateNumber(deltaDay)));
+                main.textDayDelta.setTextColor(deltaDay > 0 ? Color.parseColor("#ff69bc35") : Color.RED);
+                main.textDayDelta.setText(String.format(deltaDay > 0 ? "+%s%%" : "%s%%", Number.truncateNumber(deltaDay)));
 
                 main.textDayDelta.setCompoundDrawablesWithIntrinsicBounds(
                         null,

@@ -7,6 +7,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -27,12 +28,12 @@ import io.bettergram.data.ResourcesData__JsonHelper;
 import io.bettergram.messenger.R;
 import io.bettergram.service.ResourcesDataService;
 import io.bettergram.telegram.messenger.AndroidUtilities;
+import io.bettergram.telegram.messenger.ImageReceiver;
 import io.bettergram.telegram.messenger.support.widget.RecyclerView;
 import io.bettergram.telegram.ui.ActionBar.Theme;
 import io.bettergram.telegram.ui.Components.RecyclerListView;
 
 import static android.text.TextUtils.isEmpty;
-import static io.bettergram.telegram.messenger.ApplicationLoader.picasso;
 
 public class ResourcesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -95,8 +96,9 @@ public class ResourcesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     }
 
-    class ContentViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    class ContentViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, ImageReceiver.ImageReceiverDelegate {
 
+        ImageReceiver resourcesPhoto;
         View layoutContent;
         ImageView imageResource;
         TextView textName, textDesc;
@@ -115,6 +117,17 @@ public class ResourcesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             layoutContent.setOnClickListener(this);
             textName.setTextColor(Theme.getColor(Theme.key_resources_subItemTitleColor));
             textDesc.setTextColor(Theme.getColor(Theme.key_resources_subItemDescriptionColor));
+
+            resourcesPhoto = new ImageReceiver(imageResource);
+            resourcesPhoto.setNeedsQualityThumb(true);
+            resourcesPhoto.setDelegate(this);
+
+        }
+
+        @Override
+        public void didSetImage(ImageReceiver imageReceiver, boolean set, boolean thumb) {
+            Bitmap bitmap = imageReceiver.getBitmap();
+            imageResource.setImageBitmap(bitmap);
         }
 
         @Override
@@ -198,7 +211,12 @@ public class ResourcesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 if (!isEmpty(item.title) && !isEmpty(item.url) && !isEmpty(item.description)) {
                     cvh.textName.setText(item.title);
                     cvh.textDesc.setText(item.description);
-                    picasso().load(item.thumbnail()).into(cvh.imageResource);
+                    cvh.resourcesPhoto.setImage(
+                            item.thumbnail(),
+                            null,
+                            null,
+                            null,
+                            0);
                 }
                 break;
             default:

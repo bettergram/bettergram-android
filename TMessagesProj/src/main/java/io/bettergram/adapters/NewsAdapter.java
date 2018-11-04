@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -24,11 +25,10 @@ import io.bettergram.data.NewsList__JsonHelper;
 import io.bettergram.messenger.R;
 import io.bettergram.service.NewsDataService;
 import io.bettergram.telegram.messenger.AndroidUtilities;
+import io.bettergram.telegram.messenger.ImageReceiver;
 import io.bettergram.telegram.messenger.support.widget.RecyclerView;
 import io.bettergram.telegram.ui.ActionBar.Theme;
 import io.bettergram.telegram.ui.Components.CardView.CardView;
-
-import static io.bettergram.telegram.messenger.ApplicationLoader.picasso;
 
 public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder> {
 
@@ -70,7 +70,9 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
 
     private List<News> newsList = new ArrayList<>();
 
-    class NewsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    class NewsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, ImageReceiver.ImageReceiverDelegate {
+
+        ImageReceiver newsPhoto;
 
         ImageView imageThumb;
         TextView textTitle, textAccount, textDatePosted;
@@ -83,6 +85,10 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
             textTitle = itemView.findViewById(R.id.textTitle);
             textAccount = itemView.findViewById(R.id.textAccount);
             textDatePosted = itemView.findViewById(R.id.textDatePosted);
+
+            newsPhoto = new ImageReceiver(imageThumb);
+            newsPhoto.setNeedsQualityThumb(true);
+            newsPhoto.setDelegate(this);
 
             textTitle.setOnClickListener(this);
             imageThumb.setOnClickListener(this);
@@ -101,6 +107,12 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
 
             CardView cardView = (CardView) itemView;
             cardView.setCardBackgroundColor(Theme.getColor(Theme.key_panel_backgroundColor));
+        }
+
+        @Override
+        public void didSetImage(ImageReceiver imageReceiver, boolean set, boolean thumb) {
+            Bitmap bitmap = imageReceiver.getBitmap();
+            imageThumb.setImageBitmap(bitmap);
         }
 
         @Override
@@ -139,13 +151,13 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
         final News news = newsList.get(position);
 
         holder.news = news;
-
-        picasso()
-                .load(news.urlToImage)
-                .fit()
-                .centerCrop()
-                .placeholder(R.drawable.drawable_picasso_placeholder)
-                .into(holder.imageThumb);
+        
+        holder.newsPhoto.setImage(
+                news.urlToImage,
+                null,
+                null,
+                null,
+                0);
 
         holder.textTitle.setText(news.title);
 
