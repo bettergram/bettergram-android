@@ -2,12 +2,12 @@ package io.bettergram.telegram.ui.Components.Indicator;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
+
 import io.bettergram.telegram.messenger.AndroidUtilities;
 import io.bettergram.telegram.ui.ActionBar.Theme;
 
 public class OnlineIndicator {
 
-    private final int strokeColor = Theme.getColor(Theme.key_dialog_activeStateBorderColor);
     private final int borderWidth = AndroidUtilities.dp(2);
 
     private Paint paint = Theme.dialog_activeStatePaint;
@@ -58,10 +58,12 @@ public class OnlineIndicator {
             float dx = (float) (x0 + radius * Math.cos(40 * Math.PI / 180));
             float dy = (float) (y0 + radius * Math.sin(40 * Math.PI / 180));
             float circleSize = radius * 0.25f;
-            paint.setColor(strokeColor);
+            paint.setColor(Theme.getColor(Theme.key_dialog_activeStateBorderColor));
             canvas.drawCircle(offsetX + dx, offsetY + dy, circleSize + borderWidth, paint);
             paint.setColor(Theme.getColor(active == 1 ? Theme.key_dialog_activeStateOnlineColor : Theme.key_dialog_activeStateOfflineColor));
             canvas.drawCircle(offsetX + dx, offsetY + dy, circleSize, paint);
         }
     }
+
+
 }

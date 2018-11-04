@@ -29,3 +29,6 @@ crypto_page_labelColor=-16777216
 resources_itemTitleColor=-16777216
 resources_subItemTitleColor=-16777216
 resources_subItemDescriptionColor=-5329234
+dialog_activeStateBorderColor=-1
+dialog_favoriteBackgroundColor=-1
+EOF
