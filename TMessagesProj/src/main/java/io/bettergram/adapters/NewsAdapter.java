@@ -70,11 +70,12 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
 
     private List<News> newsList = new ArrayList<>();
 
-    class NewsViewHolder extends RecyclerView.ViewHolder {
+    class NewsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         ImageView imageThumb;
-
         TextView textTitle, textAccount, textDatePosted;
+
+        News news;
 
         NewsViewHolder(View itemView) {
             super(itemView);
@@ -82,6 +83,9 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
             textTitle = itemView.findViewById(R.id.textTitle);
             textAccount = itemView.findViewById(R.id.textAccount);
             textDatePosted = itemView.findViewById(R.id.textDatePosted);
+
+            textTitle.setOnClickListener(this);
+            imageThumb.setOnClickListener(this);
 
             AndroidUtilities.setTextViewsColor(Theme.getColor(Theme.key_panel_labelColor),
                     textTitle);
@@ -97,6 +101,15 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
 
             CardView cardView = (CardView) itemView;
             cardView.setCardBackgroundColor(Theme.getColor(Theme.key_panel_backgroundColor));
+        }
+
+        @Override
+        public void onClick(View v) {
+            if (news != null) {
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW);
+                browserIntent.setData(Uri.parse(news.url));
+                v.getContext().startActivity(browserIntent);
+            }
         }
     }
 
@@ -125,6 +138,8 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
     public void onBindViewHolder(NewsViewHolder holder, int position) {
         final News news = newsList.get(position);
 
+        holder.news = news;
+
         picasso()
                 .load(news.urlToImage)
                 .fit()
@@ -133,11 +148,6 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
                 .into(holder.imageThumb);
 
         holder.textTitle.setText(news.title);
-        holder.textTitle.setOnClickListener(v -> {
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW);
-            browserIntent.setData(Uri.parse(news.url));
-            v.getContext().startActivity(browserIntent);
-        });
 
         holder.textAccount.setText(news.source.name);
 
