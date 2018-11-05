@@ -1,7 +1,9 @@
 package io.bettergram.service.api;
 
 import android.annotation.SuppressLint;
+
 import io.bettergram.utils.io.IOUtils;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -17,6 +19,8 @@ public class NewsApi {
     //@formatter:off
     @SuppressLint("SimpleDateFormat")
     private static final SimpleDateFormat FROM_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:SS'Z'");
+    @SuppressLint("SimpleDateFormat")
+    private static final SimpleDateFormat FROM_FORMAT2 = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z");
     //@formatter:on
     @SuppressLint("SimpleDateFormat")
     private static final SimpleDateFormat TO_FORMAT = new SimpleDateFormat("MMM dd, yyyy");
@@ -41,8 +45,13 @@ public class NewsApi {
     /**
      * Gets formatted date
      */
-    public static String getFormattedDate(String unformattedDate) throws ParseException {
-        Date date = FROM_FORMAT.parse(unformattedDate);
-        return TO_FORMAT.format(date);
+    public static String getFormattedDate(String unformattedDate) {
+        try {
+            Date date = FROM_FORMAT2.parse(unformattedDate);
+            return TO_FORMAT.format(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return "";
+        }
     }
 }

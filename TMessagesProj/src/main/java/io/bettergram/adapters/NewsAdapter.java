@@ -151,7 +151,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
         final News news = newsList.get(position);
 
         holder.news = news;
-        
+
         holder.newsPhoto.setImage(
                 news.urlToImage,
                 null,
@@ -163,8 +163,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
 
         holder.textAccount.setText(news.source.name);
 
-        //TODO: proper format
-        holder.textDatePosted.setText(news.publishedAt.substring(0, 10));
+        holder.textDatePosted.setText(news.publishedAt);
     }
 
     @Override

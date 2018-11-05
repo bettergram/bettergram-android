@@ -37,6 +37,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 import static android.text.TextUtils.isEmpty;
+import static io.bettergram.service.api.NewsApi.getFormattedDate;
 import static io.bettergram.telegram.messenger.ApplicationLoader.okhttp_client;
 import static io.bettergram.utils.AeSimpleSHA1.SHA1;
 
@@ -78,7 +79,7 @@ public class NewsDataService extends BaseDataService {
 
                     String url = data.news.get(i);
                     HttpURLConnection urlConnection = (HttpURLConnection) new URL(url).openConnection();
-                    urlConnection.setRequestProperty("User-Agent", "ROME");
+                    urlConnection.setRequestProperty("User-Agent", "Bettergram");
                     urlConnection.connect();
                     InputStream in = urlConnection.getInputStream();
 
@@ -132,9 +133,9 @@ public class NewsDataService extends BaseDataService {
                                     .get(0)
                                     .getElementsByTag("title")
                                     .html();
-                            newsItem.publishedAt = itemElement
+                            newsItem.publishedAt = getFormattedDate(itemElement
                                     .getElementsByTag("pubDate")
-                                    .html();
+                                    .html());
                             temp.add(newsItem);
                         }
                     }
