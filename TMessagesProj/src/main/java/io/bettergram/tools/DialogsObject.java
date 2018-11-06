@@ -17,23 +17,10 @@ public class DialogsObject extends DialogObject {
     }
 
     public static boolean isAnnouncement(TLRPC.TL_dialog d) {
-//        if (DialogObject.isChannel(d)) {
-//            MessagesController messagesController = MessagesController.getInstance(UserConfig.selectedAccount);
-//            TLRPC.Chat chat = messagesController.getChat(-getLowerId(d));
-//            return (
-//                    chat != null && (
-//                            chat.megagroup && (
-//                                    chat.admin_rights != null && (
-//                                            chat.admin_rights.post_messages || chat.admin_rights.add_admins
-//                                    )
-//                            ) || chat.creator
-//                    )
-//            );
-//        }
         if (isChannel(d)) {
             MessagesController messagesController = MessagesController.getInstance(UserConfig.selectedAccount);
             TLRPC.Chat chat = messagesController.getChat(-getLowerId(d));
-            return (chat.id < 0 || ChatObject.isChannel(chat) && !chat.megagroup);
+            return (chat != null && (chat.id < 0 || ChatObject.isChannel(chat) && !chat.megagroup));
         }
         return false;
     }
