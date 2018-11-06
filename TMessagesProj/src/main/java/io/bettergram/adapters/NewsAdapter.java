@@ -1,5 +1,6 @@
 package io.bettergram.adapters;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -14,11 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import io.bettergram.data.News;
 import io.bettergram.data.NewsList;
 import io.bettergram.data.NewsList__JsonHelper;
@@ -29,6 +25,10 @@ import io.bettergram.telegram.messenger.ImageReceiver;
 import io.bettergram.telegram.messenger.support.widget.RecyclerView;
 import io.bettergram.telegram.ui.ActionBar.Theme;
 import io.bettergram.telegram.ui.Components.CardView.CardView;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder> {
 
@@ -146,6 +146,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
         return new NewsViewHolder(content);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(NewsViewHolder holder, int position) {
         final News news = newsList.get(position);
@@ -160,10 +161,8 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
                 0);
 
         holder.textTitle.setText(news.title);
-
         holder.textAccount.setText(news.source.name);
-
-        holder.textDatePosted.setText(news.publishedAt);
+        holder.textDatePosted.setText("\u0020\u0020\u2022\u0020\u0020" + news.publishedAt);
     }
 
     @Override

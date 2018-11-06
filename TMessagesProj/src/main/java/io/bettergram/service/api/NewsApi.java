@@ -23,7 +23,7 @@ public class NewsApi {
     private static final SimpleDateFormat FROM_FORMAT2 = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z");
     //@formatter:on
     @SuppressLint("SimpleDateFormat")
-    private static final SimpleDateFormat TO_FORMAT = new SimpleDateFormat("MMM dd, yyyy");
+    private static final SimpleDateFormat TO_FORMAT = new SimpleDateFormat("MMM dd");
 
     private static final String LIVE_COIN_WATCH_NEWS_URL = "https://api.bettergram.io/v1/news";
 

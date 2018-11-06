@@ -1,30 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<io.bettergram.telegram.ui.Components.CardView.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginStart="16dp"
-    android:layout_marginTop="16dp"
-    android:layout_marginEnd="16dp"
-    android:elevation="2dp"
-    android:minHeight="200dp"
-    app:cardCornerRadius="4dp"
-    app:cardUseCompatPadding="true">
-
-    <LinearLayout
+<io.bettergram.telegram.ui.Components.CardView.CardView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:orientation="vertical">
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:elevation="2dp"
+        android:minHeight="200dp"
+        app:cardCornerRadius="4dp"
+        app:cardUseCompatPadding="true">
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:orientation="vertical">
 
         <!--<FrameLayout-->
         <!--android:layout_width="wrap_content"-->
         <!--android:layout_height="wrap_content">-->
 
         <com.flipkart.youtubeview.YouTubePlayerView
-            android:id="@+id/youtube_player_view"
-            android:layout_width="match_parent"
-            android:layout_height="180dp" />
+                android:id="@+id/youtube_player_view"
+                android:layout_width="match_parent"
+                android:layout_height="180dp"/>
 
         <!--<TextView-->
         <!--android:id="@+id/textDuration"-->
@@ -42,65 +44,58 @@
         <!--</FrameLayout>-->
 
         <TextView
-            android:id="@+id/textTitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            android:ellipsize="end"
-            android:gravity="start"
-            android:maxLines="2"
-            android:textSize="16sp"
-            android:textStyle="normal" />
-
-        <LinearLayout
-            android:id="@+id/container_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
-            android:layout_marginEnd="4dp"
-            android:layout_marginBottom="8dp"
-            android:orientation="horizontal"
-            android:weightSum="3">
-
-            <TextView
-                android:id="@+id/textAccount"
-                android:layout_width="0dp"
+                android:id="@+id/textTitle"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="0dp"
-                android:layout_weight="1"
-                android:drawableStart="@drawable/ic_account_circle"
-                android:drawablePadding="2dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
                 android:ellipsize="end"
-                android:gravity="center_vertical"
-                android:maxLines="1"
-                android:textSize="12sp" />
+                android:gravity="start"
+                android:maxLines="2"
+                android:textSize="16sp"
+                android:textStyle="normal"/>
 
-            <TextView
-                android:id="@+id/textDatePosted"
-                android:layout_width="0dp"
+        <TableLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="0dp"
-                android:layout_weight="1"
-                android:drawableStart="@drawable/ic_date"
-                android:drawablePadding="2dp"
-                android:gravity="center_vertical"
-                android:textSize="12sp" />
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:shrinkColumns="0">
 
-            <TextView
-                android:id="@+id/textViewCount"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="0dp"
-                android:layout_weight="1"
-                android:drawableStart="@drawable/ic_views"
-                android:drawablePadding="2dp"
-                android:gravity="center_vertical"
-                android:textSize="12sp" />
+            <TableRow
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    tools:ignore="UselessParent">
 
-        </LinearLayout>
+                <TextView
+                        android:id="@+id/textAccount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:gravity="center"
+                        android:maxLines="1"
+                        android:textSize="12sp"/>
+
+                <TextView
+                        android:id="@+id/textDatePosted"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:textSize="12sp"/>
+
+                <TextView
+                        android:id="@+id/textViewCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:textSize="12sp"/>
+            </TableRow>
+
+        </TableLayout>
 
     </LinearLayout>
 

@@ -32,7 +32,7 @@ public class VideosApi {
     private static final SimpleDateFormat FROM_FORMAT2 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
     //@formatter:on
     @SuppressLint("SimpleDateFormat")
-    private static final SimpleDateFormat TO_FORMAT = new SimpleDateFormat("MMM dd, yyyy");
+    private static final SimpleDateFormat TO_FORMAT = new SimpleDateFormat("MMM dd");
 
     private static final String YOUTUBE_STATISTICS_URL = "https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails,statistics&id=%s&key=%s";
 

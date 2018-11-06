@@ -1,5 +1,6 @@
 package io.bettergram.adapters;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.content.BroadcastReceiver;
@@ -14,13 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.flipkart.youtubeview.YouTubePlayerView;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import io.bettergram.data.Video;
 import io.bettergram.data.VideoList;
 import io.bettergram.data.VideoList__JsonHelper;
@@ -31,6 +26,10 @@ import io.bettergram.telegram.messenger.ImageReceiver;
 import io.bettergram.telegram.messenger.support.widget.RecyclerView;
 import io.bettergram.telegram.ui.ActionBar.Theme;
 import io.bettergram.telegram.ui.Components.CardView.CardView;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.flipkart.youtubeview.models.YouTubePlayerType.STRICT_NATIVE;
 
@@ -159,6 +158,7 @@ public class YouTubePlayerAdapter extends
         return position;
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(final YouTubePlayerViewHolder holder, int position) {
         YouTubePlayerView playerView = holder.playerView;
@@ -172,8 +172,8 @@ public class YouTubePlayerAdapter extends
 
         holder.textTitle.setText(title);
         holder.textAccount.setText(channelTitle);
-        holder.textDatePosted.setText(publishedAt);
-        holder.textViewCount.setText(String.format("%s views", viewCount));
+        holder.textDatePosted.setText("\u0020\u0020\u2022\u0020\u0020" + publishedAt);
+        holder.textViewCount.setText("\u0020\u0020\u2022\u0020\u0020" + String.format("%s views", viewCount));
 
         if (!playerView.initted) {
             playerView.initPlayer(
