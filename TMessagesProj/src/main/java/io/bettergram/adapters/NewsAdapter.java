@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -160,8 +161,8 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
                 null,
                 0);
 
-        holder.textTitle.setText(news.title);
-        holder.textAccount.setText(news.source.name);
+        holder.textTitle.setText(Html.fromHtml(news.title));
+        holder.textAccount.setText(Html.fromHtml(news.source.name));
         holder.textDatePosted.setText("\u0020\u0020\u2022\u0020\u0020" + news.publishedAt);
     }
 
