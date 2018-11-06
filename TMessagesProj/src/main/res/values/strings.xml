@@ -2612,4 +2612,7 @@
     <string name="please_wait">Please wait…</string>
     <string name="success">Success!</string>
     <string name="please_check_email">Please check your email to confirm your sign up</string>
+
+    <string name="UpdateAlertButton">Update</string>
+    <string name="UpdateAlert">There is a newer version available for download. Please update the app by visiting the Play Store.</string>
 </resources>

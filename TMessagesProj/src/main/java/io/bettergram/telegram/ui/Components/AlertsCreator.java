@@ -23,21 +23,8 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import io.bettergram.telegram.messenger.AndroidUtilities;
-import io.bettergram.telegram.messenger.ApplicationLoader;
-import io.bettergram.telegram.messenger.BuildVars;
-import io.bettergram.telegram.messenger.LocaleController;
-import io.bettergram.telegram.messenger.MessagesController;
-import io.bettergram.telegram.messenger.MessagesStorage;
-import io.bettergram.telegram.messenger.NotificationCenter;
-import io.bettergram.telegram.messenger.NotificationsController;
 import io.bettergram.messenger.R;
-import io.bettergram.telegram.messenger.SecretChatHelper;
-import io.bettergram.telegram.messenger.SharedConfig;
-import io.bettergram.telegram.messenger.UserConfig;
-import io.bettergram.telegram.messenger.UserObject;
-import io.bettergram.telegram.messenger.Utilities;
+import io.bettergram.telegram.messenger.*;
 import io.bettergram.telegram.messenger.browser.Browser;
 import io.bettergram.telegram.tgnet.ConnectionsManager;
 import io.bettergram.telegram.tgnet.TLObject;
@@ -555,38 +542,38 @@ public class AlertsCreator {
                 LocaleController.getString("MuteDisable", R.string.MuteDisable)
         };
         builder.setItems(items, (dialogInterface, i) -> {
-            int untilTime = ConnectionsManager.getInstance(UserConfig.selectedAccount).getCurrentTime();
-            if (i == 0) {
-                untilTime += 60 * 60;
-            } else if (i == 1) {
-                untilTime += 60 * 60 * 8;
-            } else if (i == 2) {
-                untilTime += 60 * 60 * 48;
-            } else if (i == 3) {
-                untilTime = Integer.MAX_VALUE;
-            }
+                    int untilTime = ConnectionsManager.getInstance(UserConfig.selectedAccount).getCurrentTime();
+                    if (i == 0) {
+                        untilTime += 60 * 60;
+                    } else if (i == 1) {
+                        untilTime += 60 * 60 * 8;
+                    } else if (i == 2) {
+                        untilTime += 60 * 60 * 48;
+                    } else if (i == 3) {
+                        untilTime = Integer.MAX_VALUE;
+                    }
 
-            SharedPreferences preferences = MessagesController.getNotificationsSettings(UserConfig.selectedAccount);
-            SharedPreferences.Editor editor = preferences.edit();
-            long flags;
-            if (i == 3) {
-                editor.putInt("notify2_" + dialog_id, 2);
-                flags = 1;
-            } else {
-                editor.putInt("notify2_" + dialog_id, 3);
-                editor.putInt("notifyuntil_" + dialog_id, untilTime);
-                flags = ((long) untilTime << 32) | 1;
-            }
-            NotificationsController.getInstance(UserConfig.selectedAccount).removeNotificationsForDialog(dialog_id);
-            MessagesStorage.getInstance(UserConfig.selectedAccount).setDialogFlags(dialog_id, flags);
-            editor.commit();
-            TLRPC.TL_dialog dialog = MessagesController.getInstance(UserConfig.selectedAccount).dialogs_dict.get(dialog_id);
-            if (dialog != null) {
-                dialog.notify_settings = new TLRPC.TL_peerNotifySettings();
-                dialog.notify_settings.mute_until = untilTime;
-            }
-            NotificationsController.getInstance(UserConfig.selectedAccount).updateServerNotificationsSettings(dialog_id);
-        }
+                    SharedPreferences preferences = MessagesController.getNotificationsSettings(UserConfig.selectedAccount);
+                    SharedPreferences.Editor editor = preferences.edit();
+                    long flags;
+                    if (i == 3) {
+                        editor.putInt("notify2_" + dialog_id, 2);
+                        flags = 1;
+                    } else {
+                        editor.putInt("notify2_" + dialog_id, 3);
+                        editor.putInt("notifyuntil_" + dialog_id, untilTime);
+                        flags = ((long) untilTime << 32) | 1;
+                    }
+                    NotificationsController.getInstance(UserConfig.selectedAccount).removeNotificationsForDialog(dialog_id);
+                    MessagesStorage.getInstance(UserConfig.selectedAccount).setDialogFlags(dialog_id, flags);
+                    editor.commit();
+                    TLRPC.TL_dialog dialog = MessagesController.getInstance(UserConfig.selectedAccount).dialogs_dict.get(dialog_id);
+                    if (dialog != null) {
+                        dialog.notify_settings = new TLRPC.TL_peerNotifySettings();
+                        dialog.notify_settings.mute_until = untilTime;
+                    }
+                    NotificationsController.getInstance(UserConfig.selectedAccount).updateServerNotificationsSettings(dialog_id);
+                }
         );
         return builder.create();
     }
@@ -605,44 +592,44 @@ public class AlertsCreator {
                 LocaleController.getString("ReportChatOther", R.string.ReportChatOther)
         };
         builder.setItems(items, (dialogInterface, i) -> {
-            if (i == 3) {
-                Bundle args = new Bundle();
-                args.putLong("dialog_id", dialog_id);
-                args.putLong("message_id", messageId);
-                parentFragment.presentFragment(new ReportOtherActivity(args));
-                return;
-            }
-            TLObject req;
-            TLRPC.InputPeer peer = MessagesController.getInstance(UserConfig.selectedAccount).getInputPeer((int) dialog_id);
-            if (messageId != 0) {
-                TLRPC.TL_messages_report request = new TLRPC.TL_messages_report();
-                request.peer = peer;
-                request.id.add(messageId);
-                if (i == 0) {
-                    request.reason = new TLRPC.TL_inputReportReasonSpam();
-                } else if (i == 1) {
-                    request.reason = new TLRPC.TL_inputReportReasonViolence();
-                } else if (i == 2) {
-                    request.reason = new TLRPC.TL_inputReportReasonPornography();
-                }
-                req = request;
-            } else {
-                TLRPC.TL_account_reportPeer request = new TLRPC.TL_account_reportPeer();
-                request.peer = peer;
-                if (i == 0) {
-                    request.reason = new TLRPC.TL_inputReportReasonSpam();
-                } else if (i == 1) {
-                    request.reason = new TLRPC.TL_inputReportReasonViolence();
-                } else if (i == 2) {
-                    request.reason = new TLRPC.TL_inputReportReasonPornography();
-                }
-                req = request;
-            }
-            ConnectionsManager.getInstance(UserConfig.selectedAccount).sendRequest(req, (response, error) -> {
+                    if (i == 3) {
+                        Bundle args = new Bundle();
+                        args.putLong("dialog_id", dialog_id);
+                        args.putLong("message_id", messageId);
+                        parentFragment.presentFragment(new ReportOtherActivity(args));
+                        return;
+                    }
+                    TLObject req;
+                    TLRPC.InputPeer peer = MessagesController.getInstance(UserConfig.selectedAccount).getInputPeer((int) dialog_id);
+                    if (messageId != 0) {
+                        TLRPC.TL_messages_report request = new TLRPC.TL_messages_report();
+                        request.peer = peer;
+                        request.id.add(messageId);
+                        if (i == 0) {
+                            request.reason = new TLRPC.TL_inputReportReasonSpam();
+                        } else if (i == 1) {
+                            request.reason = new TLRPC.TL_inputReportReasonViolence();
+                        } else if (i == 2) {
+                            request.reason = new TLRPC.TL_inputReportReasonPornography();
+                        }
+                        req = request;
+                    } else {
+                        TLRPC.TL_account_reportPeer request = new TLRPC.TL_account_reportPeer();
+                        request.peer = peer;
+                        if (i == 0) {
+                            request.reason = new TLRPC.TL_inputReportReasonSpam();
+                        } else if (i == 1) {
+                            request.reason = new TLRPC.TL_inputReportReasonViolence();
+                        } else if (i == 2) {
+                            request.reason = new TLRPC.TL_inputReportReasonPornography();
+                        }
+                        req = request;
+                    }
+                    ConnectionsManager.getInstance(UserConfig.selectedAccount).sendRequest(req, (response, error) -> {
 
-            });
-            Toast.makeText(context, LocaleController.getString("ReportChatSent", R.string.ReportChatSent), Toast.LENGTH_SHORT).show();
-        }
+                    });
+                    Toast.makeText(context, LocaleController.getString("ReportChatSent", R.string.ReportChatSent), Toast.LENGTH_SHORT).show();
+                }
         );
         return builder.create();
     }
@@ -794,7 +781,7 @@ public class AlertsCreator {
         }
         final LinearLayout linearLayout = new LinearLayout(parentActivity);
         linearLayout.setOrientation(LinearLayout.VERTICAL);
-        String descriptions[] = new String[] {LocaleController.getString("ColorRed", R.string.ColorRed),
+        String descriptions[] = new String[]{LocaleController.getString("ColorRed", R.string.ColorRed),
                 LocaleController.getString("ColorOrange", R.string.ColorOrange),
                 LocaleController.getString("ColorYellow", R.string.ColorYellow),
                 LocaleController.getString("ColorGreen", R.string.ColorGreen),
@@ -803,7 +790,7 @@ public class AlertsCreator {
                 LocaleController.getString("ColorViolet", R.string.ColorViolet),
                 LocaleController.getString("ColorPink", R.string.ColorPink),
                 LocaleController.getString("ColorWhite", R.string.ColorWhite)};
-        final int selectedColor[] = new int[] {currentColor};
+        final int selectedColor[] = new int[]{currentColor};
         for (int a = 0; a < 9; a++) {
             RadioColorCell cell = new RadioColorCell(parentActivity);
             cell.setPadding(AndroidUtilities.dp(4), 0, AndroidUtilities.dp(4), 0);
@@ -1385,6 +1372,17 @@ public class AlertsCreator {
         builder.setView(linearLayout);
         builder.setPositiveButton(LocaleController.getString("Cancel", R.string.Cancel), null);
         return alertDialog[0] = builder.create();
+    }
+
+    public static AlertDialog.Builder createUpdateDialog(final Activity parentActivity, DialogInterface.OnClickListener listener) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(parentActivity);
+        builder.setTopImage(R.drawable.ic_app_update, Theme.getColor(Theme.key_dialogTopBackground));
+        builder.setMessage(AndroidUtilities.replaceTags(LocaleController.getString("UpdateAlert", R.string.UpdateAlert)));
+        builder.setPositiveButton(LocaleController.getString("UpdateAlertButton", R.string.UpdateAlertButton), (dialog, which) -> {
+            dialog.dismiss();
+            listener.onClick(dialog, which);
+        });
+        return builder;
     }
 
 //    public static AlertDialog createExpireDateAlert(final Context context, final boolean month, final int[] result, final Runnable callback) {

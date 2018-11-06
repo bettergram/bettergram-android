@@ -34,7 +34,6 @@ import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.*;
-
 import io.bettergram.adapters.*;
 import io.bettergram.messenger.R;
 import io.bettergram.telegram.messenger.*;
@@ -114,6 +113,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
     private int currentBottomTabPosition = 0;
 
     private DialogsActivityDelegate delegate;
+
+    private AppVersionTask appVersionTask;
 
     public interface DialogsActivityDelegate {
         void didSelectDialogs(DialogsActivity fragment, ArrayList<Long> dids, CharSequence message, boolean param);
@@ -1419,6 +1420,24 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         if (dialogsSearchAdapter != null) {
             dialogsSearchAdapter.notifyDataSetChanged();
         }
+
+        getAvailableActivity(activity -> {
+            if (appVersionTask != null) {
+                appVersionTask.cancel(true);
+            }
+            appVersionTask = new AppVersionTask(shouldUpdate -> {
+                if (shouldUpdate) {
+                    AlertDialog alertDialog = AlertsCreator.createUpdateDialog(activity, (dialog, which) -> {
+                        AppVersionTask.openAppInPlayStore(activity);
+                    }).create();
+                    alertDialog.setCanceledOnTouchOutside(false);
+                    alertDialog.setCancelable(false);
+                    alertDialog.show();
+                }
+            });
+            appVersionTask.execute();
+        });
+
         if (checkPermission && !onlySelect && Build.VERSION.SDK_INT >= 23) {
             Activity activity = getParentActivity();
             if (activity != null) {

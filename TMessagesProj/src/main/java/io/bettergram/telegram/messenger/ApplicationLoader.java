@@ -13,17 +13,14 @@ import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.Application;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.SharedPreferences;
+import android.content.*;
 import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.Handler;
 import android.os.PowerManager;
 import android.text.TextUtils;
-
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
@@ -31,17 +28,6 @@ import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.security.ProviderInstaller;
 import com.google.firebase.iid.FirebaseInstanceId;
-
-import java.io.File;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-import javax.net.ssl.SSLContext;
-
 import io.bettergram.service.CryptoDataService;
 import io.bettergram.service.NewsDataService;
 import io.bettergram.telegram.tgnet.ConnectionsManager;
@@ -52,6 +38,15 @@ import okhttp3.CipherSuite;
 import okhttp3.ConnectionSpec;
 import okhttp3.OkHttpClient;
 import okhttp3.TlsVersion;
+
+import javax.net.ssl.SSLContext;
+import java.io.File;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static io.bettergram.service.CryptoDataService.EXTRA_LIMIT;
 
@@ -69,6 +64,20 @@ public class ApplicationLoader extends Application {
     public static volatile boolean externalInterfacePaused = true;
     public static volatile boolean mainInterfacePausedStageQueue = true;
     public static volatile long mainInterfacePausedStageQueueTime;
+
+    public static String packageName() {
+        return ApplicationLoader.applicationContext.getPackageName();
+    }
+
+    public static String version() {
+        try {
+            PackageInfo pInfo = ApplicationLoader.applicationContext.getPackageManager().getPackageInfo(packageName(), 0);
+            return String.valueOf(pInfo.versionCode);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+            return "";
+        }
+    }
 
     public static File getFilesDirFixed() {
         for (int a = 0; a < 10; a++) {
@@ -176,8 +185,7 @@ public class ApplicationLoader extends Application {
         SharedPreferences preferences = MessagesController.getGlobalNotificationsSettings();
         if (preferences.getBoolean("pushService", true)) {
             try {
-                applicationContext
-                        .startService(new Intent(applicationContext, NotificationsService.class));
+                applicationContext.startService(new Intent(applicationContext, NotificationsService.class));
             } catch (Throwable ignore) {
 
             }
@@ -189,10 +197,8 @@ public class ApplicationLoader extends Application {
     public static void stopPushService() {
         applicationContext.stopService(new Intent(applicationContext, NotificationsService.class));
 
-        PendingIntent pintent = PendingIntent.getService(applicationContext, 0,
-                new Intent(applicationContext, NotificationsService.class), 0);
-        AlarmManager alarm = (AlarmManager) applicationContext
-                .getSystemService(Context.ALARM_SERVICE);
+        PendingIntent pintent = PendingIntent.getService(applicationContext, 0, new Intent(applicationContext, NotificationsService.class), 0);
+        AlarmManager alarm = (AlarmManager) applicationContext.getSystemService(Context.ALARM_SERVICE);
         alarm.cancel(pintent);
     }
 
