@@ -2,6 +2,7 @@ package com.sackcentury.shinebuttonlib;
 
 import android.animation.Animator;
 import android.animation.ValueAnimator;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -12,6 +13,7 @@ import android.os.Build;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -219,6 +221,13 @@ public class ShineButton extends PorterShapeImageView {
         onButtonClickListener = new OnButtonClickListener();
         setOnClickListener(onButtonClickListener);
 
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        super.onTouchEvent(event);
+        return false;
     }
 
     @Override
