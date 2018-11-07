@@ -31,6 +31,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static io.bettergram.service.api.NewsApi.formatToYesterdayOrToday;
+
 public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder> {
 
     /**
@@ -163,7 +165,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
 
         holder.textTitle.setText(Html.fromHtml(news.title));
         holder.textAccount.setText(Html.fromHtml(news.source.name));
-        holder.textDatePosted.setText("\u0020\u0020\u2022\u0020\u0020" + news.publishedAt);
+        holder.textDatePosted.setText("\u0020\u0020\u2022\u0020\u0020" + formatToYesterdayOrToday(news.publishedAt));
     }
 
     @Override

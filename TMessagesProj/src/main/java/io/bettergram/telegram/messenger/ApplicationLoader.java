@@ -30,6 +30,7 @@ import com.google.android.gms.security.ProviderInstaller;
 import com.google.firebase.iid.FirebaseInstanceId;
 import io.bettergram.service.CryptoDataService;
 import io.bettergram.service.NewsDataService;
+import io.bettergram.service.YoutubeDataService;
 import io.bettergram.telegram.tgnet.ConnectionsManager;
 import io.bettergram.telegram.tgnet.TLRPC;
 import io.bettergram.telegram.ui.Components.ForegroundDetector;
@@ -285,13 +286,16 @@ public class ApplicationLoader extends Application {
         return Arrays.asList(legacyTls, ConnectionSpec.CLEARTEXT);
     }
 
-    public static void warmupCryptosData(Activity activity) {
+    public static void warmupBettergramData(Activity activity) {
         Intent intent = new Intent(activity, CryptoDataService.class);
         intent.putExtra(EXTRA_LIMIT, 100);
         activity.startService(intent);
 
         Intent intent2 = new Intent(activity, NewsDataService.class);
         activity.startService(intent2);
+
+        Intent intent3 = new Intent(activity, YoutubeDataService.class);
+        activity.startService(intent3);
     }
 
     public static OkHttpClient okhttp_client() {

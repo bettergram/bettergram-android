@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.flipkart.youtubeview.models.YouTubePlayerType.STRICT_NATIVE;
+import static io.bettergram.service.api.VideosApi.formatToYesterdayOrToday;
 
 public class YouTubePlayerAdapter extends
         RecyclerView.Adapter<YouTubePlayerAdapter.YouTubePlayerViewHolder> {
@@ -172,7 +173,7 @@ public class YouTubePlayerAdapter extends
 
         holder.textTitle.setText(title);
         holder.textAccount.setText(channelTitle);
-        holder.textDatePosted.setText("\u0020\u0020\u2022\u0020\u0020" + publishedAt);
+        holder.textDatePosted.setText("\u0020\u0020\u2022\u0020\u0020" + formatToYesterdayOrToday(publishedAt));
         holder.textViewCount.setText("\u0020\u0020\u2022\u0020\u0020" + String.format("%s views", viewCount));
 
         if (!playerView.initted) {

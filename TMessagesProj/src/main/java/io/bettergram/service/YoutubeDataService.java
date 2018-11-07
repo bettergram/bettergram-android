@@ -3,7 +3,13 @@ package io.bettergram.service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-
+import com.crashlytics.android.Crashlytics;
+import io.bettergram.data.*;
+import io.bettergram.service.api.VideosApi;
+import io.bettergram.telegram.messenger.ApplicationLoader;
+import io.bettergram.utils.Counter;
+import okhttp3.Request;
+import okhttp3.Response;
 import org.json.JSONException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -12,17 +18,6 @@ import org.jsoup.parser.Parser;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
-
-import io.bettergram.data.Video;
-import io.bettergram.data.VideoData;
-import io.bettergram.data.VideoData__JsonHelper;
-import io.bettergram.data.VideoList;
-import io.bettergram.data.VideoList__JsonHelper;
-import io.bettergram.service.api.VideosApi;
-import io.bettergram.utils.Counter;
-import okhttp3.Request;
-import okhttp3.Response;
 
 import static android.text.TextUtils.isEmpty;
 import static io.bettergram.telegram.messenger.ApplicationLoader.okhttp_client;
@@ -39,9 +34,7 @@ public class YoutubeDataService extends BaseDataService {
 
     public static final String NOTIFICATION = "io.bettergram.service.YoutubeDataService";
 
-    private static List<String> videoIds = new ArrayList<>();
-
-    private SharedPreferences pref;
+    private SharedPreferences preferences = ApplicationLoader.applicationContext.getSharedPreferences(YOUTUBE_PREF, Context.MODE_PRIVATE);
 
     public YoutubeDataService() {
         super("YoutubeDataService");
@@ -50,14 +43,11 @@ public class YoutubeDataService extends BaseDataService {
     @Override
     protected void onHandleIntent(Intent intent) {
 
-        pref = getSharedPreferences(YOUTUBE_PREF, Context.MODE_PRIVATE);
-
-        String jsonRaw = pref.getString(KEY_VIDEO_JSON, null);
+        String jsonRaw = preferences.getString(KEY_VIDEO_JSON, null);
         if (!isEmpty(jsonRaw)) {
             publishResults(jsonRaw, NOTIFICATION, RESULT);
         }
 
-        //String apiKey = getString(R.string.youtube_api_key);
         try {
             VideoData videoData = VideoData__JsonHelper.parseFromJson(VideosApi.getYoutubeRSSFeed());
 
@@ -75,40 +65,51 @@ public class YoutubeDataService extends BaseDataService {
                     String result = response.body().string();
                     Document document = Jsoup.parse(result, "", Parser.xmlParser());
                     for (Element element : document.getElementsByTag("entry")) {
-
-                        Video video = new Video();
-                        video.id = element
-                                .getElementsByTag("yt:videoId")
-                                .html();
-                        video.title = element
-                                .getElementsByTag("title")
-                                .html();
-                        video.channelTitle = element
-                                .getElementsByTag("author")
-                                .get(0)
-                                .getElementsByTag("name")
-                                .html();
-                        video.viewCount = Counter.format(element
-                                .getElementsByTag("media:group")
-                                .get(0)
-                                .getElementsByTag("media:community")
-                                .get(0)
-                                .getElementsByTag("media:statistics")
-                                .attr("views"));
-                        video.publishedAt = VideosApi.formatDate(element
-                                .getElementsByTag("published")
-                                .html());
-                        videoList.videos.add(video);
+                        if (!videoList.contains(element.getElementsByTag("yt:videoId").get(0).html())) {
+                            Video video = new Video();
+                            video.id = element
+                                    .getElementsByTag("yt:videoId")
+                                    .get(0)
+                                    .html();
+                            video.title = element
+                                    .getElementsByTag("title")
+                                    .get(0)
+                                    .html();
+                            video.channelTitle = element
+                                    .getElementsByTag("author")
+                                    .get(0)
+                                    .getElementsByTag("name")
+                                    .get(0)
+                                    .html();
+                            video.viewCount = Counter.format(element
+                                    .getElementsByTag("media:group")
+                                    .get(0)
+                                    .getElementsByTag("media:community")
+                                    .get(0)
+                                    .getElementsByTag("media:statistics")
+                                    .get(0)
+                                    .attr("views"));
+                            video.publishedAt = element
+                                    .getElementsByTag("published")
+                                    .get(0)
+                                    .html();
+                            videoList.videos.add(video);
+                        }
                     }
                 }
             }
 
+            videoList.sortVideosByDate();
+
             String jsonResult = VideoList__JsonHelper.serializeToJson(videoList);
-            pref.edit().putString(KEY_VIDEO_JSON, jsonResult).apply();
+            preferences.edit().putString(KEY_VIDEO_JSON, jsonResult).apply();
 
             publishResults(jsonResult, NOTIFICATION, RESULT);
         } catch (IOException | JSONException e) {
             e.printStackTrace();
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            Crashlytics.logException(e);
         }
     }
 }

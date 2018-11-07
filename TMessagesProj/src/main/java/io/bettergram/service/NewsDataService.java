@@ -1,34 +1,12 @@
 package io.bettergram.service;
 
-import static android.text.TextUtils.isEmpty;
-import static io.bettergram.service.api.NewsApi.getFormattedDate;
-import static io.bettergram.telegram.messenger.ApplicationLoader.okhttp_client;
-import static io.bettergram.utils.AeSimpleSHA1.SHA1;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import io.bettergram.data.News;
-import io.bettergram.data.NewsData;
-import io.bettergram.data.NewsData__JsonHelper;
-import io.bettergram.data.NewsList;
-import io.bettergram.data.NewsList__JsonHelper;
-import io.bettergram.data.Source;
+import io.bettergram.data.*;
 import io.bettergram.service.api.NewsApi;
 import io.bettergram.telegram.messenger.ApplicationLoader;
 import io.bettergram.utils.io.IOUtils;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import okhttp3.Request;
 import okhttp3.Response;
 import org.json.JSONException;
@@ -37,6 +15,19 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.parser.Parser;
 import org.jsoup.select.Elements;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.security.NoSuchAlgorithmException;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static android.text.TextUtils.isEmpty;
+import static io.bettergram.telegram.messenger.ApplicationLoader.okhttp_client;
+import static io.bettergram.utils.AeSimpleSHA1.SHA1;
 
 public class NewsDataService extends BaseDataService {
 
@@ -139,10 +130,10 @@ public class NewsDataService extends BaseDataService {
                                     .getElementsByTag("title")
                                     .get(0)
                                     .html();
-                            newsItem.publishedAt = getFormattedDate(itemElement
+                            newsItem.publishedAt = itemElement
                                     .getElementsByTag("pubDate")
                                     .get(0)
-                                    .html());
+                                    .html();
                             temp.add(newsItem);
                         }
                     }
@@ -218,7 +209,7 @@ public class NewsDataService extends BaseDataService {
                                     }
                                     boolean found = false;
                                     for (int w = 0, size_w = elementsFromAttrs.size(); w < size_w;
-                                            w++) {
+                                         w++) {
                                         Element element = elementsFromAttrs.get(w);
                                         Elements imgElements = element.getElementsByTag("img");
                                         String sourceSet = imgElements.attr("srcset");
@@ -243,7 +234,7 @@ public class NewsDataService extends BaseDataService {
                                         }
                                         if (secondSmallest > 0) {
                                             for (int x = 0, size_x = sources.size(); x < size_x;
-                                                    x++) {
+                                                 x++) {
                                                 if (sources.get(x).contains(secondSmallest + "w")) {
                                                     String[] source = sources.get(x).split(" ");
                                                     if (source.length > 1 && source[0]
@@ -301,6 +292,7 @@ public class NewsDataService extends BaseDataService {
                 }
                 NewsList newsList = new NewsList();
                 newsList.articles = articles;
+                newsList.sortArticlesByDate();
 
                 try {
                     String json = NewsList__JsonHelper.serializeToJson(newsList);
