@@ -3,7 +3,9 @@ package io.bettergram.service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.util.Log;
 import io.bettergram.data.*;
+import io.bettergram.messenger.BuildConfig;
 import io.bettergram.service.api.NewsApi;
 import io.bettergram.telegram.messenger.ApplicationLoader;
 import io.bettergram.utils.io.IOUtils;
@@ -168,8 +170,7 @@ public class NewsDataService extends BaseDataService {
                                 String thumb = null;
 
                                 //for news from https://www.coindesk.com
-                                Elements elementsFromAttrs = document.head()
-                                        .getElementsByAttributeValue("type", "application/ld+json");
+                                Elements elementsFromAttrs = document.head().getElementsByAttributeValue("type", "application/ld+json");
                                 if (elementsFromAttrs != null) {
                                     for (Element element : elementsFromAttrs) {
                                         String json = element.html();
@@ -193,19 +194,21 @@ public class NewsDataService extends BaseDataService {
 
                                 // for news from https://livecoinwatch.com and https://coincentral.com
                                 if (isEmpty(thumb)) {
-                                    Elements origImageUrl = document.head()
-                                            .getElementsByAttributeValue("property", "og:image");
+                                    Elements origImageUrl = document.head().getElementsByAttributeValue("property", "og:image");
                                     String file = origImageUrl.attr("content");
-                                    file = file.substring(file.lastIndexOf('/') + 1, file.length());
-                                    file = file.substring(0, file.lastIndexOf('.'));
+                                    if (isEmpty(file)) {
+                                        file = document.head().getElementsByAttributeValue("meta", "twitter:image").attr("content");
+                                    }
 
-                                    elementsFromAttrs = document.body()
-                                            .getElementsByAttributeValue("class",
-                                                    "td-post-featured-image");
+                                    if (!isEmpty(file)) {
+                                        file = file.replaceAll("-\\d+[Xx]\\d+\\.", "");
+                                        file = file.substring(file.lastIndexOf('/') + 1, file.length());
+                                        file = file.replaceAll(".(png|gif|jpg|jpeg)", "");
+                                    }
+
+                                    elementsFromAttrs = document.body().getElementsByAttributeValue("class", "td-post-featured-image");
                                     if (isEmpty(elementsFromAttrs.html())) {
-                                        elementsFromAttrs = document.body()
-                                                .getElementsByAttributeValue("class",
-                                                        "fl-photo-content fl-photo-img-png");
+                                        elementsFromAttrs = document.body().getElementsByAttributeValue("class", "fl-photo-content fl-photo-img-png");
                                     }
                                     boolean found = false;
                                     for (int w = 0, size_w = elementsFromAttrs.size(); w < size_w;
@@ -213,15 +216,13 @@ public class NewsDataService extends BaseDataService {
                                         Element element = elementsFromAttrs.get(w);
                                         Elements imgElements = element.getElementsByTag("img");
                                         String sourceSet = imgElements.attr("srcset");
-                                        List<String> sources = Arrays
-                                                .asList(sourceSet.split("\\s*,\\s*"));
+                                        List<String> sources = Arrays.asList(sourceSet.split("\\s*,\\s*"));
                                         int smallest = Integer.MAX_VALUE;
                                         int secondSmallest = Integer.MAX_VALUE;
                                         for (int x = 0, size_x = sources.size(); x < size_x; x++) {
                                             String[] source = sources.get(x).split(" ");
                                             if (source.length > 1) {
-                                                int width = Integer
-                                                        .valueOf(source[1].replaceAll("\\D+", ""));
+                                                int width = Integer.valueOf(source[1].replaceAll("\\D+", ""));
                                                 if (width == smallest) {
                                                     secondSmallest = smallest;
                                                 } else if (width < smallest) {
@@ -237,8 +238,7 @@ public class NewsDataService extends BaseDataService {
                                                  x++) {
                                                 if (sources.get(x).contains(secondSmallest + "w")) {
                                                     String[] source = sources.get(x).split(" ");
-                                                    if (source.length > 1 && source[0]
-                                                            .contains(file)) {
+                                                    if (source.length > 1 && source[0].contains(file)) {
                                                         thumb = source[0];
                                                         found = true;
                                                         break;
@@ -254,12 +254,9 @@ public class NewsDataService extends BaseDataService {
 
                                 // for https://www.ccn.com
                                 if (isEmpty(thumb)) {
-                                    elementsFromAttrs = document
-                                            .getElementsByAttributeValue("class", "post-thumbnail");
-                                    if (isEmpty(elementsFromAttrs.html())
-                                            && elementsFromAttrs.size() > 0) {
-                                        Elements elements = elementsFromAttrs.get(0)
-                                                .getElementsByTag("img");
+                                    elementsFromAttrs = document.getElementsByAttributeValue("class", "post-thumbnail");
+                                    if (!isEmpty(elementsFromAttrs.html()) && elementsFromAttrs.size() > 0) {
+                                        Elements elements = elementsFromAttrs.get(0).getElementsByTag("img");
                                         String temp = elements.attr("src");
                                         if (!isEmpty(temp)) {
                                             thumb = temp;
@@ -270,9 +267,7 @@ public class NewsDataService extends BaseDataService {
                                 if (isEmpty(thumb)) {
                                     Elements metas = document.head().getElementsByTag("meta");
                                     for (Element meta : metas) {
-                                        Elements attribute = meta
-                                                .getElementsByAttributeValue("property",
-                                                        "og:image");
+                                        Elements attribute = meta.getElementsByAttributeValue("property", "og:image");
                                         String content = attribute.attr("content");
                                         if (!isEmpty(content)) {
                                             thumb = content;
@@ -281,8 +276,10 @@ public class NewsDataService extends BaseDataService {
                                     }
                                 }
 
+                                if (BuildConfig.DEBUG) {
+                                    Log.i("news", "thumb url: " + thumb);
+                                }
                                 articles.get(i).urlToImage = thumb;
-
                             }
 
                         }
