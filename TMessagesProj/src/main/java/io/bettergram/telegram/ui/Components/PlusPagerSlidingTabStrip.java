@@ -24,11 +24,10 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Canvas;
-import android.graphics.Paint;
+import android.graphics.*;
 import android.graphics.Paint.Style;
-import android.graphics.PorterDuff;
-import android.graphics.Typeface;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.RectShape;
 import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -44,6 +43,7 @@ import io.bettergram.telegram.messenger.AndroidUtilities;
 import io.bettergram.telegram.messenger.ApplicationLoader;
 import io.bettergram.telegram.messenger.FileLog;
 import io.bettergram.telegram.ui.ActionBar.Theme;
+import io.bettergram.utils.Counter;
 
 
 public class PlusPagerSlidingTabStrip extends HorizontalScrollView {
@@ -323,7 +323,7 @@ public class PlusPagerSlidingTabStrip extends HorizontalScrollView {
                 if (count > 0) {
                     tv.setVisibility(VISIBLE);
                     //tv.setText(count >= 10000 && Theme.plusLimitTabsCounters ? "+9999" : String.format("%d", count));
-                    tv.setText(String.format("%d", count));
+                    tv.setText(String.format("%s", Counter.format(count)));
                     //tv.getBackground().setColorFilter(allMuted ? Theme.usePlusTheme ? Theme.chatsTabCounterSilentBGColor : Theme.getColor(Theme.key_chats_unreadCounterMuted) : Theme.usePlusTheme ? Theme.chatsTabCounterBGColor : Theme.getColor(Theme.key_chats_unreadCounter), PorterDuff.Mode.SRC_IN);
                     //tv.getBackground().setColorFilter(Theme.getColor(Theme.key_topbar_unreadCounterColor), PorterDuff.Mode.SRC_IN);
                 } else {
@@ -784,7 +784,6 @@ public class PlusPagerSlidingTabStrip extends HorizontalScrollView {
     class CircularTextView extends TextView {
 
         int solidColor;
-        int lastDiameter;
 
         public CircularTextView(Context context) {
             super(context);
@@ -798,32 +797,34 @@ public class PlusPagerSlidingTabStrip extends HorizontalScrollView {
             super(context, attrs, defStyleAttr);
         }
 
-
         @Override
         public void draw(Canvas canvas) {
-            Paint circlePaint = new Paint();
-            circlePaint.setColor(solidColor);
-            circlePaint.setFlags(Paint.ANTI_ALIAS_FLAG);
-
-            int h = this.getHeight();
-            int w = this.getWidth();
-
-            int diameter = ((h > w) ? h : w);
-            int radius = diameter / 2;
-
-            if (diameter != lastDiameter) {
-                lastDiameter = diameter;
-                this.setHeight(diameter);
-                this.setWidth(diameter);
+            if (getBackground() == null ||
+                    !(getBackground() != null
+                            && getBackground() instanceof ShapeDrawable
+                            && ((ShapeDrawable) getBackground()).getShape() instanceof CurvedSidesShape
+                    )) {
+                ShapeDrawable curvedSidesShape = new ShapeDrawable(new CurvedSidesShape());
+                curvedSidesShape.setIntrinsicWidth(getWidth());
+                curvedSidesShape.setIntrinsicHeight(getHeight());
+                curvedSidesShape.getPaint().setColor(Color.RED);
+                setBackground(curvedSidesShape);
             }
-
-            canvas.drawCircle(diameter / 2, diameter / 2, radius, circlePaint);
-
             super.draw(canvas);
         }
 
         public void setSolidColor(int color) {
             solidColor = color;
+        }
+    }
+
+    class CurvedSidesShape extends RectShape {
+
+        @Override
+        public void draw(Canvas canvas, Paint paint) {
+            Path path = new Path();
+            path.addRoundRect(rect(), rect().height(), rect().height(), Path.Direction.CW);
+            canvas.drawPath(path, paint);
         }
     }
 }
