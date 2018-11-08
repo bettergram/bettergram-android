@@ -80,6 +80,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
     private ChatActivityEnterView commentView;
     private ActionBarMenuItem switchItem;
 
+    private BottomNavigationBar bottomBar;
+
     private AlertDialog permissionDialog;
     private boolean askAboutContacts = true;
 
@@ -1355,7 +1357,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             }
         });
 
-        BottomNavigationBar bottomBar = new BottomNavigationBar(context)
+        bottomBar = new BottomNavigationBar(context)
                 .setOnSelectListener((position, title) -> {
                     listView.postAndNotifyAdapter(() -> {
                         currentBottomTabPosition = position;
@@ -1400,6 +1402,13 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         ViewCompat.setTranslationZ(bottomBar, AndroidUtilities.dp(5)); // This should be above the floatingButton
 
         contentView.addView(bottomBar, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 56, Gravity.BOTTOM));
+
+        SharedPreferences preferences = ApplicationLoader.applicationContext.getSharedPreferences("userSavedStates", Context.MODE_PRIVATE);
+        int tabPosition = preferences.getInt("tabPosition", 0);
+        int navPosition = preferences.getInt("navPosition", 0);
+
+        newTabsView.post(() -> newTabsView.refreshPageAt(tabPosition));
+        bottomBar.post(() -> bottomBar.refreshTabAt(navPosition));
 
         if (!onlySelect) {
             checkUnreadCount(false);
@@ -1503,6 +1512,13 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 }
             }
         });
+
+        SharedPreferences.Editor editor = ApplicationLoader.applicationContext.getSharedPreferences("userSavedStates", Context.MODE_PRIVATE).edit();
+        int tabPosition = newTabsView.getCurrentPage();
+        int navPosition = bottomBar.getSelectedPosition();
+
+        editor.putInt("tabPosition", tabPosition).apply();
+        editor.putInt("navPosition", navPosition).apply();
     }
 
     private void checkUnreadCount(boolean animated) {

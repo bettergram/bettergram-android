@@ -107,10 +107,27 @@ public class TabsView extends FrameLayout implements NotificationCenter.Notifica
     private int currentPage;
     private boolean force;
     private RefreshAction refreshAction;
+    private boolean animateOnHide = true;
 
     public TabsView refreshAction(RefreshAction action) {
         this.refreshAction = action;
         return this;
+    }
+
+    public TabsView setCurrentPage(int currentPage) {
+        if (pager.getCurrentItem() != currentPage) {
+            pager.setCurrentItem(currentPage);
+        }
+        return this;
+    }
+
+    public void refreshPageAt(int position) {
+        animateOnHide = false;
+        setCurrentPage(position).forceRefreshAction();
+    }
+
+    public int getCurrentPage() {
+        return pager.getCurrentItem();
     }
 
     private void loadArray() {
@@ -418,8 +435,10 @@ public class TabsView extends FrameLayout implements NotificationCenter.Notifica
 
         ViewGroup parent = (ViewGroup) getParent();
         MarginLayoutParams parentMargins = (MarginLayoutParams) parent.getLayoutParams();
-
         lastParentTopMargin = hide ? parentMargins.topMargin : lastParentTopMargin;
+
+        MarginLayoutParams tabMargins = (MarginLayoutParams) getLayoutParams();
+        lastTabTopMargin = hide ? tabMargins.topMargin : lastTabTopMargin;
 
         ValueAnimator marginAnimator = ValueAnimator.ofInt(lastParentTopMargin, lastParentTopMargin);
         marginAnimator.addUpdateListener((ValueAnimator valueAnimator) -> {
@@ -427,9 +446,6 @@ public class TabsView extends FrameLayout implements NotificationCenter.Notifica
             parent.setLayoutParams(parentMargins);
         });
 
-        MarginLayoutParams tabMargins = (MarginLayoutParams) getLayoutParams();
-
-        lastTabTopMargin = hide ? tabMargins.topMargin : lastTabTopMargin;
 
         ValueAnimator tabMarginAnimator = ValueAnimator.ofInt(hide ? lastTabTopMargin : -viewHeight, hide ? -viewHeight : lastTabTopMargin);
         tabMarginAnimator.addUpdateListener(valueAnimator -> {
@@ -439,8 +455,9 @@ public class TabsView extends FrameLayout implements NotificationCenter.Notifica
 
         AnimatorSet animatorSet = new AnimatorSet();
         animatorSet.playTogether(marginAnimator, tabMarginAnimator);
-        animatorSet.setDuration(100);
+        animatorSet.setDuration(animateOnHide ? 100 : 1);
         animatorSet.setInterpolator(interpolator);
         animatorSet.start();
+        animateOnHide = true;
     }
 }

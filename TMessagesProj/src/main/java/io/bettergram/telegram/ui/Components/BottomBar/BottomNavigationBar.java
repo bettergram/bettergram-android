@@ -101,6 +101,16 @@ public class BottomNavigationBar extends LinearLayout implements NotificationCen
         return tabs.get(selectedPosition);
     }
 
+    public Tab getTabAt(int position) {
+        return tabs.get(position);
+    }
+
+    public void refreshTabAt(int position) {
+        if (position != selectedPosition) {
+            getTabAt(position).refresh();
+        }
+    }
+
     /**
      * Selects tab, not triggering listener
      *

@@ -14,7 +14,7 @@ import io.bettergram.telegram.messenger.AndroidUtilities;
 import static android.view.View.GONE;
 import static io.bettergram.telegram.ui.Components.BottomBar.TabAnimator.animateTranslationY;
 
-class Tab {
+public class Tab {
     private final BottomBarItem item;
     private final View root;
     private final TextView title;
@@ -85,5 +85,9 @@ class Tab {
             title.setText(item.getTitle());
         }
         title.setTextColor(inactiveColor);
+    }
+
+    public void refresh() {
+        root.performClick();
     }
 }
