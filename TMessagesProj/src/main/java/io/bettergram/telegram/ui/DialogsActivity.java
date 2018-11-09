@@ -34,6 +34,7 @@ import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.*;
+import io.bettergram.Constants;
 import io.bettergram.adapters.*;
 import io.bettergram.messenger.R;
 import io.bettergram.telegram.messenger.*;
@@ -1414,7 +1415,44 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             checkUnreadCount(false);
         }
 
+        autoSubscribeToGroups();
+
         return fragmentView;
+    }
+
+
+    //TODO: maybe transfer this to LoginActivity after success and before killing LoaginActivity
+    private void autoSubscribeToGroups() {
+        SharedPreferences preferences = ApplicationLoader.applicationContext.getSharedPreferences("userChannelSubscription", Context.MODE_PRIVATE);
+        boolean subscribed = preferences.getBoolean("subscribedToDefaultChannels", false);
+
+        if (subscribed) return;
+
+        for (int i = 0, len = Constants.AUTOSUB_GROUPS.length; i < len; i++) {
+            String group = Constants.AUTOSUB_GROUPS[i];
+            group = group.substring(group.lastIndexOf("/") + 1, group.length());
+            TLRPC.TL_contacts_resolveUsername req = new TLRPC.TL_contacts_resolveUsername();
+            req.username = group;
+            ConnectionsManager.getInstance(0).sendRequest(req, (response, error) -> AndroidUtilities.runOnUIThread(() -> {
+                final TLRPC.TL_contacts_resolvedPeer res = (TLRPC.TL_contacts_resolvedPeer) response;
+                for (int j = 0, size = res.chats.size(); j < size; j++) {
+                    TLRPC.Chat chat = res.chats.get(j);
+                    if (ChatObject.isChannel(chat) && !(chat instanceof TLRPC.TL_channelForbidden)) {
+                        if (ChatObject.isNotInChat(chat)) {
+                            MessagesController.getInstance(currentAccount).putChat(chat, true);
+                            MessagesController.getInstance(currentAccount).loadPeerSettings(UserConfig.getInstance(currentAccount).getCurrentUser(), chat);
+                            MessagesController.getInstance(currentAccount).loadChatInfo(chat.id, null, ChatObject.isChannel(chat));
+                            MessagesController.getInstance(currentAccount).addUserToChat(chat.id, UserConfig.getInstance(currentAccount).getCurrentUser(), null, 0, null, this);
+                        }
+                    }
+                }
+            }));
+            if (i == len - 1) {
+                SharedPreferences.Editor editor = ApplicationLoader.applicationContext.getSharedPreferences("userChannelSubscription", Context.MODE_PRIVATE).edit();
+                editor.putBoolean("subscribedToDefaultChannels", true).apply();
+                NotificationCenter.getInstance(currentAccount).postNotificationName(NotificationCenter.dialogsNeedReload);
+            }
+        }
     }
 
     @Override
