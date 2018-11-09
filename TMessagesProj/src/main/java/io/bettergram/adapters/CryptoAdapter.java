@@ -6,10 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Typeface;
+import android.graphics.*;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
@@ -19,7 +16,6 @@ import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
-import android.util.Log;
 import android.view.*;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -48,6 +44,7 @@ import java.util.List;
 
 import static android.text.TextUtils.isEmpty;
 import static io.bettergram.service.CryptoDataService.EXTRA_LIMIT;
+import static io.bettergram.telegram.messenger.AndroidUtilities.dp;
 
 public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -119,7 +116,19 @@ public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             }
             star.setOnCheckStateChangeListener(this);
 
-            itemView.findViewWithTag("starLayout").setOnClickListener(this);
+            FrameLayout starLayout = itemView.findViewWithTag("starLayout");
+            starLayout.setOnClickListener(this);
+
+            final View parent = (View) starLayout.getParent();
+            parent.post(() -> {
+                final Rect r = new Rect();
+                starLayout.getHitRect(r);
+                r.top -= dp(10);
+                r.bottom += dp(10);
+                r.left -= dp(10);
+                r.right += dp(10);
+                parent.setTouchDelegate(new TouchDelegate(r, starLayout));
+            });
         }
 
         @Override
