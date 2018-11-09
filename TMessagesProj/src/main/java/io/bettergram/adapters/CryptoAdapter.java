@@ -43,7 +43,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import static android.text.TextUtils.isEmpty;
-import static io.bettergram.service.CryptoDataService.EXTRA_LIMIT;
+import static io.bettergram.service.CryptoDataService.*;
 import static io.bettergram.telegram.messenger.AndroidUtilities.dp;
 
 public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -94,6 +94,8 @@ public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         String crypto;
         ShineButton star;
 
+        boolean fromBind = false;
+
         public void setCrypto(String crypto) {
             this.crypto = crypto;
         }
@@ -134,20 +136,22 @@ public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         @Override
         public void onClick(View v) {
             if (!star.isChecked()) {
-                star.setChecked(true);
-                star.showAnim();
+                star.setChecked(true, true);
             } else {
-                star.setChecked(false);
-                star.setCancel();
+                star.setChecked(false, true);
             }
         }
 
         @Override
         public void onCheckedChanged(View view, boolean checked) {
+            if (fromBind) {
+                fromBind = false;
+                return;
+            }
             for (int i = 0, size = data.size(); i < size; i++) {
                 if (data.get(i).code.equals(crypto)) {
                     data.get(i).favorite = checked;
-                    CryptoDataService.faveCrypto(checked, data.get(i));
+                    faveCurrency(checked, data.get(i));
                     break;
                 }
             }
@@ -162,6 +166,7 @@ public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                     iterator.remove();
                 }
             }
+            saveCurrencies(data);
         }
 
         @Override
@@ -437,7 +442,8 @@ public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 );
                 main.textDayDelta.setCompoundDrawablePadding(2);
             }
-            main.star.setChecked(info.favorite);
+            main.fromBind = true;
+            main.star.setChecked(info.favorite, false);
         }
     }
 

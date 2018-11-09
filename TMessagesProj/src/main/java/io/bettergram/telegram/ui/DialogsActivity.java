@@ -113,6 +113,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
     private boolean cantSendToChannels;
     private boolean allowSwitchAccount;
 
+    private boolean backPressed = false;
+
     private int currentBottomTabPosition = 0;
 
     private DialogsActivityDelegate delegate;
@@ -1552,11 +1554,23 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         });
 
         SharedPreferences.Editor editor = ApplicationLoader.applicationContext.getSharedPreferences("userSavedStates", Context.MODE_PRIVATE).edit();
-        int tabPosition = newTabsView.getCurrentPage();
-        int navPosition = bottomBar.getSelectedPosition();
+        if (backPressed) {
+            backPressed = false;
+            int tabPosition = newTabsView.getCurrentPage();
+            int navPosition = bottomBar.getSelectedPosition();
 
-        editor.putInt("tabPosition", tabPosition).apply();
-        editor.putInt("navPosition", navPosition).apply();
+            editor.putInt("tabPosition", tabPosition).apply();
+            editor.putInt("navPosition", navPosition).apply();
+        } else {
+            editor.putInt("tabPosition", 0).apply();
+            editor.putInt("navPosition", 0).apply();
+        }
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        backPressed = true;
+        return super.onBackPressed();
     }
 
     private void checkUnreadCount(boolean animated) {
