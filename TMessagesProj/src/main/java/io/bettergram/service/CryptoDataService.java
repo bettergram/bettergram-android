@@ -4,9 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import io.bettergram.data.*;
 import io.bettergram.telegram.messenger.ApplicationLoader;
+import io.bettergram.utils.CollectionUtil;
 import okhttp3.HttpUrl;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -96,23 +96,6 @@ public class CryptoDataService extends BaseDataService {
             }
         }
         return list;
-    }
-
-    public interface Predicate<T> {
-
-        boolean contains(T item);
-    }
-
-    public static class CollectionUtil {
-
-        public static <T> T find(final Collection<T> collection, final Predicate<T> predicate) {
-            for (T item : collection) {
-                if (predicate.contains(item)) {
-                    return item;
-                }
-            }
-            return null;
-        }
     }
 
     //class TimeDisplay for handling task

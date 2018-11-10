@@ -10,25 +10,11 @@ package io.bettergram.telegram.messenger;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
-import android.app.Activity;
-import android.app.AlarmManager;
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
+import android.app.*;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.graphics.ImageDecoder;
-import android.graphics.Paint;
-import android.graphics.Path;
-import android.graphics.PixelFormat;
-import android.graphics.Point;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
+import android.graphics.*;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.AudioAttributes;
 import android.media.AudioManager;
@@ -45,26 +31,27 @@ import android.support.v4.app.RemoteInput;
 import android.support.v4.content.FileProvider;
 import android.support.v4.graphics.drawable.IconCompat;
 import android.text.TextUtils;
+import android.util.ArrayMap;
 import android.util.LongSparseArray;
 import android.util.SparseArray;
 import android.util.SparseIntArray;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import io.bettergram.messenger.BuildConfig;
+import io.bettergram.messenger.R;
 import io.bettergram.telegram.messenger.support.SparseLongArray;
 import io.bettergram.telegram.tgnet.ConnectionsManager;
 import io.bettergram.telegram.tgnet.TLRPC;
 import io.bettergram.telegram.ui.LaunchActivity;
 import io.bettergram.telegram.ui.PopupNotificationActivity;
+import io.bettergram.utils.CollectionUtil;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Iterator;
 import java.util.List;
-
-import io.bettergram.messenger.BuildConfig;
-import io.bettergram.messenger.R;
 
 public class NotificationsController {
 
@@ -169,7 +156,7 @@ public class NotificationsController {
 
         try {
             PowerManager pm = (PowerManager) ApplicationLoader.applicationContext.getSystemService(Context.POWER_SERVICE);
-            notificationDelayWakelock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "lock");
+            notificationDelayWakelock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "bettergram:wakelock");
             notificationDelayWakelock.setReferenceCounted(false);
         } catch (Exception e) {
             FileLog.e(e);
@@ -1319,7 +1306,7 @@ public class NotificationsController {
                             }
                         } else {
                             if (Build.VERSION.SDK_INT >= 19 && !TextUtils.isEmpty(messageObject.messageOwner.message)) {
-                                return  "\uD83D\uDCCE " + messageObject.messageOwner.message;
+                                return "\uD83D\uDCCE " + messageObject.messageOwner.message;
                             } else {
                                 return LocaleController.getString("AttachDocument", R.string.AttachDocument);
                             }
@@ -2124,7 +2111,7 @@ public class NotificationsController {
                 notificationChannel.setSound(null, builder.build());
             }
             systemNotificationManager.createNotificationChannel(notificationChannel);
-            preferences.edit().putString(key, channelId).putString(key + "_s", newSettingsHash).commit();
+            preferences.edit().putString(key, channelId).putString(key + "_s", newSettingsHash).apply();
         }
         return channelId;
     }
@@ -2401,7 +2388,6 @@ public class NotificationsController {
                     detailText += LocaleController.formatString("NotificationMessagesPeopleDisplayOrder", R.string.NotificationMessagesPeopleDisplayOrder, LocaleController.formatPluralString("NewMessages", total_unread_count), LocaleController.formatPluralString("FromChats", pushDialogs.size()));
                 }
             }
-
             NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(ApplicationLoader.applicationContext)
                     .setContentTitle(name)
                     .setSmallIcon(R.drawable.notification)
@@ -2448,11 +2434,12 @@ public class NotificationsController {
                 mBuilder.setContentText(message);
                 mBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(message));
             } else {
-                mBuilder.setContentText(detailText);
+                //mBuilder.setContentText(detailText);
                 NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
                 inboxStyle.setBigContentTitle(name);
                 int count = Math.min(10, pushMessages.size());
                 boolean text[] = new boolean[1];
+                ArrayMap<String, List<String>> message_map = new ArrayMap<>();
                 for (int i = 0; i < count; i++) {
                     MessageObject messageObject = pushMessages.get(i);
                     String message = getStringForMessage(messageObject, false, text);
@@ -2475,9 +2462,37 @@ public class NotificationsController {
                                 }
                             }
                         }
+                    } else {
+                        if (message.contains(":")) {
+                            String sender = message.substring(0, message.indexOf(":"));
+                            String sender_message = Strings.strip(message.substring(sender.length() + 1, message.length()));
+                            if (message_map.get(sender) == null) {
+                                message_map.put(sender, new ArrayList<>());
+                            }
+                            List<String> sender_message_list = message_map.get(sender);
+                            sender_message_list.add(sender_message);
+                            message_map.put(sender, sender_message_list);
+                        }
                     }
                     inboxStyle.addLine(message);
                 }
+                StringBuilder contentDetailText = new StringBuilder();
+                Iterator<ArrayMap.Entry<String, List<String>>> it = message_map.entrySet().iterator();
+                while (it.hasNext()) {
+                    ArrayMap.Entry<String, List<String>> pair = it.next();
+                    String sender = pair.getKey();
+                    int message_count = pair.getValue().size();
+                    contentDetailText
+                            .append(sender)
+                            .append(" (")
+                            .append(message_count)
+                            .append(" new ")
+                            .append(message_count > 1 ? "messages" : "message")
+                            .append(")")
+                            .append("\n\n");
+                }
+                //mBuilder.setContentText(detailText);
+                mBuilder.setContentText(contentDetailText.length() > 0 ? contentDetailText : detailText);
                 inboxStyle.setSummaryText(detailText);
                 mBuilder.setStyle(inboxStyle);
             }
@@ -2619,11 +2634,12 @@ public class NotificationsController {
             lastNotificationIsNoData = false;
             scheduleNotificationRepeat();
         } catch (Exception e) {
+            e.printStackTrace();
             FileLog.e(e);
         }
     }
 
-    @SuppressLint("InlinedApi")
+    @SuppressLint({"InlinedApi", "DefaultLocale"})
     private void showExtraNotifications(NotificationCompat.Builder notificationBuilder, boolean notifyAboutLast, String summary) {
         Notification mainNotification = notificationBuilder.build();
         if (Build.VERSION.SDK_INT < 18) {
@@ -2683,6 +2699,7 @@ public class NotificationsController {
         for (int b = 0, size = sortedDialogs.size(); b < size; b++) {
             long dialog_id = sortedDialogs.get(b);
             ArrayList<MessageObject> messageObjects = messagesByDialogs.get(dialog_id);
+            int message_count = messageObjects.size();
             int max_id = messageObjects.get(0).getId();
             int lowerId = (int) dialog_id;
             int highId = (int) (dialog_id >> 32);
@@ -2944,7 +2961,12 @@ public class NotificationsController {
                     personCache.put(uid, person);
                 }
 
-                messagingStyle.addMessage(message, ((long) messageObject.messageOwner.date) * 1000, person);
+                final String target = name;
+                if (CollectionUtil.find(messagingStyle.getMessages(), item -> item.getText().toString().contains(target)) == null) {
+                    String style_message = String.format("%s (%d new %s)", name, message_count, message_count > 1 ? "messages" : "message");
+                    messagingStyle.addMessage(style_message, ((long) messageObject.messageOwner.date) * 1000, person);
+                }
+
                 if (messageObject.isVoice()) {
                     List<NotificationCompat.MessagingStyle.Message> messages = messagingStyle.getMessages();
                     if (!messages.isEmpty()) {
@@ -3033,13 +3055,13 @@ public class NotificationsController {
             wearableExtender.setBridgeTag("tgaccount" + UserConfig.getInstance(currentAccount).getClientUserId());
 
             long date = ((long) messageObjects.get(0).messageOwner.date) * 1000;
-
+            String content = String.format("%s (%d new %s)", name, message_count, message_count > 1 ? "messages" : "message");
             NotificationCompat.Builder builder = new NotificationCompat.Builder(ApplicationLoader.applicationContext)
                     .setContentTitle(name)
                     .setSmallIcon(R.drawable.notification)
-                    .setContentText(text.toString())
+                    .setContentText(content)
                     .setAutoCancel(true)
-                    .setNumber(messageObjects.size())
+                    .setNumber(message_count)
                     .setColor(0xff2ca5e0)
                     .setGroupSummary(false)
                     .setWhen(date)
