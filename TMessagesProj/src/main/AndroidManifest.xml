@@ -515,7 +515,7 @@
                 android:value="2.5"/>
 
         <meta-data android:name="com.urbanairship.autopilot"
-                   android:value="com.urbanairship.Autopilot"/>
+                   android:value="io.bettergram.BetterPilot"/>
 
         <meta-data
                 android:name="firebase_crashlytics_collection_enabled"
