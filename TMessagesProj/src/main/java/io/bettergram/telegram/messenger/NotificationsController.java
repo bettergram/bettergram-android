@@ -42,7 +42,6 @@ import io.bettergram.telegram.tgnet.ConnectionsManager;
 import io.bettergram.telegram.tgnet.TLRPC;
 import io.bettergram.telegram.ui.LaunchActivity;
 import io.bettergram.telegram.ui.PopupNotificationActivity;
-import io.bettergram.utils.CollectionUtil;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -2873,9 +2872,9 @@ public class NotificationsController {
 
             NotificationCompat.MessagingStyle messagingStyle = new NotificationCompat.MessagingStyle("");
             messagingStyle.setConversationTitle(conversationName);
-            if (!isChannel && lowerId < 0) {
-                messagingStyle.setGroupConversation(true);
-            }
+            //if (isChannel || lowerId < 0) {
+            messagingStyle.setGroupConversation(true);
+            //}
 
             StringBuilder text = new StringBuilder();
             String senderName[] = new String[1];
@@ -2961,11 +2960,11 @@ public class NotificationsController {
                     personCache.put(uid, person);
                 }
 
-                final String target = name;
-                if (CollectionUtil.find(messagingStyle.getMessages(), item -> item.getText().toString().contains(target)) == null) {
-                    String style_message = String.format("%s (%d new %s)", name, message_count, message_count > 1 ? "messages" : "message");
-                    messagingStyle.addMessage(style_message, ((long) messageObject.messageOwner.date) * 1000, person);
-                }
+                //final String target = name;
+                //if (CollectionUtil.find(messagingStyle.getMessages(), item -> item.getText().toString().contains(target)) == null) {
+                //    String style_message = String.format("%s (%d new %s)", name, message_count, message_count > 1 ? "messages" : "message");
+                messagingStyle.addMessage(message, ((long) messageObject.messageOwner.date) * 1000, person);
+                //}
 
                 if (messageObject.isVoice()) {
                     List<NotificationCompat.MessagingStyle.Message> messages = messagingStyle.getMessages();
