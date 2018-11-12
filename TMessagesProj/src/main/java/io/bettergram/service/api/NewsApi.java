@@ -24,7 +24,7 @@ public class NewsApi {
     @SuppressLint("SimpleDateFormat")
     public static final SimpleDateFormat TO_FORMAT = new SimpleDateFormat("MMM dd");
 
-    private static final String LIVE_COIN_WATCH_NEWS_URL = "https://api.bettergram.io/v1/news";
+    public static final String LIVE_COIN_WATCH_NEWS_URL = "https://api.bettergram.io/v1/news";
 
     /**
      * Gets news related to cryptocurrency

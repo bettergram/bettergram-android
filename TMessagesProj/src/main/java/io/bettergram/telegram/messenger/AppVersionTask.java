@@ -29,8 +29,7 @@ public class AppVersionTask extends AsyncTask<Void, String, String> {
         try {
             newVersion = getPlayStoreAppVersion("https://play.google.com/store/apps/details?id=" + ApplicationLoader.packageName() + "&hl=en");
             return newVersion;
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ignore) {
             return newVersion;
         }
     }
@@ -69,9 +68,8 @@ public class AppVersionTask extends AsyncTask<Void, String, String> {
                 return matcher.group(1);
             }
 
-        } catch (PatternSyntaxException ex) {
-
-            ex.printStackTrace();
+        } catch (PatternSyntaxException e) {
+            e.printStackTrace();
         }
 
         return null;

@@ -7,10 +7,10 @@ import com.crashlytics.android.Crashlytics;
 import io.bettergram.data.*;
 import io.bettergram.service.api.VideosApi;
 import io.bettergram.telegram.messenger.ApplicationLoader;
+import io.bettergram.telegram.messenger.NotificationCenter;
 import io.bettergram.utils.Counter;
 import okhttp3.Request;
 import okhttp3.Response;
-import org.json.JSONException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -49,63 +49,73 @@ public class YoutubeDataService extends BaseDataService {
         }
 
         try {
-            VideoData videoData = VideoData__JsonHelper.parseFromJson(VideosApi.getYoutubeRSSFeed());
+            Request request = new Request.Builder().url(VideosApi.LIVE_COIN_WATCH_VIDEO_URL).build();
+            Response response = okhttp_client().newCall(request).execute();
 
-            VideoList videoList = new VideoList();
-            videoList.videos = new ArrayList<>();
+            if (response.isSuccessful() && response.body() != null) {
+                String json = response.body().string();
+                VideoData videoData = VideoData__JsonHelper.parseFromJson(json);
 
-            for (String videoUrl : videoData.videos) {
-                Request request = new Request.Builder()
-                        .url(videoUrl)
-                        .build();
+                VideoList videoList = new VideoList();
+                videoList.videos = new ArrayList<>();
 
-                Response response = okhttp_client().newCall(request).execute();
+                for (String videoUrl : videoData.videos) {
+                    request = new Request.Builder()
+                            .url(videoUrl)
+                            .build();
 
-                if (response.body() != null && response.isSuccessful()) {
-                    String result = response.body().string();
-                    Document document = Jsoup.parse(result, "", Parser.xmlParser());
-                    for (Element element : document.getElementsByTag("entry")) {
-                        if (!videoList.contains(element.getElementsByTag("yt:videoId").get(0).html())) {
-                            Video video = new Video();
-                            video.id = element
-                                    .getElementsByTag("yt:videoId")
-                                    .get(0)
-                                    .html();
-                            video.title = element
-                                    .getElementsByTag("title")
-                                    .get(0)
-                                    .html();
-                            video.channelTitle = element
-                                    .getElementsByTag("author")
-                                    .get(0)
-                                    .getElementsByTag("name")
-                                    .get(0)
-                                    .html();
-                            video.viewCount = Counter.format(element
-                                    .getElementsByTag("media:group")
-                                    .get(0)
-                                    .getElementsByTag("media:community")
-                                    .get(0)
-                                    .getElementsByTag("media:statistics")
-                                    .get(0)
-                                    .attr("views"));
-                            video.publishedAt = element
-                                    .getElementsByTag("published")
-                                    .get(0)
-                                    .html();
-                            videoList.videos.add(video);
+                    response = okhttp_client().newCall(request).execute();
+
+                    if (response.body() != null && response.isSuccessful()) {
+                        String result = response.body().string();
+                        Document document = Jsoup.parse(result, "", Parser.xmlParser());
+                        for (Element element : document.getElementsByTag("entry")) {
+                            if (!videoList.contains(element.getElementsByTag("yt:videoId").get(0).html())) {
+                                Video video = new Video();
+                                video.id = element
+                                        .getElementsByTag("yt:videoId")
+                                        .get(0)
+                                        .html();
+                                video.title = element
+                                        .getElementsByTag("title")
+                                        .get(0)
+                                        .html();
+                                video.channelTitle = element
+                                        .getElementsByTag("author")
+                                        .get(0)
+                                        .getElementsByTag("name")
+                                        .get(0)
+                                        .html();
+                                video.viewCount = Counter.format(element
+                                        .getElementsByTag("media:group")
+                                        .get(0)
+                                        .getElementsByTag("media:community")
+                                        .get(0)
+                                        .getElementsByTag("media:statistics")
+                                        .get(0)
+                                        .attr("views"));
+                                video.publishedAt = element
+                                        .getElementsByTag("published")
+                                        .get(0)
+                                        .html();
+                                videoList.videos.add(video);
+                            }
                         }
                     }
                 }
+
+                videoList.sortVideosByDate();
+
+                String jsonResult = VideoList__JsonHelper.serializeToJson(videoList);
+                preferences.edit().putString(KEY_VIDEO_JSON, jsonResult).apply();
+
+                publishResults(jsonResult, NOTIFICATION, RESULT);
+            } else {
+                if (response.code() == 410) {
+                    NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.updateToLatestApiVersion);
+                }
             }
-
-            videoList.sortVideosByDate();
-
-            String jsonResult = VideoList__JsonHelper.serializeToJson(videoList);
-            preferences.edit().putString(KEY_VIDEO_JSON, jsonResult).apply();
-
-            publishResults(jsonResult, NOTIFICATION, RESULT);
-        } catch (IOException | JSONException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         } catch (NullPointerException e) {
             e.printStackTrace();

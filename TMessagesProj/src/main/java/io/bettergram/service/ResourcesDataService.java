@@ -4,15 +4,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.annotation.Nullable;
-
-import org.json.JSONException;
+import io.bettergram.service.api.ResourcesApi;
+import io.bettergram.telegram.messenger.ApplicationLoader;
+import io.bettergram.telegram.messenger.NotificationCenter;
+import okhttp3.Request;
+import okhttp3.Response;
 
 import java.io.IOException;
 
-import io.bettergram.service.api.ResourcesApi;
-import io.bettergram.telegram.messenger.ApplicationLoader;
-
 import static android.text.TextUtils.isEmpty;
+import static io.bettergram.telegram.messenger.ApplicationLoader.okhttp_client;
 
 public class ResourcesDataService extends BaseDataService {
 
@@ -36,12 +37,23 @@ public class ResourcesDataService extends BaseDataService {
                 publishResults(json, NOTIFICATION, RESULT);
             }
 
-            json = ResourcesApi.getResourcesQuietly();
-            if (!isEmpty(json)) {
-                preferences.edit().putString(KEY_RESOURCES_JSON, json).apply();
+            Request request = new Request.Builder().url(ResourcesApi.RESOURCES_BASE_URL).build();
+            Response response = okhttp_client().newCall(request).execute();
+
+            if (response.isSuccessful() && response.body() != null) {
+                json = response.body().string();
+
+                if (!isEmpty(json)) {
+                    preferences.edit().putString(KEY_RESOURCES_JSON, json).apply();
+                }
+                publishResults(json, NOTIFICATION, RESULT);
+
+            } else {
+                if (response.code() == 410) {
+                    NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.updateToLatestApiVersion);
+                }
             }
-            publishResults(json, NOTIFICATION, RESULT);
-        } catch (IOException | JSONException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

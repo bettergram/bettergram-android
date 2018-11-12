@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.support.annotation.Nullable;
 import io.bettergram.data.*;
 import io.bettergram.telegram.messenger.ApplicationLoader;
+import io.bettergram.telegram.messenger.NotificationCenter;
 import io.bettergram.utils.CollectionUtil;
 import okhttp3.HttpUrl;
 import okhttp3.Request;
@@ -128,6 +129,10 @@ public class CryptoDataService extends BaseDataService {
                         preferences.edit().putString(KEY_CRYPTO_CURRENCIES, fetchedCryptoJson)
                                 .apply();
                         savedCryptoJson = fetchedCryptoJson;
+                    } else {
+                        if (response.code() == 410) {
+                            NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.updateToLatestApiVersion);
+                        }
                     }
                 } catch (IOException e) {
                     e.printStackTrace();

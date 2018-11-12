@@ -35,7 +35,7 @@ public class VideosApi {
 
     private static final String YOUTUBE_STATISTICS_URL = "https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails,statistics&id=%s&key=%s";
 
-    private static final String LIVE_COIN_WATCH_VIDEO_URL = "https://api.bettergram.io/v1/videos";
+    public static final String LIVE_COIN_WATCH_VIDEO_URL = "https://api.bettergram.io/v1/videos";
 
     /**
      * Queries data for specific youtube video

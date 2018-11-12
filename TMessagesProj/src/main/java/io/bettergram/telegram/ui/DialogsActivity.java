@@ -121,6 +121,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
 
     private AppVersionTask appVersionTask;
 
+    private AlertDialog outdatedDialog;
+
     public interface DialogsActivityDelegate {
         void didSelectDialogs(DialogsActivity fragment, ArrayList<Long> dids, CharSequence message, boolean param);
     }
@@ -173,6 +175,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             NotificationCenter.getInstance(currentAccount).addObserver(this, NotificationCenter.dialogsUnreadCounterChanged);
 
             NotificationCenter.getGlobalInstance().addObserver(this, NotificationCenter.didSetPasscode);
+
+            NotificationCenter.getGlobalInstance().addObserver(this, NotificationCenter.updateToLatestApiVersion);
         }
 
         if (!dialogsLoaded[currentAccount]) {
@@ -215,6 +219,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             NotificationCenter.getInstance(currentAccount).removeObserver(this, NotificationCenter.dialogsUnreadCounterChanged);
 
             NotificationCenter.getGlobalInstance().removeObserver(this, NotificationCenter.didSetPasscode);
+
+            NotificationCenter.getGlobalInstance().removeObserver(this, NotificationCenter.updateToLatestApiVersion);
         }
         if (commentView != null) {
             commentView.onDestroy();
@@ -1928,6 +1934,26 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                     }).start();
                 }
             }*/
+        } else if (id == NotificationCenter.updateToLatestApiVersion) {
+            SharedPreferences preferences = ApplicationLoader.applicationContext.getSharedPreferences("outdatedDialogLastShown", Context.MODE_PRIVATE);
+            long millisLastShown = preferences.getLong("timeMillisLastShown", 0L);
+
+            final int twoHours = 2 * 60 * 60 * 1000;
+            long twoHoursAgo = millisLastShown + twoHours;
+            if (millisLastShown == 0L || System.currentTimeMillis() > twoHoursAgo) {
+                getAvailableActivity(activity -> {
+                    AndroidUtilities.runOnUIThread(() -> {
+                        if (outdatedDialog == null || !outdatedDialog.isShowing()) {
+                            outdatedDialog = AlertsCreator.createOutdateDialog(activity, (dialog, which) -> {
+                                AppVersionTask.openAppInPlayStore(activity);
+                            }).create();
+                            outdatedDialog.show();
+                        }
+                    });
+                });
+                SharedPreferences.Editor editor = ApplicationLoader.applicationContext.getSharedPreferences("outdatedDialogLastShown", Context.MODE_PRIVATE).edit();
+                editor.putLong("timeMillisLastShown", System.currentTimeMillis()).apply();
+            }
         }
     }
 

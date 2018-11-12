@@ -30,6 +30,7 @@ import com.google.android.gms.security.ProviderInstaller;
 import com.google.firebase.iid.FirebaseInstanceId;
 import io.bettergram.service.CryptoDataService;
 import io.bettergram.service.NewsDataService;
+import io.bettergram.service.ResourcesDataService;
 import io.bettergram.service.YoutubeDataService;
 import io.bettergram.telegram.tgnet.ConnectionsManager;
 import io.bettergram.telegram.tgnet.TLRPC;
@@ -296,6 +297,9 @@ public class ApplicationLoader extends Application {
 
         Intent intent3 = new Intent(activity, YoutubeDataService.class);
         activity.startService(intent3);
+
+        Intent intent4 = new Intent(activity, ResourcesDataService.class);
+        activity.startService(intent4);
     }
 
     public static OkHttpClient okhttp_client() {

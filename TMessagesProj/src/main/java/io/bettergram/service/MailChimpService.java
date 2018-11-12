@@ -4,6 +4,7 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.util.Base64;
 import io.bettergram.messenger.BuildConfig;
+import io.bettergram.telegram.messenger.NotificationCenter;
 import okhttp3.*;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -88,6 +89,8 @@ public class MailChimpService extends BaseDataService {
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
+                        } else if (response.code() == 410) {
+                            NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.updateToLatestApiVersion);
                         }
                     }
                 }

@@ -8,10 +8,10 @@ import io.bettergram.data.*;
 import io.bettergram.messenger.BuildConfig;
 import io.bettergram.service.api.NewsApi;
 import io.bettergram.telegram.messenger.ApplicationLoader;
+import io.bettergram.telegram.messenger.NotificationCenter;
 import io.bettergram.utils.io.IOUtils;
 import okhttp3.Request;
 import okhttp3.Response;
-import org.json.JSONException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -62,93 +62,102 @@ public class NewsDataService extends BaseDataService {
             List<News> articles = new ArrayList<>();
 
             try {
-                String json = NewsApi.getNewsQuietly();
+                Request request = new Request.Builder().url(NewsApi.LIVE_COIN_WATCH_NEWS_URL).build();
+                Response response = okhttp_client().newCall(request).execute();
 
-                NewsData data = NewsData__JsonHelper.parseFromJson(json);
+                if (response.isSuccessful() && response.body() != null) {
+                    String json = response.body().string();
 
-                for (int i = 0, size_i = data.news.size(); i < size_i; i++) {
+                    NewsData data = NewsData__JsonHelper.parseFromJson(json);
 
-                    String url = data.news.get(i);
-                    HttpURLConnection urlConnection = (HttpURLConnection) new URL(url)
-                            .openConnection();
-                    urlConnection.setRequestProperty("User-Agent", "Bettergram");
-                    urlConnection.connect();
-                    InputStream in = urlConnection.getInputStream();
+                    for (int i = 0, size_i = data.news.size(); i < size_i; i++) {
 
-                    String urlHash = url;
-                    try {
-                        urlHash = SHA1(urlHash);
-                    } catch (NoSuchAlgorithmException e) {
-                        e.printStackTrace();
-                    }
-                    String xmlFetched = IOUtils.toString(in, "UTF-8");
-                    Set<String> savedStringSet = preferences
-                            .getStringSet(KEY_FEED_XML_SET + urlHash, null);
-                    String xmlSaveHash =
-                            savedStringSet != null ? savedStringSet.toArray(new String[0])[0]
-                                    : null;
-                    String xmlSaved =
-                            savedStringSet != null ? savedStringSet.toArray(new String[0])[1]
-                                    : null;
-                    String xmlFinal = null;
-                    try {
-                        if (isEmpty(xmlSaved) || !SHA1(xmlFetched).equals(xmlSaveHash)) {
-                            Set<String> stringSet = new HashSet<>();
-                            stringSet.add(SHA1(xmlFetched));
-                            stringSet.add(xmlFetched);
-                            preferences.edit().putStringSet(KEY_FEED_XML_SET + urlHash, stringSet)
-                                    .apply();
-                            xmlFinal = xmlFetched;
-                        } else {
-                            xmlFinal = xmlSaved;
+                        String url = data.news.get(i);
+                        HttpURLConnection urlConnection = (HttpURLConnection) new URL(url)
+                                .openConnection();
+                        urlConnection.setRequestProperty("User-Agent", "Bettergram");
+                        urlConnection.connect();
+                        InputStream in = urlConnection.getInputStream();
+
+                        String urlHash = url;
+                        try {
+                            urlHash = SHA1(urlHash);
+                        } catch (NoSuchAlgorithmException e) {
+                            e.printStackTrace();
                         }
-                    } catch (NoSuchAlgorithmException e) {
-                        e.printStackTrace();
-                    }
-
-                    if (isEmpty(xmlFinal)) {
-                        break;
-                    }
-
-                    List<News> temp = new ArrayList<>();
-
-                    Document document = Jsoup.parse(xmlFinal, "", Parser.xmlParser());
-                    Elements channelElements = document.getElementsByTag("channel");
-                    if (channelElements != null && channelElements.size() > 0) {
-                        Elements itemElements = channelElements.get(0).getElementsByTag("item");
-                        for (Element itemElement : itemElements) {
-                            News newsItem = new News();
-                            newsItem.title = itemElement
-                                    .getElementsByTag("title")
-                                    .get(0)
-                                    .html();
-                            newsItem.url = itemElement
-                                    .getElementsByTag("link")
-                                    .get(0)
-                                    .html();
-                            newsItem.source = new Source();
-                            newsItem.source.name = channelElements
-                                    .get(0)
-                                    .getElementsByTag("title")
-                                    .get(0)
-                                    .html();
-                            newsItem.publishedAt = itemElement
-                                    .getElementsByTag("pubDate")
-                                    .get(0)
-                                    .html();
-                            temp.add(newsItem);
+                        String xmlFetched = IOUtils.toString(in, "UTF-8");
+                        Set<String> savedStringSet = preferences
+                                .getStringSet(KEY_FEED_XML_SET + urlHash, null);
+                        String xmlSaveHash =
+                                savedStringSet != null ? savedStringSet.toArray(new String[0])[0]
+                                        : null;
+                        String xmlSaved =
+                                savedStringSet != null ? savedStringSet.toArray(new String[0])[1]
+                                        : null;
+                        String xmlFinal = null;
+                        try {
+                            if (isEmpty(xmlSaved) || !SHA1(xmlFetched).equals(xmlSaveHash)) {
+                                Set<String> stringSet = new HashSet<>();
+                                stringSet.add(SHA1(xmlFetched));
+                                stringSet.add(xmlFetched);
+                                preferences.edit().putStringSet(KEY_FEED_XML_SET + urlHash, stringSet)
+                                        .apply();
+                                xmlFinal = xmlFetched;
+                            } else {
+                                xmlFinal = xmlSaved;
+                            }
+                        } catch (NoSuchAlgorithmException e) {
+                            e.printStackTrace();
                         }
-                    }
-                    articles.addAll(temp);
-                }
 
-                NewsList newsList = new NewsList();
-                newsList.articles = articles;
-                if (isEmpty(jsonRaw)) {
-                    publishResults(NewsList__JsonHelper.serializeToJson(newsList), NOTIFICATION,
-                            RESULT);
+                        if (isEmpty(xmlFinal)) {
+                            break;
+                        }
+
+                        List<News> temp = new ArrayList<>();
+
+                        Document document = Jsoup.parse(xmlFinal, "", Parser.xmlParser());
+                        Elements channelElements = document.getElementsByTag("channel");
+                        if (channelElements != null && channelElements.size() > 0) {
+                            Elements itemElements = channelElements.get(0).getElementsByTag("item");
+                            for (Element itemElement : itemElements) {
+                                News newsItem = new News();
+                                newsItem.title = itemElement
+                                        .getElementsByTag("title")
+                                        .get(0)
+                                        .html();
+                                newsItem.url = itemElement
+                                        .getElementsByTag("link")
+                                        .get(0)
+                                        .html();
+                                newsItem.source = new Source();
+                                newsItem.source.name = channelElements
+                                        .get(0)
+                                        .getElementsByTag("title")
+                                        .get(0)
+                                        .html();
+                                newsItem.publishedAt = itemElement
+                                        .getElementsByTag("pubDate")
+                                        .get(0)
+                                        .html();
+                                temp.add(newsItem);
+                            }
+                        }
+                        articles.addAll(temp);
+                    }
+
+                    NewsList newsList = new NewsList();
+                    newsList.articles = articles;
+                    if (isEmpty(jsonRaw)) {
+                        publishResults(NewsList__JsonHelper.serializeToJson(newsList), NOTIFICATION,
+                                RESULT);
+                    }
+                } else {
+                    if (response.code() == 410) {
+                        NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.updateToLatestApiVersion);
+                    }
                 }
-            } catch (IOException | JSONException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
 

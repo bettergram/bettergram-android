@@ -1385,6 +1385,17 @@ public class AlertsCreator {
         return builder;
     }
 
+    public static AlertDialog.Builder createOutdateDialog(final Activity parentActivity, DialogInterface.OnClickListener listener) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(parentActivity);
+        builder.setTopImage(R.drawable.ic_outdated, Theme.getColor(Theme.key_dialogTopBackground));
+        builder.setMessage(AndroidUtilities.replaceTags(LocaleController.getString("OutdatedAlert", R.string.OutdatedAlert)));
+        builder.setPositiveButton(LocaleController.getString("UpdateAlertButton", R.string.UpdateAlertButton), (dialog, which) -> {
+            dialog.dismiss();
+            listener.onClick(dialog, which);
+        });
+        return builder;
+    }
+
 //    public static AlertDialog createExpireDateAlert(final Context context, final boolean month, final int[] result, final Runnable callback) {
 //        AlertDialog.Builder builder = new AlertDialog.Builder(context);
 //        builder.setTitle(month ? LocaleController.getString("PaymentCardExpireDateMonth", R.string.PaymentCardExpireDateMonth) : LocaleController.getString("PaymentCardExpireDateYear", R.string.PaymentCardExpireDateYear));

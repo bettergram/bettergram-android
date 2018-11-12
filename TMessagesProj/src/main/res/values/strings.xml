@@ -2615,4 +2615,5 @@
 
     <string name="UpdateAlertButton">Update</string>
     <string name="UpdateAlert">There is a newer version available for download. Please update the app by visiting the Play Store.</string>
+    <string name="OutdatedAlert">This version of Bettergram is too old. Please update the application</string>
 </resources>
