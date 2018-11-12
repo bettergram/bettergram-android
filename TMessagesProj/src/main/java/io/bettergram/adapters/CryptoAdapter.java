@@ -322,9 +322,9 @@ public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 ImageView cryptoImage = new ImageView(context);
                 cryptoImage.setTag("imageCrypto");
                 container.addView(cryptoImage, LayoutHelper.createLinear(
-                        LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT,
+                        25, 25,
                         Gravity.CENTER,
-                        16, 8, 4, 8));
+                        0, 8, 4, 8));
                 TextView cryptoName = new TextView(context);
                 cryptoName.setTypeface(Typeface.DEFAULT);
                 cryptoName.setMaxLines(1);
