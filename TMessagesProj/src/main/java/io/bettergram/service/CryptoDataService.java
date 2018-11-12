@@ -42,8 +42,7 @@ public class CryptoDataService extends BaseDataService {
     public static final int notify = 60000;
     private Timer mTimer = null;
 
-    private static SharedPreferences preferences = ApplicationLoader.applicationContext
-            .getSharedPreferences(CRYPTO_PREF, Context.MODE_PRIVATE);
+    private static SharedPreferences preferences = ApplicationLoader.applicationContext.getSharedPreferences(CRYPTO_PREF, Context.MODE_PRIVATE);
 
     public CryptoDataService() {
         super("CryptoDataService");
@@ -51,7 +50,9 @@ public class CryptoDataService extends BaseDataService {
 
     @Override
     public void onDestroy() {
-        mTimer.cancel();
+        if (mTimer != null) {
+            mTimer.cancel();
+        }
         super.onDestroy();
     }
 
