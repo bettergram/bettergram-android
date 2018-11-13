@@ -104,7 +104,7 @@ public class YoutubeDataService extends BaseDataService {
                     }
                 }
 
-                videoList.sortVideosByDate();
+                //videoList.sortVideosByDate();
 
                 String jsonResult = VideoList__JsonHelper.serializeToJson(videoList);
                 preferences.edit().putString(KEY_VIDEO_JSON, jsonResult).apply();

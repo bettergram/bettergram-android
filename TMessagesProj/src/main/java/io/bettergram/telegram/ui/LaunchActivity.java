@@ -33,7 +33,6 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
-import io.bettergram.messenger.BuildConfig;
 import io.bettergram.messenger.R;
 import io.bettergram.telegram.messenger.*;
 import io.bettergram.telegram.messenger.browser.Browser;
@@ -137,7 +136,7 @@ public class LaunchActivity extends Activity implements ActionBarLayout.ActionBa
                 Map<String, ?> state = preferences.getAll();
                 if (state.isEmpty()) {
                     preferences = ApplicationLoader.applicationContext.getSharedPreferences("mailchimp_subscribed", MODE_PRIVATE);
-                    if (preferences.getString("mailchimp_subscribed_email", null) == null && !BuildConfig.DEBUG) {
+                    if (preferences.getString("mailchimp_subscribed_email", null) == null) {
                         Intent intent3 = new Intent(this, SplashActivity.class);
                         intent3.setData(intent.getData());
                         startActivity(intent3);
