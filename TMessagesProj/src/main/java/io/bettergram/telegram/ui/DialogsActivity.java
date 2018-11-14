@@ -27,10 +27,7 @@ import android.os.Bundle;
 import android.support.v4.view.ViewCompat;
 import android.text.TextUtils;
 import android.util.TypedValue;
-import android.view.Gravity;
-import android.view.View;
-import android.view.ViewOutlineProvider;
-import android.view.ViewTreeObserver;
+import android.view.*;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.*;
@@ -49,6 +46,7 @@ import io.bettergram.telegram.ui.Adapters.DialogsSearchAdapter;
 import io.bettergram.telegram.ui.Cells.*;
 import io.bettergram.telegram.ui.Components.*;
 import io.bettergram.telegram.ui.Components.BottomBar.BottomNavigationBar;
+import io.bettergram.telegram.ui.Components.PullToRefresh.PullRefreshLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,7 +56,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
     private RecyclerListView listView;
     private LinearLayoutManager layoutManager;
     private BetterDialogsAdapter dialogsAdapter;
-    private NewsAdapter newsAdapter = new NewsAdapter();
+    private NewsAdapter newsAdapter;
     private CryptoAdapter cryptoAdapter = new CryptoAdapter();
     private YouTubePlayerAdapter videoAdapter;
     private ResourcesAdapter resourcesAdapter = new ResourcesAdapter();
@@ -600,7 +598,11 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
 
         tabsContainer.addView(newTabsView, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, AndroidUtilities.isTablet() ? 44 : 42, Gravity.TOP));
 
-        tabsContainer.addView(listView, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 0, 1f));
+        PullRefreshLayout ptrLayout = new PullRefreshLayout(context);
+        ptrLayout.setEnabled(false); /* setting as disabled by default*/
+        ptrLayout.addView(listView, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+
+        tabsContainer.addView(ptrLayout, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 0, 1f));
 
         contentView.addView(tabsContainer, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.CENTER, 0, AndroidUtilities.isTablet() ? 16 : 14, 0, AndroidUtilities.isTablet() ? 40 : 42));// added bottom margin for the bottom navigation view
         listView.setOnItemClickListener((view, position) -> {
@@ -1357,7 +1359,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         getAvailableActivity(activity -> {
             if (activity != null) {
                 cryptoAdapter.startService(activity);
-                newsAdapter.startService(getParentActivity());
+                if (newsAdapter == null) {
+                    newsAdapter = new NewsAdapter(activity);
+                }
+                newsAdapter.startService(activity);
                 if (videoAdapter == null) {
                     videoAdapter = new YouTubePlayerAdapter(activity);
                 }
@@ -1371,12 +1376,17 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                     listView.postAndNotifyAdapter(() -> {
                         currentBottomTabPosition = position;
                         actionBar.setTitle(title);
+
                         boolean isChat = position == 0;
+
                         floatingButton.post(() -> hideFloatingButton(!isChat, true));
                         newTabsView.post(() -> newTabsView.hide(!isChat));
+                        ptrLayout.setRefreshing(false);
+                        ptrLayout.setEnabled(position == 2 || position == 3);
 
                         ActionBarMenuItem itemSearch = menu.getItem(0);
                         itemSearch.setVisibility(!isChat ? View.GONE : View.VISIBLE);
+
                         switch (position) {
                             case 0:
                                 if (!(listView.getAdapter() instanceof BetterDialogsAdapter)) {
@@ -1391,11 +1401,13 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                             case 2:
                                 if (!(listView.getAdapter() instanceof NewsAdapter)) {
                                     listView.setAdapter(newsAdapter);
+                                    ptrLayout.setOnRefreshListener(newsAdapter);
                                 }
                                 break;
                             case 3:
                                 if (!(listView.getAdapter() instanceof YouTubePlayerAdapter)) {
                                     listView.setAdapter(videoAdapter);
+                                    ptrLayout.setOnRefreshListener(videoAdapter);
                                 }
                                 break;
                             case 4:

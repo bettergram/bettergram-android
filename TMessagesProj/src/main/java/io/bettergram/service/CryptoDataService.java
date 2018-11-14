@@ -88,10 +88,7 @@ public class CryptoDataService extends BaseDataService {
 
         for (int i = 0, size = list.size(); i < size; i++) {
             final int index = i;
-
-            CryptoCurrency foundCurrency = CollectionUtil.find(currencies,
-                    (CryptoCurrency item) -> list.get(index).code.equals(item.code));
-
+            CryptoCurrency foundCurrency = CollectionUtil.find(currencies, item -> list.get(index).code.equals(item.code));
             if (foundCurrency != null) {
                 list.get(index).icon = foundCurrency.icon;
                 list.get(index).name = foundCurrency.name;

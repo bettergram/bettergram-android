@@ -26,6 +26,7 @@ import io.bettergram.telegram.messenger.ImageReceiver;
 import io.bettergram.telegram.messenger.support.widget.RecyclerView;
 import io.bettergram.telegram.ui.ActionBar.Theme;
 import io.bettergram.telegram.ui.Components.CardView.CardView;
+import io.bettergram.telegram.ui.Components.PullToRefresh.PullRefreshLayout;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -35,7 +36,7 @@ import static com.flipkart.youtubeview.models.YouTubePlayerType.STRICT_NATIVE;
 import static io.bettergram.service.api.VideosApi.formatToYesterdayOrToday;
 
 public class YouTubePlayerAdapter extends
-        RecyclerView.Adapter<YouTubePlayerAdapter.YouTubePlayerViewHolder> {
+        RecyclerView.Adapter<YouTubePlayerAdapter.YouTubePlayerViewHolder> implements PullRefreshLayout.OnRefreshListener {
 
     /**
      * Receives data from {@link YoutubeDataService}
@@ -73,12 +74,29 @@ public class YouTubePlayerAdapter extends
         }
     }
 
+    @Override
+    public void onRefresh(PullRefreshLayout ptrLayout) {
+        if (this.ptrLayout == null) {
+            this.ptrLayout = ptrLayout;
+        }
+        startService(activity);
+    }
+
+    private Activity activity;
+    private PullRefreshLayout ptrLayout;
     private List<Video> videos = new ArrayList<>();
-    private Context context;
     private FragmentManager fragmentManager;
     private int playerType;
     private String apiKey;
     private String webviewUrl;
+
+    public YouTubePlayerAdapter(Activity activity) {
+        this.activity = activity;
+        this.fragmentManager = activity.getFragmentManager();
+        this.playerType = STRICT_NATIVE;
+        this.apiKey = activity.getString(R.string.youtube_api_key);
+        this.webviewUrl = activity.getString(R.string.youtube_webview_url);
+    }
 
     class YouTubePlayerViewHolder extends RecyclerView.ViewHolder implements ImageReceiver.ImageReceiverDelegate {
         ImageReceiver videoPhoto;
@@ -125,20 +143,15 @@ public class YouTubePlayerAdapter extends
     }
 
     public void setVideos(List<Video> videos) {
+        if (ptrLayout != null) {
+            ptrLayout.setRefreshing(false);
+        }
         if (videos == null || videos.isEmpty()) {
             return;
         }
         this.videos.clear();
         this.videos.addAll(videos);
         notifyDataSetChanged();
-    }
-
-    public YouTubePlayerAdapter(Activity activity) {
-        this.context = activity;
-        this.fragmentManager = activity.getFragmentManager();
-        this.playerType = STRICT_NATIVE;
-        this.apiKey = context.getString(R.string.youtube_api_key);
-        this.webviewUrl = context.getString(R.string.youtube_webview_url);
     }
 
     @Override

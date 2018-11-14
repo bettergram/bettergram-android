@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +27,7 @@ import io.bettergram.telegram.messenger.ImageReceiver;
 import io.bettergram.telegram.messenger.support.widget.RecyclerView;
 import io.bettergram.telegram.ui.ActionBar.Theme;
 import io.bettergram.telegram.ui.Components.CardView.CardView;
+import io.bettergram.telegram.ui.Components.PullToRefresh.PullRefreshLayout;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -33,7 +35,7 @@ import java.util.List;
 
 import static io.bettergram.service.api.NewsApi.formatToYesterdayOrToday;
 
-public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder> {
+public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder> implements PullRefreshLayout.OnRefreshListener {
 
     /**
      * Receives data from {@link NewsDataService}
@@ -71,15 +73,27 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
         }
     }
 
+    @Override
+    public void onRefresh(PullRefreshLayout ptrLayout) {
+        if (this.ptrLayout == null) {
+            this.ptrLayout = ptrLayout;
+        }
+        startService(activity);
+    }
+
+    private Activity activity;
+    private PullRefreshLayout ptrLayout;
     private List<News> newsList = new ArrayList<>();
+
+    public NewsAdapter(Activity activity) {
+        this.activity = activity;
+    }
 
     class NewsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, ImageReceiver.ImageReceiverDelegate {
 
         ImageReceiver newsPhoto;
-
         ImageView imageThumb;
         TextView textTitle, textAccount, textDatePosted;
-
         News news;
 
         NewsViewHolder(View itemView) {
@@ -129,6 +143,10 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
     }
 
     public void setNewsList(List<News> newsList) {
+        if (ptrLayout != null) {
+            ptrLayout.setRefreshing(false);
+        }
+
         this.newsList.clear();
         this.newsList.addAll(newsList);
         AndroidUtilities.runOnUIThread(this::notifyDataSetChanged);
@@ -155,7 +173,6 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
         final News news = newsList.get(position);
 
         holder.news = news;
-
         holder.newsPhoto.setImage(
                 news.urlToImage,
                 null,

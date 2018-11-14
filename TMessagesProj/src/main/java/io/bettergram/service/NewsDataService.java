@@ -9,6 +9,7 @@ import io.bettergram.messenger.BuildConfig;
 import io.bettergram.service.api.NewsApi;
 import io.bettergram.telegram.messenger.ApplicationLoader;
 import io.bettergram.telegram.messenger.NotificationCenter;
+import io.bettergram.utils.CollectionUtil;
 import io.bettergram.utils.io.IOUtils;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -42,8 +43,7 @@ public class NewsDataService extends BaseDataService {
 
     public static boolean isIntentServiceRunning = false;
 
-    private SharedPreferences preferences = ApplicationLoader.applicationContext
-            .getSharedPreferences(NEWS_PREF, Context.MODE_PRIVATE);
+    private SharedPreferences preferences = ApplicationLoader.applicationContext.getSharedPreferences(NEWS_PREF, Context.MODE_PRIVATE);
 
     public NewsDataService() {
         super("NewsDataService");
@@ -148,9 +148,20 @@ public class NewsDataService extends BaseDataService {
 
                     NewsList newsList = new NewsList();
                     newsList.articles = articles;
+
                     if (isEmpty(jsonRaw)) {
-                        publishResults(NewsList__JsonHelper.serializeToJson(newsList), NOTIFICATION,
-                                RESULT);
+                        publishResults(NewsList__JsonHelper.serializeToJson(newsList), NOTIFICATION, RESULT);
+                    } else {
+                        NewsList savedNewsList = NewsList__JsonHelper.parseFromJson(jsonRaw);
+                        for (int i = 0, size = newsList.articles.size(); i < size; i++) {
+                            final News article = newsList.articles.get(i);
+                            News foundNews = CollectionUtil.find(savedNewsList.articles, item -> article.url.equals(item.url));
+                            if (foundNews != null) {
+                                newsList.articles.get(i).urlToImage = foundNews.urlToImage;
+                            }
+                        }
+                        newsList.sortArticlesByDate();
+                        publishResults(NewsList__JsonHelper.serializeToJson(newsList), NOTIFICATION, RESULT);
                     }
                 } else {
                     if (response.code() == 410) {
