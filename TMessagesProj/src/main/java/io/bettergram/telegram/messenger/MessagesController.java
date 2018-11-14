@@ -6653,6 +6653,18 @@ public class MessagesController implements NotificationCenter.NotificationCenter
         return true;
     }
 
+    public void swapPinnedDialogs(int index1, int index2) {
+        int d_size = dialogs.size();
+        if ((index1 < 0 || index1 >= d_size) || (index2 < 0 || index2 >= d_size)) return;
+
+        final TLRPC.TL_dialog d1 = dialogs.get(index1);
+        final TLRPC.TL_dialog d2 = dialogs.get(index2);
+        if (d1.pinned && d2.pinned) {
+            Collections.swap(dialogs, index1, index2);
+            MessagesStorage.getInstance(currentAccount).swapDialogs(d1.id, d2.id);
+        }
+    }
+
     public void loadPinnedDialogs(final long newDialogId, final ArrayList<Long> order) {
         if (UserConfig.getInstance(currentAccount).pinnedDialogsLoaded) {
             return;

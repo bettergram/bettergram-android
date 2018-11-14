@@ -13,27 +13,16 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
-import android.content.ClipData;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.SharedPreferences;
+import android.content.*;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Outline;
-import android.graphics.Paint;
-import android.graphics.Path;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffColorFilter;
-import android.graphics.PorterDuffXfermode;
+import android.graphics.*;
 import android.graphics.Rect;
-import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
@@ -41,129 +30,32 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.SpannableStringBuilder;
-import android.text.Spanned;
-import android.text.TextUtils;
+import android.text.*;
 import android.text.style.CharacterStyle;
 import android.text.style.ClickableSpan;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.URLSpan;
-import android.util.LongSparseArray;
-import android.util.SparseArray;
-import android.util.SparseBooleanArray;
-import android.util.SparseIntArray;
-import android.util.TypedValue;
-import android.view.Gravity;
-import android.view.HapticFeedbackConstants;
-import android.view.Menu;
-import android.view.MotionEvent;
-import android.view.TextureView;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewOutlineProvider;
-import android.view.ViewTreeObserver;
+import android.util.*;
+import android.view.*;
 import android.view.animation.DecelerateInterpolator;
-import android.widget.DatePicker;
-import android.widget.EditText;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
-
+import android.widget.*;
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
-
-import io.bettergram.telegram.messenger.AndroidUtilities;
-import io.bettergram.telegram.PhoneFormat.PhoneFormat;
 import io.bettergram.messenger.BuildConfig;
-import io.bettergram.telegram.messenger.BuildVars;
-import io.bettergram.telegram.messenger.ChatObject;
-import io.bettergram.telegram.messenger.DataQuery;
-import io.bettergram.telegram.messenger.DownloadController;
-import io.bettergram.telegram.messenger.Emoji;
-import io.bettergram.telegram.messenger.EmojiSuggestion;
-import io.bettergram.telegram.messenger.LocaleController;
+import io.bettergram.messenger.R;
+import io.bettergram.telegram.PhoneFormat.PhoneFormat;
+import io.bettergram.telegram.messenger.*;
 import io.bettergram.telegram.messenger.MediaController;
-import io.bettergram.telegram.messenger.MessagesStorage;
-import io.bettergram.telegram.messenger.NotificationsController;
-import io.bettergram.telegram.messenger.SecretChatHelper;
-import io.bettergram.telegram.messenger.SendMessagesHelper;
-import io.bettergram.telegram.messenger.SharedConfig;
-import io.bettergram.telegram.messenger.UserObject;
-import io.bettergram.telegram.messenger.Utilities;
-import io.bettergram.telegram.messenger.VideoEditedInfo;
 import io.bettergram.telegram.messenger.browser.Browser;
 import io.bettergram.telegram.messenger.support.SparseLongArray;
-import io.bettergram.telegram.messenger.support.widget.GridLayoutManager;
-import io.bettergram.telegram.messenger.support.widget.GridLayoutManagerFixed;
-import io.bettergram.telegram.messenger.support.widget.LinearLayoutManager;
-import io.bettergram.telegram.messenger.support.widget.LinearSmoothScrollerMiddle;
-import io.bettergram.telegram.messenger.support.widget.RecyclerView;
-import io.bettergram.telegram.messenger.ApplicationLoader;
-import io.bettergram.telegram.messenger.FileLoader;
+import io.bettergram.telegram.messenger.support.widget.*;
 import io.bettergram.telegram.tgnet.ConnectionsManager;
 import io.bettergram.telegram.tgnet.TLRPC;
-import io.bettergram.telegram.messenger.ContactsController;
-import io.bettergram.telegram.messenger.FileLog;
-import io.bettergram.telegram.messenger.MessageObject;
-import io.bettergram.telegram.messenger.MessagesController;
-import io.bettergram.telegram.messenger.NotificationCenter;
-import io.bettergram.messenger.R;
-import io.bettergram.telegram.messenger.UserConfig;
-import io.bettergram.telegram.ui.ActionBar.ActionBarLayout;
-import io.bettergram.telegram.ui.ActionBar.AlertDialog;
-import io.bettergram.telegram.ui.ActionBar.BackDrawable;
-import io.bettergram.telegram.ui.ActionBar.BottomSheet;
-import io.bettergram.telegram.ui.ActionBar.SimpleTextView;
-import io.bettergram.telegram.ui.ActionBar.ThemeDescription;
+import io.bettergram.telegram.ui.ActionBar.*;
 import io.bettergram.telegram.ui.Adapters.MentionsAdapter;
 import io.bettergram.telegram.ui.Adapters.StickersAdapter;
-import io.bettergram.telegram.ui.Cells.BotSwitchCell;
-import io.bettergram.telegram.ui.Cells.ChatActionCell;
-import io.bettergram.telegram.ui.Cells.ChatLoadingCell;
-import io.bettergram.telegram.ui.ActionBar.ActionBar;
-import io.bettergram.telegram.ui.ActionBar.ActionBarMenu;
-import io.bettergram.telegram.ui.ActionBar.ActionBarMenuItem;
-import io.bettergram.telegram.ui.Cells.ChatMessageCell;
-import io.bettergram.telegram.ui.Cells.ChatUnreadCell;
-import io.bettergram.telegram.ui.Cells.CheckBoxCell;
-import io.bettergram.telegram.ui.Cells.ContextLinkCell;
-import io.bettergram.telegram.ui.Cells.MentionCell;
-import io.bettergram.telegram.ui.Cells.StickerCell;
-import io.bettergram.telegram.ui.Components.AlertsCreator;
-import io.bettergram.telegram.ui.Components.BackupImageView;
-import io.bettergram.telegram.ui.ActionBar.BaseFragment;
-import io.bettergram.telegram.ui.Cells.BotHelpCell;
-import io.bettergram.telegram.ui.Components.ChatActivityEnterView;
-import io.bettergram.telegram.messenger.ImageReceiver;
-import io.bettergram.telegram.ui.Components.ChatAttachAlert;
-import io.bettergram.telegram.ui.Components.ChatAvatarContainer;
-import io.bettergram.telegram.ui.Components.ChatBigEmptyView;
-import io.bettergram.telegram.ui.Components.CombinedDrawable;
-import io.bettergram.telegram.ui.Components.CorrectlyMeasuringTextView;
-import io.bettergram.telegram.ui.Components.EmbedBottomSheet;
-import io.bettergram.telegram.ui.Components.EmojiView;
-import io.bettergram.telegram.ui.Components.ExtendedGridLayoutManager;
-import io.bettergram.telegram.ui.Components.FragmentContextView;
-import io.bettergram.telegram.ui.Components.InstantCameraView;
-import io.bettergram.telegram.ui.Components.LayoutHelper;
-import io.bettergram.telegram.ui.Components.NumberTextView;
-import io.bettergram.telegram.ui.Components.PipRoundVideoView;
-import io.bettergram.telegram.ui.Components.RadialProgressView;
-import io.bettergram.telegram.ui.Components.RecyclerListView;
-import io.bettergram.telegram.ui.Components.ShareAlert;
+import io.bettergram.telegram.ui.Cells.*;
+import io.bettergram.telegram.ui.Components.*;
 import io.bettergram.telegram.ui.Components.Size;
-import io.bettergram.telegram.ui.Components.SizeNotifierFrameLayout;
-import io.bettergram.telegram.ui.Components.StickersAlert;
-import io.bettergram.telegram.ui.ActionBar.Theme;
-import io.bettergram.telegram.ui.Components.TypefaceSpan;
-import io.bettergram.telegram.ui.Components.URLSpanBotCommand;
-import io.bettergram.telegram.ui.Components.URLSpanMono;
-import io.bettergram.telegram.ui.Components.URLSpanNoUnderline;
-import io.bettergram.telegram.ui.Components.URLSpanReplacement;
-import io.bettergram.telegram.ui.Components.URLSpanUserMention;
 import io.bettergram.telegram.ui.Components.voip.VoIPHelper;
 
 import java.io.BufferedWriter;
@@ -370,13 +262,13 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
     private HashMap<String, ArrayList<MessageObject>> messagesByDays = new HashMap<>();
     protected ArrayList<MessageObject> messages = new ArrayList<>();
     private LongSparseArray<MessageObject.GroupedMessages> groupedMessagesMap = new LongSparseArray<>();
-    private int maxMessageId[] = new int[] {Integer.MAX_VALUE, Integer.MAX_VALUE};
-    private int minMessageId[] = new int[] {Integer.MIN_VALUE, Integer.MIN_VALUE};
-    private int maxDate[] = new int[] {Integer.MIN_VALUE, Integer.MIN_VALUE};
+    private int maxMessageId[] = new int[]{Integer.MAX_VALUE, Integer.MAX_VALUE};
+    private int minMessageId[] = new int[]{Integer.MIN_VALUE, Integer.MIN_VALUE};
+    private int maxDate[] = new int[]{Integer.MIN_VALUE, Integer.MIN_VALUE};
     private int minDate[] = new int[2];
     private boolean endReached[] = new boolean[2];
     private boolean cacheEndReached[] = new boolean[2];
-    private boolean forwardEndReached[] = new boolean[] {true, true};
+    private boolean forwardEndReached[] = new boolean[]{true, true};
     private boolean loading;
     private boolean firstLoading = true;
     private boolean firstUnreadSent = false;
@@ -550,6 +442,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
     private final static int bot_help = 30;
     private final static int bot_settings = 31;
     private final static int call = 32;
+    private final static int pin = 34;
 
     private final static int attach_photo = 0;
     private final static int attach_gallery = 1;
@@ -942,6 +835,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public View createView(Context context) {
         if (chatMessageCellsCache.isEmpty()) {
@@ -1182,7 +1076,10 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                     SendMessagesHelper.getInstance(currentAccount).sendMessage("/settings", dialog_id, null, null, false, null, null, null);
                 } else if (id == search) {
                     openSearchWithText(null);
-                } else if(id == call) {
+                } else if (id == pin) {
+                    TLRPC.TL_dialog dialog = MessagesController.getInstance(currentAccount).dialogs_dict.get(dialog_id);
+                    MessagesController.getInstance(currentAccount).pinDialog(dialog.id, !dialog.pinned, null, 0);
+                } else if (id == call) {
                     if (currentUser != null && getParentActivity() != null) {
                         VoIPHelper.startCall(currentUser, getParentActivity(), MessagesController.getInstance(currentAccount).getUserFull(currentUser.id));
                     }
@@ -1334,6 +1231,10 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         }
 
         headerItem = menu.addItem(0, R.drawable.ic_ab_other);
+
+        TLRPC.TL_dialog _dialog = MessagesController.getInstance(currentAccount).dialogs_dict.get(dialog_id);
+        headerItem.addSubItem(pin, _dialog.pinned ? LocaleController.getString("UnpinFromTop", R.string.UnpinFromTop) : LocaleController.getString("PinToTop", R.string.PinToTop));
+
         if (currentUser != null) {
             headerItem.addSubItem(call, LocaleController.getString("Call", R.string.Call));
             TLRPC.TL_userFull userFull = MessagesController.getInstance(currentAccount).getUserFull(currentUser.id);
@@ -4743,7 +4644,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             int checkLoadCount;
             if (scroll) {
                 checkLoadCount = 25;
-            } else  {
+            } else {
                 checkLoadCount = 5;
             }
             if (totalItemCount - firstVisibleItem - visibleItemCount <= checkLoadCount && !loading) {
@@ -5127,7 +5028,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             chatActivityEnterView.setButtons(botButtons);
         }
     }
-    
+
     public void hideFieldPanel() {
         showFieldPanel(false, null, null, null, null, false);
     }
@@ -5656,7 +5557,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 roundVideoContainer.setTranslationY(-AndroidUtilities.roundMessageSize - 100);
                 fragmentView.invalidate();
                 MessageObject messageObject = MediaController.getInstance().getPlayingMessageObject();
-                if (messageObject != null && messageObject.isRoundVideo() && messageObject.eventId == 0 &&checkTextureViewPosition) {
+                if (messageObject != null && messageObject.isRoundVideo() && messageObject.eventId == 0 && checkTextureViewPosition) {
                     MediaController.getInstance().setCurrentRoundVisible(false);
                 }
             } else {
@@ -9698,8 +9599,6 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         }
 
 
-
-
         updateBottomOverlay();
     }
 
@@ -9824,13 +9723,13 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             chatActivityEnterView.setFieldFocused(false);
         }
         if (chatAttachAlert != null) {
-            if (!ignoreAttachOnPause){
+            if (!ignoreAttachOnPause) {
                 chatAttachAlert.onPause();
             } else {
                 ignoreAttachOnPause = false;
             }
         }
-        CharSequence[] message = new CharSequence[] {draftMessage};
+        CharSequence[] message = new CharSequence[]{draftMessage};
         ArrayList<TLRPC.MessageEntity> entities = DataQuery.getInstance(currentAccount).getEntities(message);
         DataQuery.getInstance(currentAccount).saveDraft(dialog_id, message[0], entities, replyMessage != null ? replyMessage.messageOwner : null, !searchWebpage);
 
@@ -10164,7 +10063,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             }
             if (user != null && user.id != UserConfig.getInstance(currentAccount).getClientUserId() && loadParticipant != 2) {
                 if (loadParticipant == 1 && !currentChat.creator) {
-                    final AlertDialog progressDialog[] = new AlertDialog[] {new AlertDialog(getParentActivity(), 1)};
+                    final AlertDialog progressDialog[] = new AlertDialog[]{new AlertDialog(getParentActivity(), 1)};
 
                     TLRPC.TL_channels_getParticipant req = new TLRPC.TL_channels_getParticipant();
                     req.channel = MessagesController.getInputChannel(currentChat);
@@ -10492,7 +10391,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                             TLRPC.TL_messageActionPhoneCall call = (TLRPC.TL_messageActionPhoneCall) message.messageOwner.action;
                             items.add((call.reason instanceof TLRPC.TL_phoneCallDiscardReasonMissed || call.reason instanceof TLRPC.TL_phoneCallDiscardReasonBusy) && !message.isOutOwner() ? LocaleController.getString("CallBack", R.string.CallBack) : LocaleController.getString("CallAgain", R.string.CallAgain));
                             options.add(18);
-                            if(VoIPHelper.canRateCall(call)){
+                            if (VoIPHelper.canRateCall(call)) {
                                 items.add(LocaleController.getString("CallMessageReportProblem", R.string.CallMessageReportProblem));
                                 options.add(19);
                             }
@@ -10766,7 +10665,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         checkEditTimer();
 
         chatActivityEnterView.setAllowStickersAndGifs(false, false);
-        
+
         updatePinnedMessageView(true);
         updateVisibleRows();
 
@@ -11104,12 +11003,12 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 /*if (!TextUtils.isEmpty(selectedObject.messageOwner.media.vcard)) {
                     openVCard(selectedObject.messageOwner.media.vcard, selectedObject.messageOwner.media.first_name, selectedObject.messageOwner.media.last_name);
                 } else {*/
-                    Bundle args = new Bundle();
-                    args.putInt("user_id", selectedObject.messageOwner.media.user_id);
-                    args.putString("phone", selectedObject.messageOwner.media.phone_number);
-                    args.putBoolean("addContact", true);
-                    presentFragment(new ContactAddActivity(args));
-                    break;
+                Bundle args = new Bundle();
+                args.putInt("user_id", selectedObject.messageOwner.media.user_id);
+                args.putString("phone", selectedObject.messageOwner.media.phone_number);
+                args.putBoolean("addContact", true);
+                presentFragment(new ContactAddActivity(args));
+                break;
                 //}
             }
             case 16: {

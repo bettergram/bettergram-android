@@ -38,6 +38,7 @@ import io.bettergram.telegram.messenger.*;
 import io.bettergram.telegram.messenger.support.widget.LinearLayoutManager;
 import io.bettergram.telegram.messenger.support.widget.LinearSmoothScrollerMiddle;
 import io.bettergram.telegram.messenger.support.widget.RecyclerView;
+import io.bettergram.telegram.messenger.support.widget.helper.ItemTouchHelper;
 import io.bettergram.telegram.tgnet.ConnectionsManager;
 import io.bettergram.telegram.tgnet.TLObject;
 import io.bettergram.telegram.tgnet.TLRPC;
@@ -68,6 +69,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
     private ProxyDrawable proxyDrawable;
     private ImageView floatingButton;
     private TabsView newTabsView;
+    private Dialog bottomSheetDialog;
 
     private ImageView unreadFloatingButton;
     private FrameLayout unreadFloatingButtonContainer;
@@ -755,6 +757,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 if (getParentActivity() == null) {
                     return false;
                 }
+                if (!(listView.getAdapter() instanceof BetterDialogsAdapter)) {
+                    return false;
+                }
                 if (!AndroidUtilities.isTablet() && !onlySelect && view instanceof DialogCell) {
                     DialogCell cell = (DialogCell) view;
                     if (cell.isPointInsideAvatar(x, y)) {
@@ -926,7 +931,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                                 showDialog(builder1.create());
                             }
                         });
-                        showDialog(builder.create());
+                        bottomSheetDialog = showDialog(builder.create());
                     } else {
                         final boolean isChat = lower_id < 0 && high_id != 1;
                         TLRPC.User user = null;
@@ -1001,7 +1006,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                                 showDialog(builder12.create());
                             }
                         });
-                        showDialog(builder.create());
+                        bottomSheetDialog = showDialog(builder.create());
                     }
                 }
                 return true;
@@ -1017,6 +1022,62 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 movePreviewFragment(dy);
             }
         });
+
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN, ItemTouchHelper.UP | ItemTouchHelper.DOWN) {
+
+            TLRPC.TL_dialog getDialog(int position) {
+                List<TLRPC.TL_dialog> dialogs = dialogsAdapter.getDialogsArray();
+                if (position < 0 || position >= dialogs.size()) {
+                    return null;
+                }
+                return dialogs.get(position);
+            }
+
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                final int position = viewHolder.getAdapterPosition();
+                final TLRPC.TL_dialog dialog = getDialog(position);
+                if (dialog != null && dialog.pinned) {
+                    if (bottomSheetDialog != null) {
+                        bottomSheetDialog.dismiss();
+                    }
+                    int target_position = target.getAdapterPosition();
+                    MessagesController.getInstance(currentAccount).swapPinnedDialogs(position, target_position);
+                    dialogsAdapter.notifyItemMoved(position, target_position);
+                    return true;
+                }
+                return false;
+            }
+
+            @Override
+            public void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState) {
+                super.onSelectedChanged(viewHolder, actionState);
+                if (actionState == 0) {
+                    final int position = viewHolder.getAdapterPosition();
+                    final TLRPC.TL_dialog dialog = getDialog(position);
+
+                    if (dialog != null && dialog.pinned && bottomSheetDialog != null) {
+                        bottomSheetDialog.show();
+                    }
+                }
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+            }
+
+            //defines the enabled move directions in each state (idle, swiping, dragging).
+            @Override
+            public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+                final int position = viewHolder.getAdapterPosition();
+                final TLRPC.TL_dialog dialog = getDialog(position);
+                if (dialog != null && dialog.pinned && dialogsAdapter.getDialogsArray().size() > 1) {
+                    return makeFlag(ItemTouchHelper.ACTION_STATE_DRAG, ItemTouchHelper.DOWN | ItemTouchHelper.UP);
+                } else {
+                    return makeFlag(ItemTouchHelper.ACTION_STATE_IDLE, ItemTouchHelper.ACTION_STATE_IDLE);
+                }
+            }
+        }).attachToRecyclerView(listView);
 
         searchEmptyView = new EmptyTextProgressView(context);
         searchEmptyView.setVisibility(View.GONE);

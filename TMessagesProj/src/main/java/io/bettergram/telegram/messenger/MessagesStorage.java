@@ -10,30 +10,19 @@ package io.bettergram.telegram.messenger;
 
 import android.content.SharedPreferences;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.LongSparseArray;
 import android.util.SparseArray;
 import android.util.SparseIntArray;
-
-import io.bettergram.utils.Time;
 import io.bettergram.telegram.PhoneFormat.PhoneFormat;
 import io.bettergram.telegram.SQLite.SQLiteCursor;
 import io.bettergram.telegram.SQLite.SQLiteDatabase;
 import io.bettergram.telegram.SQLite.SQLitePreparedStatement;
 import io.bettergram.telegram.messenger.support.SparseLongArray;
-import io.bettergram.telegram.tgnet.ConnectionsManager;
-import io.bettergram.telegram.tgnet.NativeByteBuffer;
-import io.bettergram.telegram.tgnet.RequestDelegate;
-import io.bettergram.telegram.tgnet.TLObject;
-import io.bettergram.telegram.tgnet.TLRPC;
+import io.bettergram.telegram.tgnet.*;
+import io.bettergram.utils.Time;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -6624,8 +6613,8 @@ public class MessagesStorage {
                             try {
                                 if (message.reply_to_msg_id != 0 && (
                                         message.action instanceof TLRPC.TL_messageActionPinMessage ||
-                                        message.action instanceof TLRPC.TL_messageActionPaymentSent ||
-                                        message.action instanceof TLRPC.TL_messageActionGameScore)) {
+                                                message.action instanceof TLRPC.TL_messageActionPaymentSent ||
+                                                message.action instanceof TLRPC.TL_messageActionGameScore)) {
                                     if (!cursor.isNull(13)) {
                                         data = cursor.byteBufferValue(13);
                                         if (data != null) {
@@ -6990,6 +6979,24 @@ public class MessagesStorage {
                 SQLitePreparedStatement state = database.executeFast("UPDATE dialogs SET pinned = ? WHERE did = ?");
                 state.bindInteger(1, pinned);
                 state.bindLong(2, did);
+                state.step();
+                state.dispose();
+            } catch (Exception e) {
+                FileLog.e(e);
+            }
+        });
+    }
+
+    public void swapDialogs(final long did1, final long did2) {
+        storageQueue.postRunnable(() -> {
+            try {
+                SQLitePreparedStatement state = database.executeFast("UPDATE dialogs SET pinned = CASE did WHEN ? THEN (SELECT pinned FROM dialogs WHERE did = ?) WHEN ? THEN (SELECT pinned FROM dialogs WHERE did = ?) END WHERE did IN (?, ?)");
+                state.bindLong(1, did1);
+                state.bindLong(2, did2);
+                state.bindLong(3, did2);
+                state.bindLong(4, did1);
+                state.bindLong(5, did1);
+                state.bindLong(6, did2);
                 state.step();
                 state.dispose();
             } catch (Exception e) {
