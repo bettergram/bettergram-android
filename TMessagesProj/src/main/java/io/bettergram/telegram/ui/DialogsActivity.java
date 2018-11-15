@@ -757,9 +757,11 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 if (getParentActivity() == null) {
                     return false;
                 }
-                if (!(listView.getAdapter() instanceof BetterDialogsAdapter)) {
+
+                if (currentBottomTabPosition > 0) {
                     return false;
                 }
+
                 if (!AndroidUtilities.isTablet() && !onlySelect && view instanceof DialogCell) {
                     DialogCell cell = (DialogCell) view;
                     if (cell.isPointInsideAvatar(x, y)) {
@@ -805,6 +807,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                         return true;
                     }
                 }
+
                 RecyclerView.Adapter adapter = listView.getAdapter();
                 if (adapter == dialogsSearchAdapter) {
                     Object item = dialogsSearchAdapter.getItem(position);
@@ -823,14 +826,37 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                         showDialog(builder.create());
                         return true;
                     }
+                    //return false;
+                }
+
+                TLRPC.TL_dialog _dialog = null;
+                if (adapter == dialogsAdapter) {
+                    List<TLRPC.TL_dialog> dialogs = dialogsAdapter.getDialogsArray();
+                    if (position < 0 || position >= dialogs.size()) {
+                        return false;
+                    }
+                    _dialog = dialogs.get(position);
+                } else if (adapter == dialogsSearchAdapter) {
+                    long dialog_id = 0L;
+                    Object item = dialogsSearchAdapter.getItem(position);
+                    if (item instanceof TLRPC.Chat) {
+                        dialog_id = -((TLRPC.Chat) item).id;
+                    } else if (item instanceof MessageObject) {
+                        dialog_id = ((MessageObject) item).getDialogId();
+                    } else if (item instanceof TLRPC.User) {
+                        dialog_id = ((TLRPC.User) item).id;
+                    }
+                    if (dialog_id == 0L) {
+                        return false;
+                    }
+                    _dialog = MessagesController.getInstance(currentAccount).dialogs_dict.get(dialog_id);
+                }
+
+                final TLRPC.TL_dialog dialog = _dialog;
+
+                if (dialog == null) {
                     return false;
                 }
-                final TLRPC.TL_dialog dialog;
-                List<TLRPC.TL_dialog> dialogs = dialogsAdapter.getDialogsArray();
-                if (position < 0 || position >= dialogs.size()) {
-                    return false;
-                }
-                dialog = dialogs.get(position);
                 if (onlySelect) {
                     if (dialogsType != 3 || selectAlertString != null) {
                         return false;
@@ -931,6 +957,11 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                                 showDialog(builder1.create());
                             }
                         });
+
+                        if (searching && searchWas) {
+                            AndroidUtilities.hideKeyboard(getParentActivity().getCurrentFocus());
+                        }
+
                         bottomSheetDialog = showDialog(builder.create());
                     } else {
                         final boolean isChat = lower_id < 0 && high_id != 1;
@@ -1006,6 +1037,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                                 showDialog(builder12.create());
                             }
                         });
+                        if (searching && searchWas) {
+                            AndroidUtilities.hideKeyboard(getParentActivity().getCurrentFocus());
+                        }
                         bottomSheetDialog = showDialog(builder.create());
                     }
                 }
@@ -1071,7 +1105,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
                 final int position = viewHolder.getAdapterPosition();
                 final TLRPC.TL_dialog dialog = getDialog(position);
-                if (dialog != null && dialog.pinned && dialogsAdapter.getDialogsArray().size() > 1) {
+                if (dialog != null && dialog.pinned && dialogsAdapter.getDialogsArray().size() > 1 && !searching) {
                     return makeFlag(ItemTouchHelper.ACTION_STATE_DRAG, ItemTouchHelper.DOWN | ItemTouchHelper.UP);
                 } else {
                     return makeFlag(ItemTouchHelper.ACTION_STATE_IDLE, ItemTouchHelper.ACTION_STATE_IDLE);
