@@ -6,6 +6,7 @@ public class Strings {
 
     public static final int INDEX_NOT_FOUND = -1;
     public static final String SPACE = " ";
+    public static final String EMPTY = "";
 
     public static String strip(final String str) {
         return strip(str, SPACE);

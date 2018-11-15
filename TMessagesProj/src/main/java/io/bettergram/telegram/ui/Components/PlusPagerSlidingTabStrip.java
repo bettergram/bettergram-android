@@ -26,13 +26,16 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.*;
 import android.graphics.Paint.Style;
-import android.graphics.drawable.ShapeDrawable;
-import android.graphics.drawable.shapes.RectShape;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.text.Layout;
+import android.text.StaticLayout;
+import android.text.TextPaint;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -42,6 +45,7 @@ import android.widget.*;
 import io.bettergram.telegram.messenger.AndroidUtilities;
 import io.bettergram.telegram.messenger.ApplicationLoader;
 import io.bettergram.telegram.messenger.FileLog;
+import io.bettergram.telegram.messenger.Strings;
 import io.bettergram.telegram.ui.ActionBar.Theme;
 import io.bettergram.utils.Counter;
 
@@ -131,8 +135,10 @@ public class PlusPagerSlidingTabStrip extends HorizontalScrollView {
         setFillViewport(true);
         setWillNotDraw(false);
         setHorizontalScrollBarEnabled(false);
+        setClipChildren(false);
 
         tabsContainer = new LinearLayout(context);
+        tabsContainer.setClipChildren(false);
         tabsContainer.setOrientation(LinearLayout.HORIZONTAL);
         tabsContainer.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         tabsContainer.setBackgroundColor(Theme.getColor(Theme.key_actionBarDefault));
@@ -235,7 +241,7 @@ public class PlusPagerSlidingTabStrip extends HorizontalScrollView {
     }
 
     private void addIconTabWithCounter(final int position, int resId) {
-        ImageButton tab = new ImageButton(getContext());
+        CounterImage tab = new CounterImage(getContext());
         //tab.setBackgroundResource(btnBgRes);
         tab.setImageResource(resId);
         //Log.e(TAG, "addIconTabWithCounter position " + position + " pager.getCurrentItem() " + pager.getCurrentItem());
@@ -246,6 +252,7 @@ public class PlusPagerSlidingTabStrip extends HorizontalScrollView {
 
     public void addTabWithCounter(final int position, View view) {
         RelativeLayout tab = new RelativeLayout(getContext());
+        tab.setClipChildren(false);
         tab.setFocusable(true);
 
         tabsContainer.addView(tab, tabShouldExpand ? expandedTabLayoutParams : defaultTabLayoutParams);
@@ -273,23 +280,23 @@ public class PlusPagerSlidingTabStrip extends HorizontalScrollView {
         tab.addView(view, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
         tab.setSelected(position == currentPosition);
 
-        CircularTextView counterView = new CircularTextView(getContext());
-
-        counterView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 10);
-        counterView.setTextColor(0xffffffff);
-        counterView.setGravity(Gravity.CENTER);
-        counterView.setSolidColor(Theme.getColor(Theme.key_topbar_unreadCounterColor));
-        counterView.setVisibility(INVISIBLE);
-
-        counterView.setMinWidth(AndroidUtilities.dp(18));
-
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-        params.setMargins(AndroidUtilities.dp(3), AndroidUtilities.dp(5), AndroidUtilities.dp(3), AndroidUtilities.dp(5));  // left, top, right, bottom
-
-        params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-        params.addRule(/*Theme.plusTabsToBottom ? RelativeLayout.ALIGN_PARENT_TOP : */RelativeLayout.ALIGN_PARENT_BOTTOM);
-
-        tab.addView(counterView, params);
+//        CircularTextView counterView = new CircularTextView(getContext());
+//
+//        counterView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 10);
+//        counterView.setTextColor(0xffffffff);
+//        counterView.setGravity(Gravity.CENTER);
+//        counterView.setSolidColor(Theme.getColor(Theme.key_topbar_unreadCounterColor));
+//        counterView.setVisibility(INVISIBLE);
+//
+//        counterView.setMinWidth(AndroidUtilities.dp(18));
+//
+//        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+//        params.setMargins(AndroidUtilities.dp(3), AndroidUtilities.dp(5), AndroidUtilities.dp(3), AndroidUtilities.dp(5));  // left, top, right, bottom
+//
+//        params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+//        params.addRule(/*Theme.plusTabsToBottom ? RelativeLayout.ALIGN_PARENT_TOP : */RelativeLayout.ALIGN_PARENT_BOTTOM);
+//
+//        tab.addView(counterView, params);
     }
 
     public void changeTabsColor(int position) {
@@ -298,9 +305,9 @@ public class PlusPagerSlidingTabStrip extends HorizontalScrollView {
         if (frame != null) {
             try {
                 View view = ((RelativeLayout) tabsContainer.getChildAt(position)).getChildAt(0);
-                if (view instanceof ImageButton) {
-                    ((ImageButton) frame.getChildAt(0)).setColorFilter(tabTextIconUnselectedColor, PorterDuff.Mode.SRC_IN); // Previous
-                    ((ImageButton) view).setColorFilter(tabTextIconSelectedColor, PorterDuff.Mode.SRC_IN); // Selected
+                if (view instanceof CounterImage) {
+                    ((CounterImage) frame.getChildAt(0)).setColorFilter(tabTextIconUnselectedColor, PorterDuff.Mode.SRC_IN); // Previous
+                    ((CounterImage) view).setColorFilter(tabTextIconSelectedColor, PorterDuff.Mode.SRC_IN); // Selected
                 } else if (view instanceof TextView) {
                     ((TextView) frame.getChildAt(0)).setTextColor(tabTextIconUnselectedColor); // Previous
                     ((TextView) view).setTextColor(tabTextIconSelectedColor); // Selected
@@ -314,117 +321,54 @@ public class PlusPagerSlidingTabStrip extends HorizontalScrollView {
     @SuppressLint("DefaultLocale")
     public void updateCounter(int position, int count, boolean allMuted, boolean force) {
         RelativeLayout frame = (RelativeLayout) tabsContainer.getChildAt(position);
-        //Log.e("TabsView", "PlusPager updateCounter position " + position + " unreadCount " + count + " allMuted " + allMuted);
-        if (frame != null && frame.getChildCount() > 1) {
-            TextView tv = (TextView) frame.getChildAt(1);
-            if (tv != null) {
-                //Log.e("TabsView", "PlusPager updateCounter NOT NULL");
-                //if (count > 0 && !Theme.plusHideTabsCounters) {
+        if (frame != null && frame.getChildCount() >= 1) {
+            CounterImage img = (CounterImage) frame.getChildAt(0);
+            if (img != null) {
                 if (count > 0) {
-                    tv.setVisibility(VISIBLE);
-                    //tv.setText(count >= 10000 && Theme.plusLimitTabsCounters ? "+9999" : String.format("%d", count));
-                    tv.setText(String.format("%s", Counter.format(count)));
-                    //tv.getBackground().setColorFilter(allMuted ? Theme.usePlusTheme ? Theme.chatsTabCounterSilentBGColor : Theme.getColor(Theme.key_chats_unreadCounterMuted) : Theme.usePlusTheme ? Theme.chatsTabCounterBGColor : Theme.getColor(Theme.key_chats_unreadCounter), PorterDuff.Mode.SRC_IN);
-                    //tv.getBackground().setColorFilter(Theme.getColor(Theme.key_topbar_unreadCounterColor), PorterDuff.Mode.SRC_IN);
+                    //tv.setVisibility(VISIBLE);
+                    //tv.setText(String.format("%s", Counter.format(count)));
+                    img.setCountString(String.format("%s", Counter.format(count)));
                 } else {
-                    tv.setVisibility(INVISIBLE);
-                    //tv.getBackground().setColorFilter(0x00000000, PorterDuff.Mode.SRC_IN);
+                    //tv.setVisibility(INVISIBLE);
+                    img.setCountString("");
                 }
                 if (force) {
-                    //tv.setTextSize(TypedValue.COMPLEX_UNIT_DIP, Theme.chatsTabCounterSize);
-                    //tv.setTextColor(Theme.usePlusTheme ? Theme.chatsTabCounterColor : Theme.getColor(Theme.key_chats_unreadCounterText));
-                    //tv.setPadding(AndroidUtilities.dp(Theme.chatsTabCounterSize > 10 ? Theme.chatsTabCounterSize - 7 : 4), 0, AndroidUtilities.dp(Theme.chatsTabCounterSize > 10 ? Theme.chatsTabCounterSize - 7 : 4), 0);
-                    tv.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 11);
-                    tv.setTextColor(Theme.getColor(Theme.key_chats_unreadCounterText));
-                    tv.setPadding(AndroidUtilities.dp(4), 0, AndroidUtilities.dp(4), 0);
+                    //tv.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 11);
+                    //tv.setTextColor(Theme.getColor(Theme.key_chats_unreadCounterText));
+                    //tv.setPadding(AndroidUtilities.dp(4), 0, AndroidUtilities.dp(4), 0);
                 }
             }
         }
     }
 
     private void updateTabStyles() {
-        //Log.e("TabsView", "PlusPager updateTabStyles tabShouldExpand " + tabShouldExpand);
-        //int childWidth = 0;
-        //int tabSize = (AndroidUtilities.displaySize.x / tabCount);
         for (int i = 0; i < tabCount; i++) {
             View tab = tabsContainer.getChildAt(i); // RelativeLayout
 
-            // ImageButton or TextView
-
-            //Log.e("PlusPager", i + " updateTabStyles view " + tab.toString());
-
-            //v.setPadding(0, 0, 0, 0);
             tab.setPadding(0, 0, 0, 0);
             if (tabShouldExpand) {
                 if (tab.getLayoutParams() != expandedTabLayoutParams) tab.setLayoutParams(expandedTabLayoutParams);
-                //v.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT, 1.0F));
-                //v.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT, 1.0F));
             } else {
                 if (tab.getLayoutParams() != defaultTabLayoutParams) tab.setLayoutParams(defaultTabLayoutParams);
                 View view = ((RelativeLayout) tabsContainer.getChildAt(i)).getChildAt(0);
                 if (view != null) {
                     view.setPadding(tabPadding, 0, tabPadding, 0);
                 }
-
-                //v.setPadding(tabPadding, 0, tabPadding, 0);
             }
-            //Log.e("PlusPager", i + " updateTabStyles tab " + tab.toString() + " " + tab.getMeasuredWidth() + " " + tab.getWidth());
-            //if (v instanceof TextView) {
-
-            //TextView tab = (TextView) v;
-            //tab.setTextSize(TypedValue.COMPLEX_UNIT_DIP, tabTextSize);
-            //tab.setTypeface(tabTypeface, tabTypefaceStyle);
-            //tab.setTypeface(Typeface.DEFAULT_BOLD);
-            //tab.setTextColor(i == currentPosition ? tabTextSelectedColor : tabTextColor);
-
-            // setAllCaps() is only available from API 14, so the upper case is made manually if we are on a
-            // pre-ICS-build
-            //if (textAllCaps) {
-            //    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-            //        tab.setAllCaps(true);
-            //    }
-            //}
-            //}
-            //childWidth += v.getWidth();
-
-
         }
         if (delegate != null) {
             delegate.onTabsUpdated();
         }
-        //Log.e("PlusPager", AndroidUtilities.displaySize.x + " / " + AndroidUtilities.displaySize.x/tabCount + " / " + tabsContainer.getMeasuredWidth() + " " + pager.getCurrentItem());
-
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        //Log.e("PlusPager", "onMeasure myWidth " + getMeasuredWidth() + " tabsContainer.getWidth() " + tabsContainer.getWidth() + " getWidth " + tabsContainer.getChildAt(0).getWidth());
         if (!tabShouldExpand || MeasureSpec.getMode(widthMeasureSpec) == MeasureSpec.UNSPECIFIED) {
             return;
         }
         int myWidth = getMeasuredWidth();
         tabsContainer.measure(MeasureSpec.EXACTLY | myWidth, heightMeasureSpec);
-        /*for (int i = 0; i < tabCount; i++) { Detects if tab title is cutted off
-            View tab = tabsContainer.getChildAt(i);
-            if(tabTitlesMode){
-                TextView tv = (TextView) ((RelativeLayout)tab).getChildAt(0);
-                if(tv != null) {
-                    android.graphics.Rect bounds = new android.graphics.Rect();
-                    String text = String.valueOf(tv.getText());
-                    tv.getPaint().getTextBounds(text, 0, text.length(), bounds);
-                    CharSequence txt = tv.getText();
-                    float width = tv.getPaint().measureText(txt, 0, txt.length());
-                    int w = bounds.left + bounds.width();
-
-
-                    if (w > tv.getWidth()) {
-
-                    }
-                }
-            }
-        }*/
-
     }
 
     private void scrollToChild(int position, int offset) {
@@ -781,50 +725,126 @@ public class PlusPagerSlidingTabStrip extends HorizontalScrollView {
         };
     }
 
-    class CircularTextView extends TextView {
+//    class CircularTextView extends TextView {
+//
+//        int solidColor;
+//
+//        public CircularTextView(Context context) {
+//            super(context);
+//        }
+//
+//        public CircularTextView(Context context, AttributeSet attrs) {
+//            super(context, attrs);
+//        }
+//
+//        public CircularTextView(Context context, AttributeSet attrs, int defStyleAttr) {
+//            super(context, attrs, defStyleAttr);
+//        }
+//
+//        @Override
+//        public void draw(Canvas canvas) {
+//            if (getBackground() == null ||
+//                    !(getBackground() != null
+//                            && getBackground() instanceof ShapeDrawable
+//                            && ((ShapeDrawable) getBackground()).getShape() instanceof CurvedSidesShape
+//                    )) {
+//                ShapeDrawable curvedSidesShape = new ShapeDrawable(new CurvedSidesShape());
+//                curvedSidesShape.setIntrinsicWidth(getWidth());
+//                curvedSidesShape.setIntrinsicHeight(getHeight());
+//                curvedSidesShape.getPaint().setColor(Color.RED);
+//                setBackground(curvedSidesShape);
+//            }
+//            super.draw(canvas);
+//        }
+//
+//        public void setSolidColor(int color) {
+//            solidColor = color;
+//        }
+//    }
+//
+//    class CurvedSidesShape extends RectShape {
+//
+//        @Override
+//        public void draw(Canvas canvas, Paint paint) {
+//            Path path = new Path();
+//            path.addRoundRect(rect(), rect().height(), rect().height(), Path.Direction.CW);
+//            canvas.drawPath(path, paint);
+//        }
+//    }
 
-        int solidColor;
+    class CounterImage extends ImageButton {
 
-        public CircularTextView(Context context) {
+        TextPaint countTextPaint;
+        Paint countPaint;
+        Paint countPaintStroke;
+        StaticLayout countLayout;
+        RectF rect = new RectF();
+        int countWidth;
+        float centreX, centreY;
+        String countString = Strings.EMPTY;
+        boolean draw_count = true;
+
+        public void setCountString(String countString) {
+            this.countString = countString;
+            draw_count = !TextUtils.isEmpty(countString);
+            warmUpText();
+            invalidate();
+        }
+
+        public CounterImage(Context context) {
             super(context);
+            init();
         }
 
-        public CircularTextView(Context context, AttributeSet attrs) {
+        public CounterImage(Context context, AttributeSet attrs) {
             super(context, attrs);
+            init();
         }
 
-        public CircularTextView(Context context, AttributeSet attrs, int defStyleAttr) {
+        public CounterImage(Context context, AttributeSet attrs, int defStyleAttr) {
             super(context, attrs, defStyleAttr);
+            init();
+        }
+
+        private void init() {
+            countTextPaint = new TextPaint(TextPaint.ANTI_ALIAS_FLAG);
+            countTextPaint.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+            countTextPaint.setTextSize(AndroidUtilities.dp(11));
+            countTextPaint.setColor(Theme.getColor(Theme.key_chats_unreadCounterText));
+            countPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            countPaint.setColor(Color.RED);
+            countPaintStroke = new Paint(Paint.ANTI_ALIAS_FLAG);
+            countPaintStroke.setStyle(Paint.Style.STROKE);
+            countPaintStroke.setColor(Theme.getColor(Theme.key_actionBarDefault));
+            countPaintStroke.setStrokeWidth(2);
+            warmUpText();
+        }
+
+        private void warmUpText() {
+            countWidth = Math.max(AndroidUtilities.dp(9), (int) Math.ceil(countTextPaint.measureText(countString)));
+            countLayout = new StaticLayout(countString, countTextPaint, countWidth, Layout.Alignment.ALIGN_CENTER, 1.0f, 0.0f, false);
         }
 
         @Override
-        public void draw(Canvas canvas) {
-            if (getBackground() == null ||
-                    !(getBackground() != null
-                            && getBackground() instanceof ShapeDrawable
-                            && ((ShapeDrawable) getBackground()).getShape() instanceof CurvedSidesShape
-                    )) {
-                ShapeDrawable curvedSidesShape = new ShapeDrawable(new CurvedSidesShape());
-                curvedSidesShape.setIntrinsicWidth(getWidth());
-                curvedSidesShape.setIntrinsicHeight(getHeight());
-                curvedSidesShape.getPaint().setColor(Color.RED);
-                setBackground(curvedSidesShape);
+        protected void onDraw(Canvas canvas) {
+            super.onDraw(canvas);
+
+            if (draw_count) {
+                centreX = getX() + getWidth() * 0.5f;
+                centreY = getY() + getHeight() * 0.5f;
+
+                Drawable drawable = getDrawable();
+                int countLeft = Math.round(centreX + (drawable.getIntrinsicWidth() * 0.45f));// + AndroidUtilities.dp(len > 2 ? 2 : 4));
+                int countTop = Math.round(centreY - AndroidUtilities.dp(3.25f));
+                int x = countLeft - AndroidUtilities.dp(3.25f);
+                rect.set(x, countTop, x + countWidth + AndroidUtilities.dp(8), countTop + AndroidUtilities.dp(17));
+                canvas.drawRoundRect(rect, 8.5f * AndroidUtilities.density, 8.5f * AndroidUtilities.density, countPaint);
+                canvas.drawRoundRect(rect, 8.5f * AndroidUtilities.density, 8.5f * AndroidUtilities.density, countPaintStroke);
+                canvas.save();
+                int len = countString.length();
+                canvas.translate(countLeft + AndroidUtilities.dp(len > 2 ? 0.125f : 0.5f), countTop + AndroidUtilities.dp(1.90f));
+                countLayout.draw(canvas);
             }
-            super.draw(canvas);
-        }
-
-        public void setSolidColor(int color) {
-            solidColor = color;
-        }
-    }
-
-    class CurvedSidesShape extends RectShape {
-
-        @Override
-        public void draw(Canvas canvas, Paint paint) {
-            Path path = new Path();
-            path.addRoundRect(rect(), rect().height(), rect().height(), Path.Direction.CW);
-            canvas.drawPath(path, paint);
         }
     }
 }
