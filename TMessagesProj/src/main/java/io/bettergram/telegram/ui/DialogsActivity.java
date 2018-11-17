@@ -560,6 +560,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         listView.setItemAnimator(null);
         listView.setInstantClick(true);
         listView.setLayoutAnimation(null);
+        listView.setBackgroundColor(Theme.getColor(Theme.key_dialog_backgroundColor));
         listView.setTag(4);
         layoutManager = new LinearLayoutManager(context) {
             @Override
@@ -1059,6 +1060,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
 
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN, ItemTouchHelper.UP | ItemTouchHelper.DOWN) {
 
+            private Drawable previousDrawable;
+
             TLRPC.TL_dialog getDialog(int position) {
                 List<TLRPC.TL_dialog> dialogs = dialogsAdapter.getDialogsArray();
                 if (position < 0 || position >= dialogs.size()) {
@@ -1086,7 +1089,13 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             @Override
             public void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState) {
                 super.onSelectedChanged(viewHolder, actionState);
-                if (actionState == 0) {
+                if (actionState == 2) {
+                    final Drawable draggingDrawable = listView.getBackground();
+                    previousDrawable = viewHolder.itemView.getBackground();
+                    viewHolder.itemView.setBackground(draggingDrawable);
+                } else if (actionState == 0) {
+                    viewHolder.itemView.setBackground(previousDrawable);
+
                     final int position = viewHolder.getAdapterPosition();
                     final TLRPC.TL_dialog dialog = getDialog(position);
 

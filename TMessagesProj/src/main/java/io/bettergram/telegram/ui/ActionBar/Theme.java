@@ -1084,6 +1084,8 @@ public class Theme {
     public static final String key_panel_labelColor = "panel_labelColor";
     public static final String key_panel_subLabelColor = "panel_subLabelColor";
 
+    public static final String key_dialog_backgroundColor = "dialog_backgroundColor";
+
     public static final String key_crypto_topTab_activeColor = "crypto_topTab_activeColor";
     public static final String key_crypto_topTab_inactiveColor = "crypto_topTab_inactiveColor";
     public static final String key_crypto_topTab_stripColor = "crypto_topTab_stripColor";
@@ -1737,6 +1739,8 @@ public class Theme {
         defaultColors.put(key_panel_backgroundColor, 0xffffffff);
         defaultColors.put(key_panel_labelColor, 0xff000000);
         defaultColors.put(key_panel_subLabelColor, 0xFFC9C9C9);
+
+        defaultColors.put(key_dialog_backgroundColor, 0xffffffff);
 
         defaultColors.put(key_crypto_topTab_activeColor, 0xFF1FCD6D);
         defaultColors.put(key_crypto_topTab_inactiveColor, 0xFFC9C9C9);
