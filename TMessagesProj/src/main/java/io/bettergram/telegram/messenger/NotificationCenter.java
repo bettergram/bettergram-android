@@ -148,6 +148,8 @@ public class NotificationCenter {
     public static final int closeSearchByActiveAction = totalEvents++;
 
     public static final int updateToLatestApiVersion = totalEvents++;
+    public static final int currencySearchResultsUpdate = totalEvents++;
+    public static final int updateCurrenyDataToBackup = totalEvents++;
 
     private SparseArray<ArrayList<Object>> observers = new SparseArray<>();
     private SparseArray<ArrayList<Object>> removeAfterBroadcast = new SparseArray<>();

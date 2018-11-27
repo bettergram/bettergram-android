@@ -19,8 +19,16 @@ public class CryptoCurrencyInfo {
     public double price;
     @JsonField(fieldName = "delta")
     public CryptoCurrencyInfoDelta delta;
-    @JsonField(fieldName = "icon")
-    public String icon;
+//    @JsonField(fieldName = "icon")
+//    public String icon;
+    @JsonField(fieldName = "supply")
+    public long supply;
+    @JsonField(fieldName = "circulating")
+    public long circulating;
     @JsonField(fieldName = "favorite")
     public boolean favorite;
+
+    public String getIcon() {
+        return "https://beta.livecoinwatch.com/public/coins/icons/32/" + code.toLowerCase() + ".png";
+    }
 }

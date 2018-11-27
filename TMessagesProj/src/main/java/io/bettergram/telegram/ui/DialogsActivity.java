@@ -34,6 +34,7 @@ import android.widget.*;
 import io.bettergram.Constants;
 import io.bettergram.adapters.*;
 import io.bettergram.messenger.R;
+import io.bettergram.service.api.CurrencyApi;
 import io.bettergram.telegram.messenger.*;
 import io.bettergram.telegram.messenger.support.widget.LinearLayoutManager;
 import io.bettergram.telegram.messenger.support.widget.LinearSmoothScrollerMiddle;
@@ -81,6 +82,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
     private ChatActivityEnterView commentView;
     private ActionBarMenuItem switchItem;
 
+    private PullRefreshLayout ptrLayout;
     private BottomNavigationBar bottomBar;
 
     private AlertDialog permissionDialog;
@@ -177,6 +179,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             NotificationCenter.getGlobalInstance().addObserver(this, NotificationCenter.didSetPasscode);
 
             NotificationCenter.getGlobalInstance().addObserver(this, NotificationCenter.updateToLatestApiVersion);
+            NotificationCenter.getGlobalInstance().addObserver(this, NotificationCenter.currencySearchResultsUpdate);
+            NotificationCenter.getGlobalInstance().addObserver(this, NotificationCenter.updateCurrenyDataToBackup);
         }
 
         if (!dialogsLoaded[currentAccount]) {
@@ -221,6 +225,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             NotificationCenter.getGlobalInstance().removeObserver(this, NotificationCenter.didSetPasscode);
 
             NotificationCenter.getGlobalInstance().removeObserver(this, NotificationCenter.updateToLatestApiVersion);
+            NotificationCenter.getGlobalInstance().removeObserver(this, NotificationCenter.currencySearchResultsUpdate);
+            NotificationCenter.getGlobalInstance().removeObserver(this, NotificationCenter.updateCurrenyDataToBackup);
         }
         if (commentView != null) {
             commentView.onDestroy();
@@ -285,7 +291,11 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
 
             @Override
             public void onSearchCollapse() {
-                newTabsView.hide(false);
+                if (currentBottomTabPosition == 0) {
+                    newTabsView.hide(false);
+                } else {
+                    cryptoAdapter.setSearchMode(false);
+                }
                 searching = false;
                 searchWas = false;
                 if (listView != null) {
@@ -301,34 +311,42 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                         floatingButton.setTranslationY(AndroidUtilities.dp(100));
                         hideFloatingButton(false, false);
                     }
-                    if (listView.getAdapter() != dialogsAdapter) {
+                    if (listView.getAdapter() != dialogsAdapter && currentBottomTabPosition == 0) {
                         listView.setAdapter(dialogsAdapter);
                         dialogsAdapter.notifyDataSetChanged();
                     }
                 }
-                if (dialogsSearchAdapter != null) {
-                    dialogsSearchAdapter.searchDialogs(null);
+                if (currentBottomTabPosition == 0) {
+                    if (dialogsSearchAdapter != null) {
+                        dialogsSearchAdapter.searchDialogs(null);
+                    }
+                    updatePasscodeButton();
                 }
-                updatePasscodeButton();
             }
 
             @Override
             public void onTextChanged(EditText editText) {
                 String text = editText.getText().toString();
-                if (text.length() != 0 || dialogsSearchAdapter != null && dialogsSearchAdapter.hasRecentRearch()) {
-                    searchWas = true;
-                    if (dialogsSearchAdapter != null && listView.getAdapter() != dialogsSearchAdapter) {
-                        listView.setAdapter(dialogsSearchAdapter);
-                        dialogsSearchAdapter.notifyDataSetChanged();
+                if (currentBottomTabPosition == 0) {
+                    if (text.length() != 0 || dialogsSearchAdapter != null && dialogsSearchAdapter.hasRecentRearch()) {
+                        searchWas = true;
+                        if (dialogsSearchAdapter != null && listView.getAdapter() != dialogsSearchAdapter) {
+                            listView.setAdapter(dialogsSearchAdapter);
+                            dialogsSearchAdapter.notifyDataSetChanged();
+                        }
+                        if (searchEmptyView != null && listView.getEmptyView() != searchEmptyView) {
+                            progressView.setVisibility(View.GONE);
+                            searchEmptyView.showTextView();
+                            listView.setEmptyView(searchEmptyView);
+                        }
                     }
-                    if (searchEmptyView != null && listView.getEmptyView() != searchEmptyView) {
-                        progressView.setVisibility(View.GONE);
-                        searchEmptyView.showTextView();
-                        listView.setEmptyView(searchEmptyView);
+                    if (dialogsSearchAdapter != null) {
+                        dialogsSearchAdapter.searchDialogs(text);
                     }
-                }
-                if (dialogsSearchAdapter != null) {
-                    dialogsSearchAdapter.searchDialogs(text);
+                } else {
+                    ptrLayout.setRefreshing(text.length() > 0);
+                    cryptoAdapter.setSearchMode(text.length() > 0);
+                    CurrencyApi.search(text);
                 }
             }
         });
@@ -601,7 +619,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
 
         tabsContainer.addView(newTabsView, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, AndroidUtilities.isTablet() ? 44 : 42, Gravity.TOP));
 
-        PullRefreshLayout ptrLayout = new PullRefreshLayout(context);
+        ptrLayout = new PullRefreshLayout(context);
         ptrLayout.setEnabled(false); /* setting as disabled by default*/
         ptrLayout.addView(listView, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
@@ -1480,17 +1498,15 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                     listView.postAndNotifyAdapter(() -> {
                         currentBottomTabPosition = position;
                         actionBar.setTitle(title);
-
-                        boolean isChat = position == 0;
-
+                        final boolean isChat = position == 0;
                         floatingButton.post(() -> hideFloatingButton(!isChat, true));
                         newTabsView.post(() -> newTabsView.hide(!isChat));
                         ptrLayout.setRefreshing(false);
                         ptrLayout.setEnabled(position == 2 || position == 3);
-
+                        final boolean shouldOpen = position == 0 || position == 1;
                         ActionBarMenuItem itemSearch = menu.getItem(0);
-                        itemSearch.setVisibility(!isChat ? View.GONE : View.VISIBLE);
-
+                        itemSearch.setVisibility(!shouldOpen ? View.GONE : View.VISIBLE);
+                        actionBar.closeSearchField();
                         switch (position) {
                             case 0:
                                 if (!(listView.getAdapter() instanceof BetterDialogsAdapter)) {
@@ -1940,7 +1956,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
     @Override
     @SuppressWarnings("unchecked")
     public void didReceivedNotification(int id, int account, Object... args) {
-        if (id == NotificationCenter.dialogsNeedReload) {
+        if (id == NotificationCenter.currencySearchResultsUpdate || id == NotificationCenter.updateCurrenyDataToBackup) {
+            ptrLayout.post(() -> ptrLayout.setRefreshing(false));
+        } else if (id == NotificationCenter.dialogsNeedReload) {
             checkUnreadCount(true);
             if (dialogsAdapter != null) {
                 if (dialogsAdapter.isDataSetChanged() || args.length > 0) {

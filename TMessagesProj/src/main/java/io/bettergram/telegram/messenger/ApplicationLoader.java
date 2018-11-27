@@ -28,7 +28,7 @@ import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.security.ProviderInstaller;
 import com.google.firebase.iid.FirebaseInstanceId;
-import io.bettergram.service.CryptoDataService;
+import io.bettergram.service.CryptoCurrencyDataService;
 import io.bettergram.service.NewsDataService;
 import io.bettergram.service.ResourcesDataService;
 import io.bettergram.service.YoutubeDataService;
@@ -50,7 +50,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import static io.bettergram.service.CryptoDataService.EXTRA_LIMIT;
+import static io.bettergram.service.CryptoCurrencyDataService.EXTRA_LIMIT;
 
 public class ApplicationLoader extends Application {
 
@@ -288,7 +288,7 @@ public class ApplicationLoader extends Application {
     }
 
     public static void warmupBettergramData(Activity activity) {
-        Intent intent = new Intent(activity, CryptoDataService.class);
+        Intent intent = new Intent(activity, CryptoCurrencyDataService.class);
         intent.putExtra(EXTRA_LIMIT, 100);
         activity.startService(intent);
 

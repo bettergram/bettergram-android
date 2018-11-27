@@ -16,19 +16,19 @@ import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
+import android.util.Log;
 import android.view.*;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.sackcentury.shinebuttonlib.ShineButton;
-import io.bettergram.data.CryptoCurrencyInfo;
-import io.bettergram.data.CryptoCurrencyInfoResponse;
-import io.bettergram.data.CryptoCurrencyInfoResponse__JsonHelper;
+import io.bettergram.data.*;
 import io.bettergram.messenger.R;
-import io.bettergram.service.CryptoDataService;
+import io.bettergram.service.CryptoCurrencyDataService;
 import io.bettergram.telegram.messenger.AndroidUtilities;
 import io.bettergram.telegram.messenger.ImageReceiver;
+import io.bettergram.telegram.messenger.NotificationCenter;
 import io.bettergram.telegram.messenger.support.widget.RecyclerView;
 import io.bettergram.telegram.ui.ActionBar.Theme;
 import io.bettergram.telegram.ui.Components.CardView.CardView;
@@ -43,20 +43,20 @@ import java.util.Iterator;
 import java.util.List;
 
 import static android.text.TextUtils.isEmpty;
-import static io.bettergram.service.CryptoDataService.*;
+import static io.bettergram.service.CryptoCurrencyDataService.*;
 import static io.bettergram.telegram.messenger.AndroidUtilities.dp;
 
-public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements NotificationCenter.NotificationCenterDelegate {
 
     /**
-     * Receives data from {@link CryptoDataService}
+     * Receives data from {@link CryptoCurrencyDataService}
      */
     public BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             Bundle bundle = intent.getExtras();
             if (bundle != null) {
-                new Thread(new JsonRunnable(bundle.getString(CryptoDataService.RESULT))).start();
+                new Thread(new JsonRunnable(bundle.getString(CryptoCurrencyDataService.RESULT))).start();
             }
         }
     };
@@ -82,6 +82,33 @@ public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    @Override
+    public void didReceivedNotification(int id, int account, Object... args) {
+        if (id == NotificationCenter.currencySearchResultsUpdate) {
+            String json = (String) args[0];
+            if (!isEmpty(json)) {
+                try {
+                    json = json.replace("data", "list");
+                    CryptoCurrencyInfoData _data = CryptoCurrencyInfoData__JsonHelper.parseFromJson(json);
+                    AndroidUtilities.runOnUIThread(() -> {
+                        data.clear();
+                        data.addAll(_data.list);
+                        notifyDataSetChanged();
+                    });
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        } else if (id == NotificationCenter.updateCurrenyDataToBackup) {
+            AndroidUtilities.runOnUIThread(() -> {
+                Log.e("search", "Point H");
+                data.clear();
+                data.addAll(backup);
+                notifyDataSetChanged();
+            });
         }
     }
 
@@ -214,12 +241,19 @@ public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     }
 
     private CryptoCurrencyInfoResponse cryptoData;
-
     private List<CryptoCurrencyInfo> data = new ArrayList<>();
     private List<CryptoCurrencyInfo> backup = new ArrayList<>();
     private List<CryptoCurrencyInfo> favorites = new ArrayList<>();
+    private boolean searchMode = false;
+
+    public void setSearchMode(boolean searchMode) {
+        this.searchMode = searchMode;
+        notifyDataSetChanged();
+    }
 
     public CryptoAdapter() {
+        NotificationCenter.getGlobalInstance().addObserver(this, NotificationCenter.currencySearchResultsUpdate);
+        NotificationCenter.getGlobalInstance().addObserver(this, NotificationCenter.updateCurrenyDataToBackup);
     }
 
     public void setCryptoData(CryptoCurrencyInfoResponse cryptoData) {
@@ -227,7 +261,7 @@ public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             this.cryptoData = cryptoData;
             if (cryptoData.data != null && !cryptoData.data.list.isEmpty()) {
                 data.clear();
-                data.addAll(cryptoData.data.favorites);
+                //data.addAll(cryptoData.data.favorites);
                 data.addAll(cryptoData.data.list);
                 backup.clear();
                 backup.addAll(data);
@@ -246,7 +280,7 @@ public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     @Override
     public int getItemViewType(int position) {
-        return position == 0 ? 0 : position == 1 ? 1 : position == 2 ? 2 : 3;
+        return searchMode ? 3 : position == 0 ? 0 : position == 1 ? 1 : position == 2 ? 2 : 3;
     }
 
 
@@ -386,9 +420,12 @@ public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         final Context context = holder.itemView.getContext();
-
-        if (holder instanceof HeaderViewHolder) {
+        if (holder instanceof LabelViewHolder) {
+            LabelViewHolder label = (LabelViewHolder) holder;
+            label.itemView.setVisibility(searchMode ? View.GONE : View.VISIBLE);
+        } else if (holder instanceof HeaderViewHolder) {
             HeaderViewHolder header = (HeaderViewHolder) holder;
+            holder.itemView.setVisibility(searchMode ? View.GONE : View.VISIBLE);
             double cap = cryptoData.cap;
             header.textCap.setText(formatHeaderValue(context, "MARKET CAP($)", Number.truncateNumber(cap)));
             double dom = cryptoData.btcDominance;
@@ -397,7 +434,7 @@ public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             header.textVol.setText(formatHeaderValue(context, "24H VOL($)", Number.truncateNumber(vol)));
         } else if (holder instanceof MainViewHolder) {
 
-            int real_position = position - 3;
+            int real_position = position - (searchMode ? 0 : 3);
 
             if (real_position < 0 || real_position > data.size()) {
                 return;
@@ -419,9 +456,9 @@ public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 //main.textCryptoPrice.setTextColor(deltaMinute > 0 ? Color.parseColor("#ff69bc35") : Color.RED);
                 main.textCryptoPrice.setText(String.format(isGreaterZero ? "$%,.2f" : "$%.4f", price));
             }
-            if (!isEmpty(info.icon)) {
+            if (!isEmpty(info.getIcon())) {
                 main.cryptoPhoto.setImage(
-                        info.icon,
+                        info.getIcon(),
                         null,
                         Theme.circle_placeholderDrawable,
                         null,
@@ -449,7 +486,7 @@ public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     @Override
     public int getItemCount() {
-        return data.size() + 3;
+        return data.size() + (searchMode ? 0 : 3);
     }
 
     /**
@@ -473,20 +510,20 @@ public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     }
 
     public void startService(Activity activity) {
-        Intent intent = new Intent(activity, CryptoDataService.class);
+        Intent intent = new Intent(activity, CryptoCurrencyDataService.class);
         intent.putExtra(EXTRA_LIMIT, 100);
         activity.startService(intent);
     }
 
     /**
-     * Register {@link BroadcastReceiver} of {@link CryptoDataService}
+     * Register {@link BroadcastReceiver} of {@link CryptoCurrencyDataService}
      */
     public void registerReceiver(Activity activity) {
-        activity.registerReceiver(receiver, new IntentFilter(CryptoDataService.NOTIFICATION));
+        activity.registerReceiver(receiver, new IntentFilter(CryptoCurrencyDataService.NOTIFICATION));
     }
 
     /**
-     * Unregister {@link BroadcastReceiver} of {@link CryptoDataService}
+     * Unregister {@link BroadcastReceiver} of {@link CryptoCurrencyDataService}
      */
     public void unregisterReceiver(Activity activity) {
         try {

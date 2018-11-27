@@ -9,6 +9,6 @@ import java.util.List;
 public class CryptoCurrencyInfoData {
     @JsonField(fieldName = "list")
     public List<CryptoCurrencyInfo> list;
-    @JsonField(fieldName = "favorites")
-    public List<CryptoCurrencyInfo> favorites;
+    //@JsonField(fieldName = "favorites")
+    //public List<CryptoCurrencyInfo> favorites;
 }

@@ -9,8 +9,10 @@ public class CryptoCurrency {
     public String code;
     @JsonField(fieldName = "name")
     public String name;
-    @JsonField(fieldName = "url")
-    public String url;
+    //@JsonField(fieldName = "url")
+    //public String url;
+    @JsonField(fieldName = "type")
+    public String type;
     @JsonField(fieldName = "icon")
     public String icon;
 }
