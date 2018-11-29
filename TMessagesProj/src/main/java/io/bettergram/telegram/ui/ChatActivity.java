@@ -1233,7 +1233,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         headerItem = menu.addItem(0, R.drawable.ic_ab_other);
 
         TLRPC.TL_dialog _dialog = MessagesController.getInstance(currentAccount).dialogs_dict.get(dialog_id);
-        headerItem.addSubItem(pin, _dialog.pinned ? LocaleController.getString("UnpinFromTop", R.string.UnpinFromTop) : LocaleController.getString("PinToTop", R.string.PinToTop));
+        headerItem.addSubItem(pin, _dialog != null && _dialog.pinned ? LocaleController.getString("UnpinFromTop", R.string.UnpinFromTop) : LocaleController.getString("PinToTop", R.string.PinToTop));
 
         if (currentUser != null) {
             headerItem.addSubItem(call, LocaleController.getString("Call", R.string.Call));
@@ -3226,6 +3226,13 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             contentView.addView(fragmentContextView = new FragmentContextView(context, this, false), LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 39, Gravity.TOP | Gravity.LEFT, 0, -36, 0, 0));
             fragmentContextView.setAdditionalContextView(fragmentLocationContextView);
             fragmentLocationContextView.setAdditionalContextView(fragmentContextView);
+        }
+
+        if (actionBar != null) {
+            ViewGroup parentViewGroup = (ViewGroup) actionBar.getParent();
+            if (parentViewGroup != null) {
+                parentViewGroup.removeAllViews();
+            }
         }
 
         contentView.addView(actionBar);
