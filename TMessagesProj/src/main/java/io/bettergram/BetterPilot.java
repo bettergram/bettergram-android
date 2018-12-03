@@ -50,7 +50,7 @@ public class BetterPilot extends Autopilot {
                     .setGcmSender(assets.getProperty("fcmSenderId")) // FCM/GCM sender ID
                     .setNotificationIcon(R.drawable.notification)
                     //.setNotificationAccentColor(Theme.getColor(Theme.key_actionBarDefault))
-                    .setNotificationChannel("customChannel")
+                    .setNotificationChannel("bettergram_channel")
                     .build();
         } catch (IOException e) {
             e.printStackTrace();

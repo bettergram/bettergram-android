@@ -22,7 +22,9 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import com.sackcentury.shinebuttonlib.ShineButton;
+
 import io.bettergram.data.*;
 import io.bettergram.messenger.R;
 import io.bettergram.service.CryptoCurrencyDataService;
@@ -326,7 +328,7 @@ public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 container.setOrientation(LinearLayout.HORIZONTAL);
                 container.setPadding(
                         0, 0,
-                        AndroidUtilities.dp(8), 0);
+                        AndroidUtilities.dp(4), 0);
 
                 ShineButton star = new ShineButton(context);
                 star.setBtnColor(context.getResources().getColor(android.R.color.darker_gray));
@@ -349,15 +351,14 @@ public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
                 container.addView(starLayout, LayoutHelper.createLinear(
                         AndroidUtilities.isTablet() ? 60 : 58, AndroidUtilities.isTablet() ? 44 : 42,
-                        Gravity.CENTER,
-                        0, 0, 0, 0));
+                        Gravity.CENTER));
 
                 ImageView cryptoImage = new ImageView(context);
                 cryptoImage.setTag("imageCrypto");
                 container.addView(cryptoImage, LayoutHelper.createLinear(
                         25, 25,
                         Gravity.CENTER,
-                        0, 8, 4, 8));
+                        -4, 8, 4, 8));
                 TextView cryptoName = new TextView(context);
                 cryptoName.setTypeface(Typeface.DEFAULT);
                 cryptoName.setMaxLines(1);
@@ -390,7 +391,7 @@ public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 content.setLayoutParams(margin);
                 content.addView(container, LayoutHelper.createLinear(
                         0, AndroidUtilities.isTablet() ? 44 : 42,
-                        0.5f));
+                        0.45f));
                 TextView cryptoPrice = new TextView(context);
                 cryptoPrice.setGravity(Gravity.CENTER);
                 cryptoPrice.setTextSize(14);
@@ -406,7 +407,7 @@ public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 cryptoDelta.setTag("textDayDelta");
                 content.addView(cryptoDelta, LayoutHelper.createLinear(
                         0, LayoutHelper.WRAP_CONTENT,
-                        0.25f, Gravity.CENTER,
+                        0.30f, Gravity.CENTER,
                         0, 0, 8, 0));
 
                 return new MainViewHolder(content);
