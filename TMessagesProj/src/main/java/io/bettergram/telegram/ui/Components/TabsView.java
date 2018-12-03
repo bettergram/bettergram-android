@@ -17,15 +17,24 @@ import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import io.bettergram.messenger.R;
-import io.bettergram.telegram.messenger.*;
-import io.bettergram.telegram.tgnet.TLRPC;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static io.bettergram.tools.DialogsObject.*;
+import io.bettergram.messenger.R;
+import io.bettergram.telegram.messenger.AndroidUtilities;
+import io.bettergram.telegram.messenger.ApplicationLoader;
+import io.bettergram.telegram.messenger.LocaleController;
+import io.bettergram.telegram.messenger.MessagesController;
+import io.bettergram.telegram.messenger.NotificationCenter;
+import io.bettergram.telegram.messenger.UserConfig;
+import io.bettergram.telegram.tgnet.TLRPC;
+
+import static io.bettergram.tools.DialogsObject.isAnnouncement;
+import static io.bettergram.tools.DialogsObject.isDirect;
+import static io.bettergram.tools.DialogsObject.isFavorite;
+import static io.bettergram.tools.DialogsObject.isGroup;
 
 /**
  * Created by Yan on 09/07/2018.
@@ -52,7 +61,7 @@ public class TabsView extends FrameLayout implements NotificationCenter.Notifica
 
     private boolean counting = false;
 
-    private static class Tab {
+    public static class Tab {
         private final String title;
         private final int res;
         private final int type;
@@ -128,6 +137,10 @@ public class TabsView extends FrameLayout implements NotificationCenter.Notifica
 
     public int getCurrentPage() {
         return pager.getCurrentItem();
+    }
+
+    public Tab getCurrentTab() {
+        return tabs.get(currentPage);
     }
 
     private void loadArray() {
@@ -239,10 +252,10 @@ public class TabsView extends FrameLayout implements NotificationCenter.Notifica
 
             @Override
             public void onPageSelected(int position) {
+                currentPage = position;
                 if (refreshAction != null) {
                     refreshAction.onNewTypeSelected(tabs.get(position).getType(), true);
                 }
-                currentPage = position;
                 saveNewPage();
             }
 

@@ -31,6 +31,7 @@ import android.view.*;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.*;
+
 import io.bettergram.Constants;
 import io.bettergram.adapters.*;
 import io.bettergram.messenger.R;
@@ -617,6 +618,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                             listView.scrollToPosition(0);
                         }
                     }
+                    actionBar.setTitle(newTabsView.getCurrentTab().getTitle());
                 });
         LinearLayout tabsContainer = new LinearLayout(context);
         tabsContainer.setOrientation(LinearLayout.VERTICAL);
@@ -1501,7 +1503,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 .setOnSelectListener((position, title) -> {
                     listView.postAndNotifyAdapter(() -> {
                         currentBottomTabPosition = position;
-                        actionBar.setTitle(title);
+                        actionBar.setTitle(position == 0 ? newTabsView.getCurrentTab().getTitle() : title);
                         final boolean isChat = position == 0;
                         floatingButton.post(() -> hideFloatingButton(!isChat, true));
                         newTabsView.post(() -> newTabsView.hide(!isChat));
@@ -1542,7 +1544,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                         }
                     });
                 })
-                .setOnReselectListener((position, title) -> actionBar.setTitle(title))
+                .setOnReselectListener((position, title) -> {
+                    actionBar.setTitle(position == 0 ? newTabsView.getCurrentTab().getTitle() : title);
+                })
                 .selectTabAndTriggerListener(0, true);
         ViewCompat.setTranslationZ(bottomBar, AndroidUtilities.dp(5)); // This should be above the floatingButton
 

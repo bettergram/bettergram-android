@@ -2579,15 +2579,15 @@
 
 
     <!--Better-->
-    <string name="tabsAll">All</string>
-    <string name="tabsDirect">Direct</string>
+    <string name="tabsAll">All Chats</string>
+    <string name="tabsDirect">Direct Messages</string>
     <string name="tabsGroups">Groups</string>
     <string name="tabsAnnouncements">Announcements</string>
     <string name="tabsFavorites">Favorites</string>
     <string name="tabsCrypto">Crypto</string>
 
     <!-- Bottom Bar -->
-    <string name="barItemChats">Chats</string>
+    <string name="barItemChats">All Chats</string>
     <string name="barItemPrices">Prices</string>
     <string name="barItemNews">News</string>
     <string name="barItemVideos">Videos</string>
