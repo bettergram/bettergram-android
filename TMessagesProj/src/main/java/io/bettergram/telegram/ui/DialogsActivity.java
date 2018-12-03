@@ -276,6 +276,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
 
             @Override
             public boolean canCollapseSearch() {
+                if (currentBottomTabPosition == 1) {
+                    cryptoAdapter.setSearchMode(false);
+                    NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.updateCurrenyDataToBackup);
+                }
                 if (switchItem != null) {
                     switchItem.setVisibility(View.VISIBLE);
                 }

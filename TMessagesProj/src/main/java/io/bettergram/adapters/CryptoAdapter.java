@@ -104,7 +104,6 @@ public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             }
         } else if (id == NotificationCenter.updateCurrenyDataToBackup) {
             AndroidUtilities.runOnUIThread(() -> {
-                Log.e("search", "Point H");
                 data.clear();
                 data.addAll(backup);
                 notifyDataSetChanged();
