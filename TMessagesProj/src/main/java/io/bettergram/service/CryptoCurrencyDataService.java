@@ -181,7 +181,7 @@ public class CryptoCurrencyDataService extends BaseDataService {
                         String savedFaveCryptoJson = preferences.getString(KEY_CRYPTO_CURRENCIES_FAVORITE, null);
                         if (!isEmpty(savedFaveCryptoJson)) {
                             CryptoCurrencyInfoData data = CryptoCurrencyInfoData__JsonHelper.parseFromJson(savedFaveCryptoJson);
-                            if (data != null && !data.list.isEmpty()) {
+                            if (data != null && data.list != null && !data.list.isEmpty()) {
                                 for (int i = 0, size = cryptoResponse.data.list.size(); i < size; i++) {
                                     final int index = i;
                                     CryptoCurrencyInfo inf = CollectionUtil.find(data.list,
