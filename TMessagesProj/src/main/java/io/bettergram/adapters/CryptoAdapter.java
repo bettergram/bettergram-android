@@ -6,7 +6,11 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.*;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
@@ -16,8 +20,12 @@ import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
-import android.util.Log;
-import android.view.*;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.TouchDelegate;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -25,7 +33,16 @@ import android.widget.TextView;
 
 import com.sackcentury.shinebuttonlib.ShineButton;
 
-import io.bettergram.data.*;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import io.bettergram.data.CryptoCurrencyInfo;
+import io.bettergram.data.CryptoCurrencyInfoData;
+import io.bettergram.data.CryptoCurrencyInfoData__JsonHelper;
+import io.bettergram.data.CryptoCurrencyInfoResponse;
+import io.bettergram.data.CryptoCurrencyInfoResponse__JsonHelper;
 import io.bettergram.messenger.R;
 import io.bettergram.service.CryptoCurrencyDataService;
 import io.bettergram.telegram.messenger.AndroidUtilities;
@@ -35,20 +52,18 @@ import io.bettergram.telegram.messenger.support.widget.RecyclerView;
 import io.bettergram.telegram.ui.ActionBar.Theme;
 import io.bettergram.telegram.ui.Components.CardView.CardView;
 import io.bettergram.telegram.ui.Components.LayoutHelper;
+import io.bettergram.telegram.ui.Components.PullToRefresh.PullRefreshLayout;
 import io.bettergram.telegram.ui.Components.TabStrip.SlidingTabLayout;
 import io.bettergram.utils.Number;
 import io.bettergram.utils.SpanBuilder;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import static android.text.TextUtils.isEmpty;
-import static io.bettergram.service.CryptoCurrencyDataService.*;
+import static io.bettergram.service.CryptoCurrencyDataService.EXTRA_LIMIT;
+import static io.bettergram.service.CryptoCurrencyDataService.faveCurrency;
+import static io.bettergram.service.CryptoCurrencyDataService.saveCurrencies;
 import static io.bettergram.telegram.messenger.AndroidUtilities.dp;
 
-public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements NotificationCenter.NotificationCenterDelegate {
+public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements PullRefreshLayout.OnRefreshListener, NotificationCenter.NotificationCenterDelegate {
 
     /**
      * Receives data from {@link CryptoCurrencyDataService}
@@ -78,13 +93,20 @@ public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         public void run() {
             android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
             try {
-                CryptoCurrencyInfoResponse res = CryptoCurrencyInfoResponse__JsonHelper
-                        .parseFromJson(json);
+                CryptoCurrencyInfoResponse res = CryptoCurrencyInfoResponse__JsonHelper.parseFromJson(json);
                 AndroidUtilities.runOnUIThread(() -> setCryptoData(res));
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+    }
+
+    @Override
+    public void onRefresh(PullRefreshLayout ptrLayout) {
+        if (this.ptrLayout == null) {
+            this.ptrLayout = ptrLayout;
+        }
+        startService(activity);
     }
 
     @Override
@@ -241,6 +263,8 @@ public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         }
     }
 
+    private Activity activity;
+    private PullRefreshLayout ptrLayout;
     private CryptoCurrencyInfoResponse cryptoData;
     private List<CryptoCurrencyInfo> data = new ArrayList<>();
     private List<CryptoCurrencyInfo> backup = new ArrayList<>();
@@ -252,7 +276,8 @@ public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         notifyDataSetChanged();
     }
 
-    public CryptoAdapter() {
+    public CryptoAdapter(Activity activity) {
+        this.activity = activity;
         NotificationCenter.getGlobalInstance().addObserver(this, NotificationCenter.currencySearchResultsUpdate);
         NotificationCenter.getGlobalInstance().addObserver(this, NotificationCenter.updateCurrenyDataToBackup);
     }
@@ -275,7 +300,11 @@ public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                         iterator.remove();
                     }
                 }
+                notifyDataSetChanged();
             }
+        }
+        if (ptrLayout != null) {
+            ptrLayout.postDelayed(() -> ptrLayout.setRefreshing(false), 1500);
         }
     }
 

@@ -9,7 +9,11 @@
 package io.bettergram.telegram.ui;
 
 import android.Manifest;
-import android.animation.*;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
+import android.animation.StateListAnimator;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -27,16 +31,47 @@ import android.os.Bundle;
 import android.support.v4.view.ViewCompat;
 import android.text.TextUtils;
 import android.util.TypedValue;
-import android.view.*;
+import android.view.Gravity;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewOutlineProvider;
+import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
-import android.widget.*;
+import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import io.bettergram.Constants;
-import io.bettergram.adapters.*;
+import io.bettergram.adapters.BetterDialogsAdapter;
+import io.bettergram.adapters.CryptoAdapter;
+import io.bettergram.adapters.NewsAdapter;
+import io.bettergram.adapters.ResourcesAdapter;
+import io.bettergram.adapters.YouTubePlayerAdapter;
 import io.bettergram.messenger.R;
 import io.bettergram.service.api.CurrencyApi;
-import io.bettergram.telegram.messenger.*;
+import io.bettergram.telegram.messenger.AndroidUtilities;
+import io.bettergram.telegram.messenger.AppVersionTask;
+import io.bettergram.telegram.messenger.ApplicationLoader;
+import io.bettergram.telegram.messenger.BuildVars;
+import io.bettergram.telegram.messenger.ChatObject;
+import io.bettergram.telegram.messenger.ContactsController;
+import io.bettergram.telegram.messenger.DataQuery;
+import io.bettergram.telegram.messenger.DialogObject;
+import io.bettergram.telegram.messenger.FileLog;
+import io.bettergram.telegram.messenger.ImageLoader;
+import io.bettergram.telegram.messenger.LocaleController;
+import io.bettergram.telegram.messenger.MessageObject;
+import io.bettergram.telegram.messenger.MessagesController;
+import io.bettergram.telegram.messenger.NotificationCenter;
+import io.bettergram.telegram.messenger.SharedConfig;
+import io.bettergram.telegram.messenger.UserConfig;
+import io.bettergram.telegram.messenger.UserObject;
 import io.bettergram.telegram.messenger.support.widget.LinearLayoutManager;
 import io.bettergram.telegram.messenger.support.widget.LinearSmoothScrollerMiddle;
 import io.bettergram.telegram.messenger.support.widget.RecyclerView;
@@ -44,15 +79,48 @@ import io.bettergram.telegram.messenger.support.widget.helper.ItemTouchHelper;
 import io.bettergram.telegram.tgnet.ConnectionsManager;
 import io.bettergram.telegram.tgnet.TLObject;
 import io.bettergram.telegram.tgnet.TLRPC;
-import io.bettergram.telegram.ui.ActionBar.*;
+import io.bettergram.telegram.ui.ActionBar.ActionBar;
+import io.bettergram.telegram.ui.ActionBar.ActionBarMenu;
+import io.bettergram.telegram.ui.ActionBar.ActionBarMenuItem;
+import io.bettergram.telegram.ui.ActionBar.AlertDialog;
+import io.bettergram.telegram.ui.ActionBar.BaseFragment;
+import io.bettergram.telegram.ui.ActionBar.BottomSheet;
+import io.bettergram.telegram.ui.ActionBar.MenuDrawable;
+import io.bettergram.telegram.ui.ActionBar.Theme;
+import io.bettergram.telegram.ui.ActionBar.ThemeDescription;
 import io.bettergram.telegram.ui.Adapters.DialogsSearchAdapter;
-import io.bettergram.telegram.ui.Cells.*;
-import io.bettergram.telegram.ui.Components.*;
+import io.bettergram.telegram.ui.Cells.AccountSelectCell;
+import io.bettergram.telegram.ui.Cells.DialogCell;
+import io.bettergram.telegram.ui.Cells.DialogsEmptyCell;
+import io.bettergram.telegram.ui.Cells.DividerCell;
+import io.bettergram.telegram.ui.Cells.DrawerActionCell;
+import io.bettergram.telegram.ui.Cells.DrawerAddCell;
+import io.bettergram.telegram.ui.Cells.DrawerProfileCell;
+import io.bettergram.telegram.ui.Cells.DrawerUserCell;
+import io.bettergram.telegram.ui.Cells.GraySectionCell;
+import io.bettergram.telegram.ui.Cells.HashtagSearchCell;
+import io.bettergram.telegram.ui.Cells.HintDialogCell;
+import io.bettergram.telegram.ui.Cells.LoadingCell;
+import io.bettergram.telegram.ui.Cells.ProfileSearchCell;
+import io.bettergram.telegram.ui.Cells.UserCell;
+import io.bettergram.telegram.ui.Components.AlertsCreator;
+import io.bettergram.telegram.ui.Components.AnimatedArrowDrawable;
+import io.bettergram.telegram.ui.Components.AvatarDrawable;
+import io.bettergram.telegram.ui.Components.BackupImageView;
 import io.bettergram.telegram.ui.Components.BottomBar.BottomNavigationBar;
+import io.bettergram.telegram.ui.Components.ChatActivityEnterView;
+import io.bettergram.telegram.ui.Components.CombinedDrawable;
+import io.bettergram.telegram.ui.Components.EmptyTextProgressView;
+import io.bettergram.telegram.ui.Components.FragmentContextView;
+import io.bettergram.telegram.ui.Components.JoinGroupAlert;
+import io.bettergram.telegram.ui.Components.LayoutHelper;
+import io.bettergram.telegram.ui.Components.ProxyDrawable;
 import io.bettergram.telegram.ui.Components.PullToRefresh.PullRefreshLayout;
-
-import java.util.ArrayList;
-import java.util.List;
+import io.bettergram.telegram.ui.Components.RadialProgressView;
+import io.bettergram.telegram.ui.Components.RecyclerListView;
+import io.bettergram.telegram.ui.Components.SizeNotifierFrameLayout;
+import io.bettergram.telegram.ui.Components.StickersAlert;
+import io.bettergram.telegram.ui.Components.TabsView;
 
 public class DialogsActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate {
 
@@ -60,7 +128,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
     private LinearLayoutManager layoutManager;
     private BetterDialogsAdapter dialogsAdapter;
     private NewsAdapter newsAdapter;
-    private CryptoAdapter cryptoAdapter = new CryptoAdapter();
+    private CryptoAdapter cryptoAdapter;
     private YouTubePlayerAdapter videoAdapter;
     private ResourcesAdapter resourcesAdapter = new ResourcesAdapter();
     private DialogsSearchAdapter dialogsSearchAdapter;
@@ -1486,6 +1554,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
 
         getAvailableActivity(activity -> {
             if (activity != null) {
+                if (cryptoAdapter == null) {
+                    cryptoAdapter = new CryptoAdapter(activity);
+                }
                 cryptoAdapter.startService(activity);
                 if (newsAdapter == null) {
                     newsAdapter = new NewsAdapter(activity);
@@ -1508,7 +1579,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                         floatingButton.post(() -> hideFloatingButton(!isChat, true));
                         newTabsView.post(() -> newTabsView.hide(!isChat));
                         ptrLayout.setRefreshing(false);
-                        ptrLayout.setEnabled(position == 2 || position == 3);
+                        ptrLayout.setEnabled(position == 1 || position == 2 || position == 3);
                         final boolean shouldOpen = position == 0 || position == 1;
                         ActionBarMenuItem itemSearch = menu.getItem(0);
                         itemSearch.setVisibility(!shouldOpen ? View.GONE : View.VISIBLE);
@@ -1522,6 +1593,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                             case 1:
                                 if (!(listView.getAdapter() instanceof CryptoAdapter)) {
                                     listView.setAdapter(cryptoAdapter);
+                                    ptrLayout.setOnRefreshListener(cryptoAdapter);
                                 }
                                 break;
                             case 2:
