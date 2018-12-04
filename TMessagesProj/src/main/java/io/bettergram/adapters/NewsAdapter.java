@@ -11,12 +11,16 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import io.bettergram.data.News;
 import io.bettergram.data.NewsList;
 import io.bettergram.data.NewsList__JsonHelper;
@@ -28,10 +32,6 @@ import io.bettergram.telegram.messenger.support.widget.RecyclerView;
 import io.bettergram.telegram.ui.ActionBar.Theme;
 import io.bettergram.telegram.ui.Components.CardView.CardView;
 import io.bettergram.telegram.ui.Components.PullToRefresh.PullRefreshLayout;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import static io.bettergram.service.api.NewsApi.formatToYesterdayOrToday;
 
@@ -78,7 +78,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
         if (this.ptrLayout == null) {
             this.ptrLayout = ptrLayout;
         }
-        startService(activity);
+        startService(activity, false);
     }
 
     private Activity activity;
@@ -195,8 +195,9 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
         return newsList.size();
     }
 
-    public void startService(Activity activity) {
+    public void startService(Activity activity, boolean fromStart) {
         Intent intent = new Intent(activity, NewsDataService.class);
+        intent.putExtra(NewsDataService.EXTRA_FROM_START, fromStart);
         activity.startService(intent);
     }
 

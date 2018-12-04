@@ -24,24 +24,26 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.*;
+import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.Paint.Style;
-import android.graphics.drawable.Drawable;
+import android.graphics.PorterDuff;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
-import android.text.Layout;
-import android.text.StaticLayout;
-import android.text.TextPaint;
-import android.text.TextUtils;
-import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
-import android.widget.*;
+import android.widget.HorizontalScrollView;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+
 import io.bettergram.telegram.messenger.AndroidUtilities;
 import io.bettergram.telegram.messenger.ApplicationLoader;
 import io.bettergram.telegram.messenger.FileLog;
@@ -242,7 +244,7 @@ public class PlusPagerSlidingTabStrip extends HorizontalScrollView {
 
     private void addIconTabWithCounter(final int position, int resId) {
         CounterImage tab = new CounterImage(getContext());
-        //tab.setBackgroundResource(btnBgRes);
+        tab.textSize(11).borderColor(Theme.getColor(Theme.key_actionBarDefault)).update();
         tab.setImageResource(resId);
         //Log.e(TAG, "addIconTabWithCounter position " + position + " pager.getCurrentItem() " + pager.getCurrentItem());
         tab.setColorFilter(position == pager.getCurrentItem() ? tabTextIconSelectedColor : tabTextIconUnselectedColor, PorterDuff.Mode.SRC_IN);
@@ -252,7 +254,6 @@ public class PlusPagerSlidingTabStrip extends HorizontalScrollView {
 
     public void addTabWithCounter(final int position, View view) {
         RelativeLayout tab = new RelativeLayout(getContext());
-        tab.setClipChildren(false);
         tab.setFocusable(true);
 
         tabsContainer.addView(tab, tabShouldExpand ? expandedTabLayoutParams : defaultTabLayoutParams);
@@ -327,10 +328,10 @@ public class PlusPagerSlidingTabStrip extends HorizontalScrollView {
                 if (count > 0) {
                     //tv.setVisibility(VISIBLE);
                     //tv.setText(String.format("%s", Counter.format(count)));
-                    img.setCountString(String.format("%s", Counter.format(count)));
+                    img.countString(String.format("%s", Counter.format(count))).update();
                 } else {
                     //tv.setVisibility(INVISIBLE);
-                    img.setCountString("");
+                    img.countString(Strings.EMPTY).update();
                 }
                 if (force) {
                     //tv.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 11);
@@ -347,9 +348,11 @@ public class PlusPagerSlidingTabStrip extends HorizontalScrollView {
 
             tab.setPadding(0, 0, 0, 0);
             if (tabShouldExpand) {
-                if (tab.getLayoutParams() != expandedTabLayoutParams) tab.setLayoutParams(expandedTabLayoutParams);
+                if (tab.getLayoutParams() != expandedTabLayoutParams)
+                    tab.setLayoutParams(expandedTabLayoutParams);
             } else {
-                if (tab.getLayoutParams() != defaultTabLayoutParams) tab.setLayoutParams(defaultTabLayoutParams);
+                if (tab.getLayoutParams() != defaultTabLayoutParams)
+                    tab.setLayoutParams(defaultTabLayoutParams);
                 View view = ((RelativeLayout) tabsContainer.getChildAt(i)).getChildAt(0);
                 if (view != null) {
                     view.setPadding(tabPadding, 0, tabPadding, 0);
@@ -725,126 +728,4 @@ public class PlusPagerSlidingTabStrip extends HorizontalScrollView {
         };
     }
 
-//    class CircularTextView extends TextView {
-//
-//        int solidColor;
-//
-//        public CircularTextView(Context context) {
-//            super(context);
-//        }
-//
-//        public CircularTextView(Context context, AttributeSet attrs) {
-//            super(context, attrs);
-//        }
-//
-//        public CircularTextView(Context context, AttributeSet attrs, int defStyleAttr) {
-//            super(context, attrs, defStyleAttr);
-//        }
-//
-//        @Override
-//        public void draw(Canvas canvas) {
-//            if (getBackground() == null ||
-//                    !(getBackground() != null
-//                            && getBackground() instanceof ShapeDrawable
-//                            && ((ShapeDrawable) getBackground()).getShape() instanceof CurvedSidesShape
-//                    )) {
-//                ShapeDrawable curvedSidesShape = new ShapeDrawable(new CurvedSidesShape());
-//                curvedSidesShape.setIntrinsicWidth(getWidth());
-//                curvedSidesShape.setIntrinsicHeight(getHeight());
-//                curvedSidesShape.getPaint().setColor(Color.RED);
-//                setBackground(curvedSidesShape);
-//            }
-//            super.draw(canvas);
-//        }
-//
-//        public void setSolidColor(int color) {
-//            solidColor = color;
-//        }
-//    }
-//
-//    class CurvedSidesShape extends RectShape {
-//
-//        @Override
-//        public void draw(Canvas canvas, Paint paint) {
-//            Path path = new Path();
-//            path.addRoundRect(rect(), rect().height(), rect().height(), Path.Direction.CW);
-//            canvas.drawPath(path, paint);
-//        }
-//    }
-
-    class CounterImage extends ImageButton {
-
-        TextPaint countTextPaint;
-        Paint countPaint;
-        Paint countPaintStroke;
-        StaticLayout countLayout;
-        RectF rect = new RectF();
-        int countWidth;
-        float centreX, centreY;
-        String countString = Strings.EMPTY;
-        boolean draw_count = true;
-
-        public void setCountString(String countString) {
-            this.countString = countString;
-            draw_count = !TextUtils.isEmpty(countString);
-            warmUpText();
-            invalidate();
-        }
-
-        public CounterImage(Context context) {
-            super(context);
-            init();
-        }
-
-        public CounterImage(Context context, AttributeSet attrs) {
-            super(context, attrs);
-            init();
-        }
-
-        public CounterImage(Context context, AttributeSet attrs, int defStyleAttr) {
-            super(context, attrs, defStyleAttr);
-            init();
-        }
-
-        private void init() {
-            countTextPaint = new TextPaint(TextPaint.ANTI_ALIAS_FLAG);
-            countTextPaint.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
-            countTextPaint.setTextSize(AndroidUtilities.dp(11));
-            countTextPaint.setColor(Theme.getColor(Theme.key_chats_unreadCounterText));
-            countPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-            countPaint.setColor(Color.RED);
-            countPaintStroke = new Paint(Paint.ANTI_ALIAS_FLAG);
-            countPaintStroke.setStyle(Paint.Style.STROKE);
-            countPaintStroke.setColor(Theme.getColor(Theme.key_actionBarDefault));
-            countPaintStroke.setStrokeWidth(2);
-            warmUpText();
-        }
-
-        private void warmUpText() {
-            countWidth = Math.max(AndroidUtilities.dp(9), (int) Math.ceil(countTextPaint.measureText(countString)));
-            countLayout = new StaticLayout(countString, countTextPaint, countWidth, Layout.Alignment.ALIGN_CENTER, 1.0f, 0.0f, false);
-        }
-
-        @Override
-        protected void onDraw(Canvas canvas) {
-            super.onDraw(canvas);
-
-            if (draw_count) {
-                centreX = getX() + getWidth() * 0.5f;
-                centreY = getY() + getHeight() * 0.5f;
-
-                Drawable drawable = getDrawable();
-                int countLeft = Math.round(centreX + (drawable.getIntrinsicWidth() * 0.45f));// + AndroidUtilities.dp(len > 2 ? 2 : 4));
-                int countTop = Math.round(centreY - AndroidUtilities.dp(3.25f));
-                int x = countLeft - AndroidUtilities.dp(3.25f);
-                rect.set(x, countTop, x + countWidth + AndroidUtilities.dp(8), countTop + AndroidUtilities.dp(17));
-                canvas.drawRoundRect(rect, 8.5f * AndroidUtilities.density, 8.5f * AndroidUtilities.density, countPaint);
-                canvas.drawRoundRect(rect, 8.5f * AndroidUtilities.density, 8.5f * AndroidUtilities.density, countPaintStroke);
-                canvas.save();
-                int len = countString.length();
-                canvas.translate(countLeft + AndroidUtilities.dp(len > 2 ? 0.125f : 0.5f), countTop + AndroidUtilities.dp(1.90f));
-                countLayout.draw(canvas);
-            }
-        }
-    }
 }

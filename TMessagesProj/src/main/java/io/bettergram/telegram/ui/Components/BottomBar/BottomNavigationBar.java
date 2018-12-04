@@ -1,6 +1,7 @@
 package io.bettergram.telegram.ui.Components.BottomBar;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.os.Build;
 import android.os.Parcelable;
@@ -11,29 +12,36 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.Pair;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import io.bettergram.messenger.R;
-import io.bettergram.telegram.messenger.AndroidUtilities;
-import io.bettergram.telegram.messenger.NotificationCenter;
-import io.bettergram.telegram.ui.ActionBar.Theme;
-import io.bettergram.telegram.ui.Components.LayoutHelper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import io.bettergram.messenger.R;
+import io.bettergram.telegram.messenger.AndroidUtilities;
+import io.bettergram.telegram.messenger.ApplicationLoader;
+import io.bettergram.telegram.messenger.NotificationCenter;
+import io.bettergram.telegram.messenger.Strings;
+import io.bettergram.telegram.ui.ActionBar.Theme;
+import io.bettergram.telegram.ui.Components.CounterImage;
+import io.bettergram.telegram.ui.Components.LayoutHelper;
+import io.bettergram.utils.Counter;
+
+import static android.text.TextUtils.isEmpty;
+
 public class BottomNavigationBar extends LinearLayout implements NotificationCenter.NotificationCenterDelegate {
 
     private static final String TAG = BottomNavigationBar.class.getName();
+    private static final String BOTTOM_COUNTER = "BOTTOM_COUNTER";
+    private SharedPreferences preferences = ApplicationLoader.applicationContext.getSharedPreferences(BOTTOM_COUNTER, Context.MODE_PRIVATE);
 
     private static final List<Pair<Integer, Integer>> ITEMS = Arrays.asList(
             new Pair<>(R.drawable.ic_tab_chats, R.string.barItemChats),
@@ -73,6 +81,20 @@ public class BottomNavigationBar extends LinearLayout implements NotificationCen
         initTabActivityColors();
         init();
         createStubForEditMode();
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        NotificationCenter.getGlobalInstance().addObserver(this, NotificationCenter.updateBottombarCounter);
+        NotificationCenter.getGlobalInstance().addObserver(this, NotificationCenter.openBottombarCounter);
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        NotificationCenter.getGlobalInstance().removeObserver(this, NotificationCenter.updateBottombarCounter);
+        NotificationCenter.getGlobalInstance().removeObserver(this, NotificationCenter.openBottombarCounter);
     }
 
     private void createStubForEditMode() {
@@ -176,14 +198,15 @@ public class BottomNavigationBar extends LinearLayout implements NotificationCen
     public BottomNavigationBar addTab(@NonNull BottomBarItem item) {
         final Context context = getContext();
         LinearLayout tabView = new LinearLayout(context);
+        tabView.setClipChildren(false);
         tabView.setClickable(true);
         tabView.setOrientation(LinearLayout.VERTICAL);
         tabView.setTranslationY(AndroidUtilities.dp(2));
         tabView.setBackgroundResource(tabItemBgRes);
 
-        ImageView tabIcon = new ImageView(context);
+        CounterImage tabIcon = new CounterImage(context);
 
-        addViewOnUIThread(tabView, tabIcon, LayoutHelper.createLinear(24, 24, Gravity.CENTER));
+        addViewOnUIThread(tabView, tabIcon, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.CENTER));
 
         TextView tabTitle = new TextView(context);
         tabTitle.setMaxLines(1);
@@ -282,8 +305,35 @@ public class BottomNavigationBar extends LinearLayout implements NotificationCen
 
     @Override
     public void didReceivedNotification(int id, int account, Object... args) {
-        for (Object object : args) {
-            Log.i(TAG, "object: " + object.toString());
+        if (id == NotificationCenter.updateBottombarCounter) {
+            int count = (int) args[0];
+            String tag = (String) args[1];
+            if (!isEmpty(tag)) {
+                if (!preferences.getBoolean(tag + "_counter_opened", false)) {
+                    if (tag.equals("news")) {
+                        if (count > 0 && selectedPosition != 2) {
+                            getTabAt(2).icon.countString(String.format("%s", Counter.format(count))).update();
+                        }
+                    } else if (tag.equals("video") && selectedPosition != 3) {
+                        if (count > 0) {
+                            getTabAt(3).icon.countString(String.format("%s", Counter.format(count))).update();
+                        }
+                    }
+                } else {
+                    if (tag.equals("news")) {
+                        getTabAt(2).icon.countString(Strings.EMPTY).update();
+                    } else if (tag.equals("video")) {
+                        getTabAt(3).icon.countString(Strings.EMPTY).update();
+                    }
+                    preferences.edit().putBoolean(tag + "_counter_opened", false).apply();
+                }
+            }
+        } else if (id == NotificationCenter.openBottombarCounter) {
+            String tag = (String) args[0];
+            if (!isEmpty(tag)) {
+                preferences.edit().putBoolean(tag + "_counter_opened", true).apply();
+                NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.updateBottombarCounter, 0, tag);
+            }
         }
     }
 

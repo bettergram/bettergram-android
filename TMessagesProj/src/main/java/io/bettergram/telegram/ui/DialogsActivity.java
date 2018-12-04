@@ -249,7 +249,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
 
             NotificationCenter.getGlobalInstance().addObserver(this, NotificationCenter.updateToLatestApiVersion);
             NotificationCenter.getGlobalInstance().addObserver(this, NotificationCenter.currencySearchResultsUpdate);
-            NotificationCenter.getGlobalInstance().addObserver(this, NotificationCenter.updateCurrenyDataToBackup);
+            NotificationCenter.getGlobalInstance().addObserver(this, NotificationCenter.updateCurrencyDataToBackup);
         }
 
         if (!dialogsLoaded[currentAccount]) {
@@ -295,7 +295,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
 
             NotificationCenter.getGlobalInstance().removeObserver(this, NotificationCenter.updateToLatestApiVersion);
             NotificationCenter.getGlobalInstance().removeObserver(this, NotificationCenter.currencySearchResultsUpdate);
-            NotificationCenter.getGlobalInstance().removeObserver(this, NotificationCenter.updateCurrenyDataToBackup);
+            NotificationCenter.getGlobalInstance().removeObserver(this, NotificationCenter.updateCurrencyDataToBackup);
         }
         if (commentView != null) {
             commentView.onDestroy();
@@ -347,7 +347,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             public boolean canCollapseSearch() {
                 if (currentBottomTabPosition == 1) {
                     cryptoAdapter.setSearchMode(false);
-                    NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.updateCurrenyDataToBackup);
+                    NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.updateCurrencyDataToBackup);
                 }
                 if (switchItem != null) {
                     switchItem.setVisibility(View.VISIBLE);
@@ -1561,11 +1561,11 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 if (newsAdapter == null) {
                     newsAdapter = new NewsAdapter(activity);
                 }
-                newsAdapter.startService(activity);
+                newsAdapter.startService(activity, true);
                 if (videoAdapter == null) {
                     videoAdapter = new YouTubePlayerAdapter(activity);
                 }
-                videoAdapter.startService(activity);
+                videoAdapter.startService(activity, true);
                 resourcesAdapter.startService(activity);
             }
         });
@@ -1598,12 +1598,14 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                                 break;
                             case 2:
                                 if (!(listView.getAdapter() instanceof NewsAdapter)) {
+                                    NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.openBottombarCounter, "news");
                                     listView.setAdapter(newsAdapter);
                                     ptrLayout.setOnRefreshListener(newsAdapter);
                                 }
                                 break;
                             case 3:
                                 if (!(listView.getAdapter() instanceof YouTubePlayerAdapter)) {
+                                    NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.openBottombarCounter, "video");
                                     listView.setAdapter(videoAdapter);
                                     ptrLayout.setOnRefreshListener(videoAdapter);
                                 }
@@ -2036,7 +2038,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
     @Override
     @SuppressWarnings("unchecked")
     public void didReceivedNotification(int id, int account, Object... args) {
-        if (id == NotificationCenter.currencySearchResultsUpdate || id == NotificationCenter.updateCurrenyDataToBackup) {
+        if (id == NotificationCenter.currencySearchResultsUpdate || id == NotificationCenter.updateCurrencyDataToBackup) {
             ptrLayout.post(() -> ptrLayout.setRefreshing(false));
         } else if (id == NotificationCenter.dialogsNeedReload) {
             checkUnreadCount(true);

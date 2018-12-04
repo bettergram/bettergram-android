@@ -126,7 +126,7 @@ public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                     e.printStackTrace();
                 }
             }
-        } else if (id == NotificationCenter.updateCurrenyDataToBackup) {
+        } else if (id == NotificationCenter.updateCurrencyDataToBackup) {
             AndroidUtilities.runOnUIThread(() -> {
                 data.clear();
                 data.addAll(backup);
@@ -279,7 +279,7 @@ public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     public CryptoAdapter(Activity activity) {
         this.activity = activity;
         NotificationCenter.getGlobalInstance().addObserver(this, NotificationCenter.currencySearchResultsUpdate);
-        NotificationCenter.getGlobalInstance().addObserver(this, NotificationCenter.updateCurrenyDataToBackup);
+        NotificationCenter.getGlobalInstance().addObserver(this, NotificationCenter.updateCurrencyDataToBackup);
     }
 
     public void setCryptoData(CryptoCurrencyInfoResponse cryptoData) {

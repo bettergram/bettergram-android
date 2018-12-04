@@ -15,7 +15,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.flipkart.youtubeview.YouTubePlayerView;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import io.bettergram.data.Video;
 import io.bettergram.data.VideoList;
 import io.bettergram.data.VideoList__JsonHelper;
@@ -27,10 +33,6 @@ import io.bettergram.telegram.messenger.support.widget.RecyclerView;
 import io.bettergram.telegram.ui.ActionBar.Theme;
 import io.bettergram.telegram.ui.Components.CardView.CardView;
 import io.bettergram.telegram.ui.Components.PullToRefresh.PullRefreshLayout;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import static com.flipkart.youtubeview.models.YouTubePlayerType.STRICT_NATIVE;
 import static io.bettergram.service.api.VideosApi.formatToYesterdayOrToday;
@@ -79,7 +81,7 @@ public class YouTubePlayerAdapter extends
         if (this.ptrLayout == null) {
             this.ptrLayout = ptrLayout;
         }
-        startService(activity);
+        startService(activity, false);
     }
 
     private Activity activity;
@@ -210,8 +212,9 @@ public class YouTubePlayerAdapter extends
         }
     }
 
-    public void startService(Activity activity) {
+    public void startService(Activity activity, boolean fromStart) {
         Intent intent = new Intent(activity, YoutubeDataService.class);
+        intent.putExtra(YoutubeDataService.EXTRA_FROM_START, fromStart);
         activity.startService(intent);
     }
 

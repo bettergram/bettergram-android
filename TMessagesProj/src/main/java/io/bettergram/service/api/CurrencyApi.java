@@ -30,7 +30,7 @@ public final class CurrencyApi {
     public static void search(String query) {
         if (query.length() == 0) {
             cancelCallsByTag("request_currency_search");
-            NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.updateCurrenyDataToBackup);
+            NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.updateCurrencyDataToBackup);
             return;
         }
         THREAD_POOL.submit(() -> {

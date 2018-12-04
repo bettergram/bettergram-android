@@ -4,15 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
-import io.bettergram.data.*;
-import io.bettergram.messenger.BuildConfig;
-import io.bettergram.service.api.NewsApi;
-import io.bettergram.telegram.messenger.ApplicationLoader;
-import io.bettergram.telegram.messenger.NotificationCenter;
-import io.bettergram.utils.CollectionUtil;
-import io.bettergram.utils.io.IOUtils;
-import okhttp3.Request;
-import okhttp3.Response;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -24,9 +16,28 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import io.bettergram.data.News;
+import io.bettergram.data.NewsData;
+import io.bettergram.data.NewsData__JsonHelper;
+import io.bettergram.data.NewsList;
+import io.bettergram.data.NewsList__JsonHelper;
+import io.bettergram.data.Source;
+import io.bettergram.messenger.BuildConfig;
+import io.bettergram.service.api.NewsApi;
+import io.bettergram.telegram.messenger.ApplicationLoader;
+import io.bettergram.telegram.messenger.NotificationCenter;
+import io.bettergram.utils.CollectionUtil;
+import io.bettergram.utils.io.IOUtils;
+import okhttp3.Request;
+import okhttp3.Response;
 
 import static android.text.TextUtils.isEmpty;
 import static io.bettergram.telegram.messenger.ApplicationLoader.okhttp_client;
@@ -41,6 +52,8 @@ public class NewsDataService extends BaseDataService {
     public static final String RESULT = "result";
     public static final String NOTIFICATION = "io.bettergram.service.NewsDataService";
 
+    public static final String EXTRA_FROM_START = "EXTRA_FROM_START";
+
     public static boolean isIntentServiceRunning = false;
 
     private SharedPreferences preferences = ApplicationLoader.applicationContext.getSharedPreferences(NEWS_PREF, Context.MODE_PRIVATE);
@@ -53,6 +66,8 @@ public class NewsDataService extends BaseDataService {
     protected void onHandleIntent(Intent intent) {
         if (!isIntentServiceRunning) {
             isIntentServiceRunning = true;
+
+            final boolean fromStart = intent.getBooleanExtra(EXTRA_FROM_START, false);
 
             String jsonRaw = preferences.getString(KEY_SAVED_LIST, null);
             if (!isEmpty(jsonRaw)) {
@@ -315,6 +330,27 @@ public class NewsDataService extends BaseDataService {
                     String json = NewsList__JsonHelper.serializeToJson(newsList);
                     preferences.edit().putString(KEY_SAVED_LIST, json).apply();
                     publishResults(json, NOTIFICATION, RESULT);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                try {
+                    int counter = 0;
+                    if (!isEmpty(jsonRaw) && !fromStart) {
+                        NewsList rawNewsList = NewsList__JsonHelper.parseFromJson(jsonRaw);
+                        for (int i = 0, size = newsList.articles.size(); i < size; i++) {
+                            final News indexedNews = newsList.articles.get(i);
+                            final News foundNews = CollectionUtil.find(rawNewsList.articles, item -> indexedNews.title.equals(item.title));
+                            if (foundNews == null) {
+                                counter++;
+                            }
+                        }
+                    } else {
+                        if (newsList.articles != null && !newsList.articles.isEmpty()) {
+                            counter = newsList.articles.size() - 1;
+                        }
+                    }
+                    NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.updateBottombarCounter, counter, "news");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

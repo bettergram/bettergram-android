@@ -3,14 +3,9 @@ package io.bettergram.service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+
 import com.crashlytics.android.Crashlytics;
-import io.bettergram.data.*;
-import io.bettergram.service.api.VideosApi;
-import io.bettergram.telegram.messenger.ApplicationLoader;
-import io.bettergram.telegram.messenger.NotificationCenter;
-import io.bettergram.utils.Counter;
-import okhttp3.Request;
-import okhttp3.Response;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -18,6 +13,19 @@ import org.jsoup.parser.Parser;
 
 import java.io.IOException;
 import java.util.ArrayList;
+
+import io.bettergram.data.Video;
+import io.bettergram.data.VideoData;
+import io.bettergram.data.VideoData__JsonHelper;
+import io.bettergram.data.VideoList;
+import io.bettergram.data.VideoList__JsonHelper;
+import io.bettergram.service.api.VideosApi;
+import io.bettergram.telegram.messenger.ApplicationLoader;
+import io.bettergram.telegram.messenger.NotificationCenter;
+import io.bettergram.utils.CollectionUtil;
+import io.bettergram.utils.Counter;
+import okhttp3.Request;
+import okhttp3.Response;
 
 import static android.text.TextUtils.isEmpty;
 import static io.bettergram.telegram.messenger.ApplicationLoader.okhttp_client;
@@ -27,12 +35,12 @@ public class YoutubeDataService extends BaseDataService {
     private static final String TAG = YoutubeDataService.class.getName();
 
     public static final String YOUTUBE_PREF = "YOUTUBE_PREF";
-
     public static final String KEY_VIDEO_JSON = "KEY_VIDEO_JSON";
 
     public static final String RESULT = "result";
-
     public static final String NOTIFICATION = "io.bettergram.service.YoutubeDataService";
+
+    public static final String EXTRA_FROM_START = "EXTRA_FROM_START";
 
     private SharedPreferences preferences = ApplicationLoader.applicationContext.getSharedPreferences(YOUTUBE_PREF, Context.MODE_PRIVATE);
 
@@ -42,6 +50,8 @@ public class YoutubeDataService extends BaseDataService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
+
+        final boolean fromStart = intent.getBooleanExtra(EXTRA_FROM_START, false);
 
         String jsonRaw = preferences.getString(KEY_VIDEO_JSON, null);
         if (!isEmpty(jsonRaw)) {
@@ -110,6 +120,23 @@ public class YoutubeDataService extends BaseDataService {
                 preferences.edit().putString(KEY_VIDEO_JSON, jsonResult).apply();
 
                 publishResults(jsonResult, NOTIFICATION, RESULT);
+
+                int counter = 0;
+                if (!isEmpty(jsonRaw) && !fromStart) {
+                    VideoList rawVideoList = VideoList__JsonHelper.parseFromJson(jsonRaw);
+                    for (int i = 0, size = videoList.videos.size(); i < size; i++) {
+                        final Video indexedVideo = videoList.videos.get(i);
+                        final Video foundVideo = CollectionUtil.find(rawVideoList.videos, item -> indexedVideo.title.equals(item.title));
+                        if (foundVideo == null) {
+                            counter++;
+                        }
+                    }
+                } else {
+                    if (videoList.videos != null && !videoList.videos.isEmpty()) {
+                        counter = videoList.videos.size() - 1;
+                    }
+                }
+                NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.updateBottombarCounter, counter, "video");
             } else {
                 if (response.code() == 410) {
                     NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.updateToLatestApiVersion);
