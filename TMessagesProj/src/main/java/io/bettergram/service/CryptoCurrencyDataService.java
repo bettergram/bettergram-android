@@ -4,15 +4,33 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.annotation.Nullable;
-import io.bettergram.data.*;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import io.bettergram.data.CryptoCurrency;
+import io.bettergram.data.CryptoCurrencyData;
+import io.bettergram.data.CryptoCurrencyData__JsonHelper;
+import io.bettergram.data.CryptoCurrencyInfo;
+import io.bettergram.data.CryptoCurrencyInfoData;
+import io.bettergram.data.CryptoCurrencyInfoData__JsonHelper;
+import io.bettergram.data.CryptoCurrencyInfoResponse;
+import io.bettergram.data.CryptoCurrencyInfoResponse__JsonHelper;
 import io.bettergram.service.api.CurrencyApi;
 import io.bettergram.telegram.messenger.ApplicationLoader;
 import io.bettergram.telegram.messenger.NotificationCenter;
 import io.bettergram.utils.CollectionUtil;
-import okhttp3.*;
-
-import java.io.IOException;
-import java.util.*;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.HttpUrl;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 import static android.text.TextUtils.isEmpty;
 import static io.bettergram.telegram.messenger.ApplicationLoader.okhttp_client;

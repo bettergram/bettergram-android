@@ -83,6 +83,7 @@
             tools:node="replace"/>
 
     <application
+            android:networkSecurityConfig="@xml/network_security_config"
             android:name="io.bettergram.telegram.messenger.ApplicationLoader"
             android:allowBackup="false"
             android:hardwareAccelerated="@bool/useHardwareAcceleration"
