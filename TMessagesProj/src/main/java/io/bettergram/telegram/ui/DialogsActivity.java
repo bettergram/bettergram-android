@@ -1561,11 +1561,11 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 if (newsAdapter == null) {
                     newsAdapter = new NewsAdapter(activity);
                 }
-                newsAdapter.startService(activity, true);
+                newsAdapter.startService(activity);
                 if (videoAdapter == null) {
                     videoAdapter = new YouTubePlayerAdapter(activity);
                 }
-                videoAdapter.startService(activity, true);
+                videoAdapter.startService(activity);
                 resourcesAdapter.startService(activity);
             }
         });

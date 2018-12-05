@@ -52,8 +52,6 @@ public class NewsDataService extends BaseDataService {
     public static final String RESULT = "result";
     public static final String NOTIFICATION = "io.bettergram.service.NewsDataService";
 
-    public static final String EXTRA_FROM_START = "EXTRA_FROM_START";
-
     public static boolean isIntentServiceRunning = false;
 
     private SharedPreferences preferences = ApplicationLoader.applicationContext.getSharedPreferences(NEWS_PREF, Context.MODE_PRIVATE);
@@ -66,8 +64,6 @@ public class NewsDataService extends BaseDataService {
     protected void onHandleIntent(Intent intent) {
         if (!isIntentServiceRunning) {
             isIntentServiceRunning = true;
-
-            final boolean fromStart = intent.getBooleanExtra(EXTRA_FROM_START, false);
 
             String jsonRaw = preferences.getString(KEY_SAVED_LIST, null);
             if (!isEmpty(jsonRaw)) {
@@ -336,7 +332,7 @@ public class NewsDataService extends BaseDataService {
 
                 try {
                     int counter = 0;
-                    if (!isEmpty(jsonRaw) && !fromStart) {
+                    if (!isEmpty(jsonRaw)) {
                         NewsList rawNewsList = NewsList__JsonHelper.parseFromJson(jsonRaw);
                         for (int i = 0, size = newsList.articles.size(); i < size; i++) {
                             final News indexedNews = newsList.articles.get(i);

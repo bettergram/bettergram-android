@@ -81,7 +81,7 @@ public class YouTubePlayerAdapter extends
         if (this.ptrLayout == null) {
             this.ptrLayout = ptrLayout;
         }
-        startService(activity, false);
+        startService(activity);
     }
 
     private Activity activity;
@@ -212,9 +212,8 @@ public class YouTubePlayerAdapter extends
         }
     }
 
-    public void startService(Activity activity, boolean fromStart) {
+    public void startService(Activity activity) {
         Intent intent = new Intent(activity, YoutubeDataService.class);
-        intent.putExtra(YoutubeDataService.EXTRA_FROM_START, fromStart);
         activity.startService(intent);
     }
 

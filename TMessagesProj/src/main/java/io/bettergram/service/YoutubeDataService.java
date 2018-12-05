@@ -40,8 +40,6 @@ public class YoutubeDataService extends BaseDataService {
     public static final String RESULT = "result";
     public static final String NOTIFICATION = "io.bettergram.service.YoutubeDataService";
 
-    public static final String EXTRA_FROM_START = "EXTRA_FROM_START";
-
     private SharedPreferences preferences = ApplicationLoader.applicationContext.getSharedPreferences(YOUTUBE_PREF, Context.MODE_PRIVATE);
 
     public YoutubeDataService() {
@@ -50,8 +48,6 @@ public class YoutubeDataService extends BaseDataService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-
-        final boolean fromStart = intent.getBooleanExtra(EXTRA_FROM_START, false);
 
         String jsonRaw = preferences.getString(KEY_VIDEO_JSON, null);
         if (!isEmpty(jsonRaw)) {
@@ -122,7 +118,7 @@ public class YoutubeDataService extends BaseDataService {
                 publishResults(jsonResult, NOTIFICATION, RESULT);
 
                 int counter = 0;
-                if (!isEmpty(jsonRaw) && !fromStart) {
+                if (!isEmpty(jsonRaw)) {
                     VideoList rawVideoList = VideoList__JsonHelper.parseFromJson(jsonRaw);
                     for (int i = 0, size = videoList.videos.size(); i < size; i++) {
                         final Video indexedVideo = videoList.videos.get(i);

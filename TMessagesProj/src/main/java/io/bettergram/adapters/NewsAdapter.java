@@ -78,7 +78,7 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
         if (this.ptrLayout == null) {
             this.ptrLayout = ptrLayout;
         }
-        startService(activity, false);
+        startService(activity);
     }
 
     private Activity activity;
@@ -195,9 +195,8 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.NewsViewHolder
         return newsList.size();
     }
 
-    public void startService(Activity activity, boolean fromStart) {
+    public void startService(Activity activity) {
         Intent intent = new Intent(activity, NewsDataService.class);
-        intent.putExtra(NewsDataService.EXTRA_FROM_START, fromStart);
         activity.startService(intent);
     }
 
