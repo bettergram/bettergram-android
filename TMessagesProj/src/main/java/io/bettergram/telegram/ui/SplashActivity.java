@@ -3,7 +3,11 @@ package io.bettergram.telegram.ui;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
-import android.content.*;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Patterns;
 import android.view.View;
@@ -13,10 +17,9 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
+
 import io.bettergram.messenger.R;
 import io.bettergram.service.MailChimpService;
-import org.json.JSONException;
-import org.json.JSONObject;
 import io.bettergram.telegram.messenger.AndroidUtilities;
 import io.bettergram.telegram.messenger.ApplicationLoader;
 import io.bettergram.telegram.messenger.LocaleController;
@@ -49,48 +52,12 @@ public class SplashActivity extends Activity {
             progressDialog.dismiss();
             Bundle bundle = intent.getExtras();
             if (bundle != null) {
-
-                String json = bundle.getString(MailChimpService.RESULT);
-
-                if (isEmpty(json)) {
-                    json = bundle.getString(MailChimpService.ERROR);
-                    try {
-                        JSONObject errors = new JSONObject(json);
-                        String title = errors.keys().next();
-                        String message = errors.getString(title);
-
-                        createAlertDialog(title, message)
-                                .setPositiveButton(
-                                        context.getString(android.R.string.ok),
-                                        (dialog, which) -> dialog.dismiss()
-                                )
-                                .show();
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    try {
-                        JSONObject object = new JSONObject(json);
-                        String email = object.getString("email_address");
-                        preferences.edit().putString("mailchimp_subscribed_email", email).apply();
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    createAlertDialog(getString(R.string.success), getString(R.string.please_check_email))
-                            .setPositiveButton(
-                                    context.getString(android.R.string.ok),
-                                    (dialog, which) -> {
-                                        dialog.dismiss();
-                                        AndroidUtilities.runOnUIThread(() -> {
-                                            Intent intent1 = new Intent(SplashActivity.this, IntroActivity.class);
-                                            intent1.setData(getIntent().getData());
-                                            startActivity(intent1);
-                                            finish();
-                                        }, 1000);
-                                    }
-                            )
-                            .show();
-                }
+                AndroidUtilities.runOnUIThread(() -> {
+                    Intent intent1 = new Intent(SplashActivity.this, IntroActivity.class);
+                    intent1.setData(getIntent().getData());
+                    startActivity(intent1);
+                    finish();
+                }, 1500);
             }
         }
     };
