@@ -22,8 +22,8 @@ import static io.bettergram.service.CryptoCurrencyDataService.KEY_CRYPTO_CURRENC
 import static io.bettergram.telegram.messenger.ApplicationLoader.okhttp_client;
 
 public final class CurrencyApi {
-    private static final String CURRENCY_SEARCH_URL = "https://alpha-api.livecoinwatch.com/currencies?search=";
-    private static final String CURRENCY_COINS_URL = "https://alpha-api.livecoinwatch.com/coins";
+    private static final String CURRENCY_SEARCH_URL = "https://http-api.livecoinwatch.com/currencies?search=";
+    private static final String CURRENCY_COINS_URL = "https://http-api.livecoinwatch.com/coins";
     private static final ExecutorService THREAD_POOL = Executors.newCachedThreadPool();
     private static SharedPreferences preferences = ApplicationLoader.applicationContext.getSharedPreferences(CRYPTO_PREF, Context.MODE_PRIVATE);
 

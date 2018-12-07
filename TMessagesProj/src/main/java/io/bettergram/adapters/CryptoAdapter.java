@@ -455,11 +455,11 @@ public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         } else if (holder instanceof HeaderViewHolder) {
             HeaderViewHolder header = (HeaderViewHolder) holder;
             holder.itemView.setVisibility(searchMode ? View.GONE : View.VISIBLE);
-            double cap = cryptoData.cap;
+            double cap = cryptoData != null ? cryptoData.cap : 0.0f;
             header.textCap.setText(formatHeaderValue(context, "MARKET CAP($)", Number.truncateNumber(cap)));
-            double dom = cryptoData.btcDominance;
+            double dom = cryptoData != null ? cryptoData.btcDominance : 0.0f;
             header.textDom.setText(formatHeaderValue(context, "BTC DOM.", String.format("%.2f%%", (dom * 100))));
-            double vol = cryptoData.volume;
+            double vol = cryptoData != null ? cryptoData.volume : 0.0f;
             header.textVol.setText(formatHeaderValue(context, "24H VOL($)", Number.truncateNumber(vol)));
         } else if (holder instanceof MainViewHolder) {
 

@@ -36,6 +36,7 @@ import io.bettergram.telegram.ui.Components.LayoutHelper;
 import io.bettergram.utils.Counter;
 
 import static android.text.TextUtils.isEmpty;
+import static io.bettergram.telegram.messenger.AndroidUtilities.runOnUIThread;
 
 public class BottomNavigationBar extends LinearLayout implements NotificationCenter.NotificationCenterDelegate {
 
@@ -309,26 +310,37 @@ public class BottomNavigationBar extends LinearLayout implements NotificationCen
             int count = (int) args[0];
             String tag = (String) args[1];
             if (!isEmpty(tag)) {
-                if (!preferences.getBoolean(tag + "_counter_opened", false)) {
-                    if (tag.equals("news")) {
-                        if (count > 0 && selectedPosition != 2) {
-                            getTabAt(2).icon.countString(String.format("%s", Counter.format(count))).update();
+                Thread thread = new Thread(() -> {
+                    do {
+                        if (!preferences.getBoolean(tag + "_counter_opened", false)) {
+                            if (tag.equals("news") && count > 0 && selectedPosition != 2 && tabs.size() > 2) {
+                                runOnUIThread(() -> {
+                                    getTabAt(2).icon.countString(String.format("%s", Counter.format(count))).update();
+                                });
+                            } else if (tag.equals("video") && selectedPosition != 3 && count > 0 && tabs.size() > 3) {
+                                runOnUIThread(() -> {
+                                    getTabAt(3).icon.countString(String.format("%s", Counter.format(count))).update();
+                                });
+                            }
+                        } else {
+                            if (tag.equals("news") && tabs.size() > 2) {
+                                runOnUIThread(() -> {
+                                    getTabAt(2).icon.countString(Strings.EMPTY).update();
+                                });
+                            } else if (tag.equals("video") && tabs.size() > 3) {
+                                runOnUIThread(() -> {
+                                    getTabAt(3).icon.countString(Strings.EMPTY).update();
+                                });
+                            }
+                            preferences.edit().putBoolean(tag + "_counter_opened", false).apply();
                         }
-                    } else if (tag.equals("video") && selectedPosition != 3) {
-                        if (count > 0) {
-                            getTabAt(3).icon.countString(String.format("%s", Counter.format(count))).update();
-                        }
-                    }
-                } else {
-                    if (tag.equals("news")) {
-                        getTabAt(2).icon.countString(Strings.EMPTY).update();
-                    } else if (tag.equals("video")) {
-                        getTabAt(3).icon.countString(Strings.EMPTY).update();
-                    }
-                    preferences.edit().putBoolean(tag + "_counter_opened", false).apply();
-                }
+                    } while (tabs.size() == 0);
+                });
+                thread.start();
             }
-        } else if (id == NotificationCenter.openBottombarCounter) {
+        } else if (id == NotificationCenter.openBottombarCounter)
+
+        {
             String tag = (String) args[0];
             if (!isEmpty(tag)) {
                 preferences.edit().putBoolean(tag + "_counter_opened", true).apply();

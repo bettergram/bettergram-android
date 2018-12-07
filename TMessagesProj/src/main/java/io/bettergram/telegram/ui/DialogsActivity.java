@@ -676,7 +676,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                     int firstVisibleItem = layoutManager.findFirstVisibleItemPosition();
                     //change data set
                     if (dialogsAdapter != null) {
-                        dialogsAdapter.setDialogsType(type);
+                        listView.postAndNotifyAdapter(() -> dialogsAdapter.setDialogsType(type));
                     }
                     if (scroll) {
                         //scroll to top

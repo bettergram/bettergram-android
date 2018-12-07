@@ -179,7 +179,7 @@ public class NewsDataService extends BaseDataService {
                         NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.updateToLatestApiVersion);
                     }
                 }
-            } catch (IOException e) {
+            } catch (IOException | IllegalStateException e) {
                 e.printStackTrace();
             }
 

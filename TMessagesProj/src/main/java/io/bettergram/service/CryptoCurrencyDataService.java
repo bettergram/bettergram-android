@@ -53,9 +53,9 @@ public class CryptoCurrencyDataService extends BaseDataService {
     public static final String RESULT = "result";
     public static final String NOTIFICATION = "io.bettergram.service.CryptoCurrencyDataService";
 
-    public static final String CURRENCY_URL = "https://alpha-api.livecoinwatch.com/currencies?type=coin";
-    public static final String CURRENCY_COINS_URL = "https://alpha-api.livecoinwatch.com/bettergram/coins";
-    public static final String CURRENCY_STATS_URL = "https://alpha-api.livecoinwatch.com/stats";
+    public static final String CURRENCY_URL = "https://http-api.livecoinwatch.com/currencies?type=coin";
+    public static final String CURRENCY_COINS_URL = "https://http-api.livecoinwatch.com/bettergram/coins";
+    public static final String CURRENCY_STATS_URL = "https://http-api.livecoinwatch.com/stats";
 
     private static final OkHttpClient client = okhttp_client();
     public static final int notify = 60000;
