@@ -52,6 +52,8 @@ public class YoutubeDataService extends BaseDataService {
         String jsonRaw = preferences.getString(KEY_VIDEO_JSON, null);
         if (!isEmpty(jsonRaw)) {
             publishResults(jsonRaw, NOTIFICATION, RESULT);
+            int counter = preferences.getInt("videos_unread_count", 0);
+            NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.updateBottombarCounter, counter, "video");
         }
 
         try {
@@ -127,6 +129,8 @@ public class YoutubeDataService extends BaseDataService {
                             counter++;
                         }
                     }
+                    counter += preferences.getInt("videos_unread_count", 0);
+                    preferences.edit().putInt("videos_unread_count", counter).apply();
                 } else {
                     if (videoList.videos != null && !videoList.videos.isEmpty()) {
                         counter = videoList.videos.size() - 1;

@@ -13,18 +13,28 @@ import android.text.TextUtils;
 import android.util.LongSparseArray;
 import android.util.SparseArray;
 import android.util.SparseIntArray;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicLong;
+
 import io.bettergram.telegram.PhoneFormat.PhoneFormat;
 import io.bettergram.telegram.SQLite.SQLiteCursor;
 import io.bettergram.telegram.SQLite.SQLiteDatabase;
 import io.bettergram.telegram.SQLite.SQLitePreparedStatement;
 import io.bettergram.telegram.messenger.support.SparseLongArray;
-import io.bettergram.telegram.tgnet.*;
+import io.bettergram.telegram.tgnet.ConnectionsManager;
+import io.bettergram.telegram.tgnet.NativeByteBuffer;
+import io.bettergram.telegram.tgnet.RequestDelegate;
+import io.bettergram.telegram.tgnet.TLObject;
+import io.bettergram.telegram.tgnet.TLRPC;
 import io.bettergram.utils.Time;
-
-import java.io.File;
-import java.util.*;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.atomic.AtomicLong;
 
 public class MessagesStorage {
 
@@ -1843,7 +1853,7 @@ public class MessagesStorage {
                             } else {
                                 continue;
                             }
-                            message.media.flags = message.media.flags &~ 1;
+                            message.media.flags = message.media.flags & ~1;
                             message.id = cursor.intValue(1);
                             message.date = cursor.intValue(2);
                             message.dialog_id = cursor.longValue(3);
@@ -2389,7 +2399,7 @@ public class MessagesStorage {
             TLObject result = null;
             try {
                 database.executeFast("DELETE FROM botcache WHERE date < " + currentDate).stepThis().dispose();
-                SQLiteCursor cursor = database.queryFinalized( "SELECT data FROM botcache WHERE id = ?", key);
+                SQLiteCursor cursor = database.queryFinalized("SELECT data FROM botcache WHERE id = ?", key);
                 if (cursor.next()) {
                     try {
                         NativeByteBuffer data = cursor.byteBufferValue(0);
@@ -3624,7 +3634,7 @@ public class MessagesStorage {
                         cursor.dispose();
 
                         cursor = database.queryFinalized(String.format(Locale.US, "SELECT * FROM (SELECT m.read_state, m.data, m.send_state, m.mid, m.date, r.random_id, m.replydata, m.media, m.ttl, m.mention FROM messages as m LEFT JOIN randoms as r ON r.mid = m.mid WHERE m.uid = %d AND m.mid <= %d ORDER BY m.mid DESC LIMIT %d) UNION " +
-                                        "SELECT * FROM (SELECT m.read_state, m.data, m.send_state, m.mid, m.date, r.random_id, m.replydata, m.media, m.ttl, m.mention FROM messages as m LEFT JOIN randoms as r ON r.mid = m.mid WHERE m.uid = %d AND m.mid > %d ORDER BY m.mid ASC LIMIT %d)", dialog_id, messageMaxId, count_query / 2, dialog_id, messageMaxId, count_query / 2));
+                                "SELECT * FROM (SELECT m.read_state, m.data, m.send_state, m.mid, m.date, r.random_id, m.replydata, m.media, m.ttl, m.mention FROM messages as m LEFT JOIN randoms as r ON r.mid = m.mid WHERE m.uid = %d AND m.mid > %d ORDER BY m.mid ASC LIMIT %d)", dialog_id, messageMaxId, count_query / 2, dialog_id, messageMaxId, count_query / 2));
                     } else if (load_type == 1) {
                         cursor = database.queryFinalized(String.format(Locale.US, "SELECT m.read_state, m.data, m.send_state, m.mid, m.date, r.random_id, m.replydata, m.media, m.ttl, m.mention FROM messages as m LEFT JOIN randoms as r ON r.mid = m.mid WHERE m.uid = %d AND m.mid < %d ORDER BY m.mid DESC LIMIT %d", dialog_id, max_id, count_query));
                     } else if (minDate != 0) {
@@ -4588,9 +4598,9 @@ public class MessagesStorage {
     private int getMessageMediaType(TLRPC.Message message) {
         if (message instanceof TLRPC.TL_message_secret) {
             if ((message.media instanceof TLRPC.TL_messageMediaPhoto || MessageObject.isGifMessage(message)) && message.ttl > 0 && message.ttl <= 60 ||
-                            MessageObject.isVoiceMessage(message) ||
-                            MessageObject.isVideoMessage(message) ||
-                            MessageObject.isRoundVideoMessage(message)) {
+                    MessageObject.isVoiceMessage(message) ||
+                    MessageObject.isVideoMessage(message) ||
+                    MessageObject.isRoundVideoMessage(message)) {
                 return 1;
             } else if (message.media instanceof TLRPC.TL_messageMediaPhoto || MessageObject.isVideoMessage(message)) {
                 return 0;
@@ -6939,6 +6949,33 @@ public class MessagesStorage {
                 FileLog.e(e);
             }
         });
+    }
+
+    public int getPinnedCount() {
+        final CountDownLatch countDownLatch = new CountDownLatch(1);
+        final int[] count = new int[1];
+        storageQueue.postRunnable(() -> {
+            SQLiteCursor cursor = null;
+            try {
+                cursor = database.queryFinalized("SELECT COUNT(*) FROM dialogs WHERE pinned > 0");
+                if (cursor.next()) {
+                    count[0] = cursor.intValue(0);
+                }
+            } catch (Exception e) {
+                FileLog.e(e);
+            } finally {
+                if (cursor != null) {
+                    cursor.dispose();
+                }
+            }
+            countDownLatch.countDown();
+        });
+        try {
+            countDownLatch.await();
+        } catch (Exception e) {
+            FileLog.e(e);
+        }
+        return count[0];
     }
 
     public void setDialogFavorite(final long did, final int favorite_date) {

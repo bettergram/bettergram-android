@@ -1166,7 +1166,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
                 final int position = viewHolder.getAdapterPosition();
                 final TLRPC.TL_dialog dialog = getDialog(position);
-                if (dialog != null && dialog.pinned) {
+                if (dialog != null && dialog.pinned && MessagesController.getInstance(currentAccount).getPinnedCount() > 1) {
                     if (bottomSheetDialog != null) {
                         bottomSheetDialog.dismiss();
                     }
@@ -1206,7 +1206,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
                 final int position = viewHolder.getAdapterPosition();
                 final TLRPC.TL_dialog dialog = getDialog(position);
-                if (dialog != null && dialog.pinned && dialogsAdapter.getDialogsArray().size() > 1 && !searching) {
+                if (dialog != null && dialog.pinned && dialogsAdapter.getDialogsArray().size() > 1 && !searching && MessagesController.getInstance(currentAccount).getPinnedCount() > 1) {
                     return makeFlag(ItemTouchHelper.ACTION_STATE_DRAG, ItemTouchHelper.DOWN | ItemTouchHelper.UP);
                 } else {
                     return makeFlag(ItemTouchHelper.ACTION_STATE_IDLE, ItemTouchHelper.ACTION_STATE_IDLE);

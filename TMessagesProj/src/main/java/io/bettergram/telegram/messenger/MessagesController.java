@@ -23,6 +23,15 @@ import android.util.SparseArray;
 import android.util.SparseBooleanArray;
 import android.util.SparseIntArray;
 import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CountDownLatch;
+
 import io.bettergram.messenger.R;
 import io.bettergram.telegram.SQLite.SQLiteCursor;
 import io.bettergram.telegram.messenger.support.SparseLongArray;
@@ -38,10 +47,6 @@ import io.bettergram.telegram.ui.ChatActivity;
 import io.bettergram.telegram.ui.Components.AlertsCreator;
 import io.bettergram.telegram.ui.DialogsActivity;
 import io.bettergram.telegram.ui.ProfileActivity;
-
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CountDownLatch;
 
 public class MessagesController implements NotificationCenter.NotificationCenterDelegate {
 
@@ -6584,6 +6589,10 @@ public class MessagesController implements NotificationCenter.NotificationCenter
                 loadingUnreadDialogs = false;
             }
         }));
+    }
+
+    public int getPinnedCount() {
+        return MessagesStorage.getInstance(currentAccount).getPinnedCount();
     }
 
     public boolean pinDialog(long did, boolean pin, TLRPC.InputPeer peer, long taskId) {

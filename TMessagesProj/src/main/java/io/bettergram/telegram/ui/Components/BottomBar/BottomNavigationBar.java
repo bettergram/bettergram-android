@@ -36,13 +36,14 @@ import io.bettergram.telegram.ui.Components.LayoutHelper;
 import io.bettergram.utils.Counter;
 
 import static android.text.TextUtils.isEmpty;
+import static io.bettergram.service.NewsDataService.NEWS_PREF;
+import static io.bettergram.service.YoutubeDataService.YOUTUBE_PREF;
 import static io.bettergram.telegram.messenger.AndroidUtilities.runOnUIThread;
 
 public class BottomNavigationBar extends LinearLayout implements NotificationCenter.NotificationCenterDelegate {
 
     private static final String TAG = BottomNavigationBar.class.getName();
     private static final String BOTTOM_COUNTER = "BOTTOM_COUNTER";
-    private SharedPreferences preferences = ApplicationLoader.applicationContext.getSharedPreferences(BOTTOM_COUNTER, Context.MODE_PRIVATE);
 
     private static final List<Pair<Integer, Integer>> ITEMS = Arrays.asList(
             new Pair<>(R.drawable.ic_tab_chats, R.string.barItemChats),
@@ -312,7 +313,7 @@ public class BottomNavigationBar extends LinearLayout implements NotificationCen
             if (!isEmpty(tag)) {
                 Thread thread = new Thread(() -> {
                     do {
-                        if (!preferences.getBoolean(tag + "_counter_opened", false)) {
+                        if (!getPrefs(BOTTOM_COUNTER).getBoolean(tag + "_counter_opened", false)) {
                             if (tag.equals("news") && count > 0 && selectedPosition != 2 && tabs.size() > 2) {
                                 runOnUIThread(() -> {
                                     getTabAt(2).icon.countString(String.format("%s", Counter.format(count))).update();
@@ -326,13 +327,15 @@ public class BottomNavigationBar extends LinearLayout implements NotificationCen
                             if (tag.equals("news") && tabs.size() > 2) {
                                 runOnUIThread(() -> {
                                     getTabAt(2).icon.countString(Strings.EMPTY).update();
+                                    getPrefs(NEWS_PREF).edit().putInt("news_unread_count", 0).apply();
                                 });
                             } else if (tag.equals("video") && tabs.size() > 3) {
                                 runOnUIThread(() -> {
                                     getTabAt(3).icon.countString(Strings.EMPTY).update();
+                                    getPrefs(YOUTUBE_PREF).edit().putInt("videos_unread_count", 0).apply();
                                 });
                             }
-                            preferences.edit().putBoolean(tag + "_counter_opened", false).apply();
+                            getPrefs(BOTTOM_COUNTER).edit().putBoolean(tag + "_counter_opened", false).apply();
                         }
                     } while (tabs.size() == 0);
                 });
@@ -343,10 +346,14 @@ public class BottomNavigationBar extends LinearLayout implements NotificationCen
         {
             String tag = (String) args[0];
             if (!isEmpty(tag)) {
-                preferences.edit().putBoolean(tag + "_counter_opened", true).apply();
+                getPrefs(BOTTOM_COUNTER).edit().putBoolean(tag + "_counter_opened", true).apply();
                 NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.updateBottombarCounter, 0, tag);
             }
         }
+    }
+
+    private SharedPreferences getPrefs(String name) {
+        return ApplicationLoader.applicationContext.getSharedPreferences(name, Context.MODE_PRIVATE);
     }
 
     private boolean atLeastLollipop() {

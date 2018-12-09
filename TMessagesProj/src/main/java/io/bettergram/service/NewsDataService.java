@@ -68,6 +68,8 @@ public class NewsDataService extends BaseDataService {
             String jsonRaw = preferences.getString(KEY_SAVED_LIST, null);
             if (!isEmpty(jsonRaw)) {
                 publishResults(jsonRaw, NOTIFICATION, RESULT);
+                int counter = preferences.getInt("news_unread_count", 0);
+                NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.updateBottombarCounter, counter, "news");
             }
 
             List<News> articles = new ArrayList<>();
@@ -341,6 +343,8 @@ public class NewsDataService extends BaseDataService {
                                 counter++;
                             }
                         }
+                        counter += preferences.getInt("news_unread_count", 0);
+                        preferences.edit().putInt("news_unread_count", counter).apply();
                     } else {
                         if (newsList.articles != null && !newsList.articles.isEmpty()) {
                             counter = newsList.articles.size() - 1;
