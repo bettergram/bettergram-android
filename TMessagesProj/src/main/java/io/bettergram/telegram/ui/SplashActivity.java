@@ -8,7 +8,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
+import android.text.TextPaint;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
+import android.text.style.ForegroundColorSpan;
 import android.util.Patterns;
 import android.view.View;
 import android.view.Window;
@@ -17,6 +23,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import io.bettergram.messenger.R;
 import io.bettergram.service.MailChimpService;
@@ -24,6 +31,7 @@ import io.bettergram.telegram.messenger.AndroidUtilities;
 import io.bettergram.telegram.messenger.ApplicationLoader;
 import io.bettergram.telegram.messenger.LocaleController;
 import io.bettergram.telegram.ui.ActionBar.AlertDialog;
+import io.bettergram.utils.SpanBuilder;
 
 import static android.text.TextUtils.isEmpty;
 import static io.bettergram.service.MailChimpService.EXTRA_SUBSCRIBE_EMAIL;
@@ -36,6 +44,7 @@ public class SplashActivity extends Activity {
     private Button signUpButton;
     private CheckBox termsCheckbox, newsletterCheckbox;
     private ImageView overlayImage;
+    private TextView termsText;
 
     private AlertDialog progressDialog;
 
@@ -91,6 +100,26 @@ public class SplashActivity extends Activity {
         termsCheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
             signUpButton.setEnabled(isChecked);
         });
+        termsText = findViewById(R.id.textTerms);
+        ClickableSpan clickableSpan = new ClickableSpan() {
+            @Override
+            public void onClick(View widget) {
+                widget.cancelPendingInputEvents();
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW);
+                browserIntent.setData(Uri.parse("https://bettergram.io/#myModal3"));
+                startActivity(browserIntent);
+            }
+
+            @Override
+            public void updateDrawState(TextPaint ds) {
+                super.updateDrawState(ds);
+                ds.setUnderlineText(true);
+            }
+        };
+        SpanBuilder spanBuilder = new SpanBuilder();
+        spanBuilder.append(getString(R.string.i_agree_to_the_terms), clickableSpan, new ForegroundColorSpan(Color.WHITE));
+        termsText.setText(spanBuilder.build());
+        termsText.setMovementMethod(LinkMovementMethod.getInstance());
         overlayImage.animate()
                 .translationY(overlayImage.getHeight())
                 .alpha(0.0f)
