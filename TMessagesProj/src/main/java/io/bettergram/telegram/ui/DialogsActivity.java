@@ -1657,6 +1657,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             req.username = group;
             ConnectionsManager.getInstance(0).sendRequest(req, (response, error) -> AndroidUtilities.runOnUIThread(() -> {
                 final TLRPC.TL_contacts_resolvedPeer res = (TLRPC.TL_contacts_resolvedPeer) response;
+                if (res == null) return;
                 for (int j = 0, size = res.chats.size(); j < size; j++) {
                     TLRPC.Chat chat = res.chats.get(j);
                     if (ChatObject.isChannel(chat) && !(chat instanceof TLRPC.TL_channelForbidden)) {

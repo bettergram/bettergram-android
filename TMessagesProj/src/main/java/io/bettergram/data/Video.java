@@ -1,5 +1,6 @@
 package io.bettergram.data;
 
+import com.crashlytics.android.Crashlytics;
 import com.instagram.common.json.annotation.JsonField;
 import com.instagram.common.json.annotation.JsonType;
 
@@ -32,8 +33,9 @@ public class Video {
     public Date getPublishedAt() {
         try {
             return FROM_FORMAT2.parse(publishedAt);
-        } catch (ParseException e) {
+        } catch (ParseException | NumberFormatException e) {
             e.printStackTrace();
+            Crashlytics.logException(e);
             return null;
         }
     }

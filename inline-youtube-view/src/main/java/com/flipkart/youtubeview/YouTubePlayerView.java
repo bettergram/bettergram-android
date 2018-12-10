@@ -29,13 +29,13 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewParent;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+
 import com.flipkart.youtubeview.fragment.YouTubeBaseFragment;
 import com.flipkart.youtubeview.fragment.YouTubeFragment;
 import com.flipkart.youtubeview.fragment.YouTubeWebViewFragment;
@@ -44,6 +44,8 @@ import com.flipkart.youtubeview.models.ImageLoader;
 import com.flipkart.youtubeview.models.YouTubePlayerType;
 import com.flipkart.youtubeview.util.$Precondition$Check;
 import com.flipkart.youtubeview.util.ServiceUtil;
+
+import java.lang.reflect.Field;
 
 public class YouTubePlayerView extends FrameLayout {
 
@@ -94,7 +96,7 @@ public class YouTubePlayerView extends FrameLayout {
             lastWidth = newWidth;
             lastHeight = newHeight;
         }
-    
+
         setMeasuredDimension(lastWidth, lastHeight);
 
 //        if (playerContainer != null && playerContainer.getMeasuredHeight() != lastHeight) {
@@ -217,19 +219,21 @@ public class YouTubePlayerView extends FrameLayout {
             if (isNative) {
                 youtubePlayerFragment = YouTubeFragment.newInstance(key, videoId);
             } else {
-                YouTubeWebViewFragment webViewFragment = YouTubeWebViewFragment
-                        .newInstance(webViewUrl, videoId);
+                YouTubeWebViewFragment webViewFragment = YouTubeWebViewFragment.newInstance(webViewUrl, videoId);
                 if (currentYouTubeFragment instanceof YouTubeWebViewFragment) {
-                    webViewFragment
-                            .setWebView(((YouTubeWebViewFragment) currentYouTubeFragment).removeWebView());
+                    webViewFragment.setWebView(((YouTubeWebViewFragment) currentYouTubeFragment).removeWebView());
                 }
                 youtubePlayerFragment = webViewFragment;
             }
-            youtubePlayerFragment.setYouTubeEventListener(listener);
-            this.fragmentManger.beginTransaction()
-                    .add(R.id.youtubeFragmentContainer, (Fragment) youtubePlayerFragment, TAG)
-                    .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
-                    .commit();
+            try {
+                youtubePlayerFragment.setYouTubeEventListener(listener);
+                this.fragmentManger.beginTransaction()
+                        .add(R.id.youtubeFragmentContainer, (Fragment) youtubePlayerFragment, TAG)
+                        .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+                        .commitAllowingStateLoss();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -238,6 +242,13 @@ public class YouTubePlayerView extends FrameLayout {
         Fragment youTubeFragment = fragmentManager.findFragmentByTag(TAG);
         YouTubeBaseFragment youTubeBaseFragment = null;
         if (youTubeFragment instanceof YouTubeBaseFragment) {
+            try {
+                Field childFragmentManager = Fragment.class.getDeclaredField("mChildFragmentManager");
+                childFragmentManager.setAccessible(true);
+                childFragmentManager.set(youTubeFragment, null);
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
             youTubeBaseFragment = (YouTubeBaseFragment) youTubeFragment;
             View fragmentView = youTubeFragment.getView();
             ViewParent parentView = null != fragmentView ? fragmentView.getParent() : null;

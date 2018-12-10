@@ -90,7 +90,7 @@ public class CryptoCurrencyDataService extends BaseDataService {
                 String savedCryptoInfoJson = preferences
                         .getString(KEY_CRYPTO_CURRENCIES_SAVED, null);
                 if (!isEmpty(savedCryptoInfoJson)) {
-                    publishResults(savedCryptoInfoJson, NOTIFICATION, RESULT);
+                    NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.updateCurrencyData, savedCryptoInfoJson);
                 }
                 canStart = true;
             }
@@ -130,7 +130,7 @@ public class CryptoCurrencyDataService extends BaseDataService {
         public void run() {
             String savedCryptoInfoJson = preferences.getString(KEY_CRYPTO_CURRENCIES_SAVED, null);
             if (!isEmpty(savedCryptoInfoJson)) {
-                publishResults(savedCryptoInfoJson, NOTIFICATION, RESULT);
+                NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.updateCurrencyData, savedCryptoInfoJson);
             }
 
             boolean fetchCryptoCurrencies = intent.getBooleanExtra(KEY_CRYPTO_CURRENCIES, false);
@@ -211,7 +211,7 @@ public class CryptoCurrencyDataService extends BaseDataService {
                         }
                         String json = CryptoCurrencyInfoResponse__JsonHelper.serializeToJson(cryptoResponse);
                         preferences.edit().putString(KEY_CRYPTO_CURRENCIES_SAVED, json).apply();
-                        publishResults(json, NOTIFICATION, RESULT);
+                        NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.updateCurrencyData, json);
                     }
                 }
             });

@@ -28,31 +28,78 @@ import android.os.Parcelable;
 import android.os.StatFs;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
-import android.view.*;
+import android.util.Log;
+import android.view.ActionMode;
+import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
-import io.bettergram.messenger.R;
-import io.bettergram.telegram.messenger.*;
-import io.bettergram.telegram.messenger.browser.Browser;
-import io.bettergram.telegram.messenger.camera.CameraController;
-import io.bettergram.telegram.messenger.support.widget.DefaultItemAnimator;
-import io.bettergram.telegram.messenger.support.widget.LinearLayoutManager;
-import io.bettergram.telegram.tgnet.ConnectionsManager;
-import io.bettergram.telegram.tgnet.TLRPC;
-import io.bettergram.telegram.ui.ActionBar.*;
-import io.bettergram.telegram.ui.Adapters.DrawerLayoutAdapter;
-import io.bettergram.telegram.ui.Cells.DrawerAddCell;
-import io.bettergram.telegram.ui.Cells.DrawerUserCell;
-import io.bettergram.telegram.ui.Cells.LanguageCell;
-import io.bettergram.telegram.ui.Components.*;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import io.bettergram.messenger.R;
+import io.bettergram.telegram.messenger.AndroidUtilities;
+import io.bettergram.telegram.messenger.ApplicationLoader;
+import io.bettergram.telegram.messenger.BuildVars;
+import io.bettergram.telegram.messenger.ChatObject;
+import io.bettergram.telegram.messenger.ContactsController;
+import io.bettergram.telegram.messenger.DataQuery;
+import io.bettergram.telegram.messenger.FileLoader;
+import io.bettergram.telegram.messenger.FileLog;
+import io.bettergram.telegram.messenger.ImageLoader;
+import io.bettergram.telegram.messenger.LocaleController;
+import io.bettergram.telegram.messenger.MediaController;
+import io.bettergram.telegram.messenger.MessageObject;
+import io.bettergram.telegram.messenger.MessagesController;
+import io.bettergram.telegram.messenger.MessagesStorage;
+import io.bettergram.telegram.messenger.NotificationCenter;
+import io.bettergram.telegram.messenger.NotificationsController;
+import io.bettergram.telegram.messenger.SendMessagesHelper;
+import io.bettergram.telegram.messenger.SharedConfig;
+import io.bettergram.telegram.messenger.UserConfig;
+import io.bettergram.telegram.messenger.UserObject;
+import io.bettergram.telegram.messenger.Utilities;
+import io.bettergram.telegram.messenger.browser.Browser;
+import io.bettergram.telegram.messenger.camera.CameraController;
+import io.bettergram.telegram.messenger.support.widget.DefaultItemAnimator;
+import io.bettergram.telegram.messenger.support.widget.LinearLayoutManager;
+import io.bettergram.telegram.tgnet.ConnectionsManager;
+import io.bettergram.telegram.tgnet.TLRPC;
+import io.bettergram.telegram.ui.ActionBar.ActionBarLayout;
+import io.bettergram.telegram.ui.ActionBar.AlertDialog;
+import io.bettergram.telegram.ui.ActionBar.BaseFragment;
+import io.bettergram.telegram.ui.ActionBar.DrawerLayoutContainer;
+import io.bettergram.telegram.ui.ActionBar.Theme;
+import io.bettergram.telegram.ui.Adapters.DrawerLayoutAdapter;
+import io.bettergram.telegram.ui.Cells.DrawerAddCell;
+import io.bettergram.telegram.ui.Cells.DrawerUserCell;
+import io.bettergram.telegram.ui.Cells.LanguageCell;
+import io.bettergram.telegram.ui.Components.AlertsCreator;
+import io.bettergram.telegram.ui.Components.AudioPlayerAlert;
+import io.bettergram.telegram.ui.Components.BlockingUpdateView;
+import io.bettergram.telegram.ui.Components.EmbedBottomSheet;
+import io.bettergram.telegram.ui.Components.JoinGroupAlert;
+import io.bettergram.telegram.ui.Components.LayoutHelper;
+import io.bettergram.telegram.ui.Components.PasscodeView;
+import io.bettergram.telegram.ui.Components.PipRoundVideoView;
+import io.bettergram.telegram.ui.Components.RecyclerListView;
+import io.bettergram.telegram.ui.Components.SharingLocationsAlert;
+import io.bettergram.telegram.ui.Components.StickersAlert;
+import io.bettergram.telegram.ui.Components.TermsOfServiceView;
+import io.bettergram.telegram.ui.Components.ThemeEditorView;
+import io.bettergram.telegram.ui.Components.UpdateAppAlertDialog;
 
 public class LaunchActivity extends Activity implements ActionBarLayout.ActionBarLayoutDelegate, NotificationCenter.NotificationCenterDelegate, DialogsActivity.DialogsActivityDelegate {
 
@@ -172,6 +219,7 @@ public class LaunchActivity extends Activity implements ActionBarLayout.ActionBa
         }
 
         super.onCreate(savedInstanceState);
+        Log.e("test", "super.onCreate(savedInstanceState)");
         if (Build.VERSION.SDK_INT >= 24) {
             AndroidUtilities.isInMultiwindow = isInMultiWindowMode();
         }

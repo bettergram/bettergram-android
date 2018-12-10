@@ -150,6 +150,7 @@ public class NotificationCenter {
     public static final int updateToLatestApiVersion = totalEvents++;
     public static final int currencySearchResultsUpdate = totalEvents++;
     public static final int updateCurrencyDataToBackup = totalEvents++;
+    public static final int updateCurrencyData = totalEvents++;
     public static final int updateBottombarCounter = totalEvents++;
     public static final int openBottombarCounter = totalEvents++;
 

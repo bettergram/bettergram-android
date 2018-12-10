@@ -18,17 +18,21 @@
  */
 package com.flipkart.youtubeview.fragment;
 
+import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+
 import com.flipkart.youtubeview.listener.YouTubeEventListener;
 import com.flipkart.youtubeview.models.PlayerStateList;
 import com.flipkart.youtubeview.util.$Precondition$Check;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerFragment;
+
+import java.lang.reflect.Field;
 
 public class YouTubeFragment extends YouTubePlayerFragment implements YouTubePlayer.OnInitializedListener, YouTubeBaseFragment {
 
@@ -201,6 +205,18 @@ public class YouTubeFragment extends YouTubePlayerFragment implements YouTubePla
     public void onDestroyView() {
         super.onDestroyView();
         release();
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        try {
+            Field childFragmentManager = Fragment.class.getDeclaredField("mChildFragmentManager");
+            childFragmentManager.setAccessible(true);
+            childFragmentManager.set(this, null);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @MainThread

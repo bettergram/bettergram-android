@@ -46,6 +46,7 @@ import io.bettergram.data.CryptoCurrencyInfoResponse__JsonHelper;
 import io.bettergram.messenger.R;
 import io.bettergram.service.CryptoCurrencyDataService;
 import io.bettergram.telegram.messenger.AndroidUtilities;
+import io.bettergram.telegram.messenger.FileLog;
 import io.bettergram.telegram.messenger.ImageReceiver;
 import io.bettergram.telegram.messenger.NotificationCenter;
 import io.bettergram.telegram.messenger.support.widget.RecyclerView;
@@ -132,6 +133,15 @@ public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 data.addAll(backup);
                 notifyDataSetChanged();
             });
+        } else if (id == NotificationCenter.updateCurrencyData) {
+            String json = (String) args[0];
+            try {
+                CryptoCurrencyInfoResponse res = CryptoCurrencyInfoResponse__JsonHelper.parseFromJson(json);
+                AndroidUtilities.runOnUIThread(() -> setCryptoData(res));
+            } catch (IOException e) {
+                e.printStackTrace();
+                FileLog.e(e);
+            }
         }
     }
 
@@ -280,6 +290,7 @@ public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         this.activity = activity;
         NotificationCenter.getGlobalInstance().addObserver(this, NotificationCenter.currencySearchResultsUpdate);
         NotificationCenter.getGlobalInstance().addObserver(this, NotificationCenter.updateCurrencyDataToBackup);
+        NotificationCenter.getGlobalInstance().addObserver(this, NotificationCenter.updateCurrencyData);
     }
 
     public void setCryptoData(CryptoCurrencyInfoResponse cryptoData) {
