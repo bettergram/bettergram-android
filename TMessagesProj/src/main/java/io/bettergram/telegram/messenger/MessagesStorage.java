@@ -6978,7 +6978,9 @@ public class MessagesStorage {
         return count[0];
     }
 
-    public void setDialogFavorite(final long did, final int favorite_date) {
+    public int setDialogFavorite(final long did, final int favorite_date) {
+        final CountDownLatch countDownLatch = new CountDownLatch(1);
+        final Integer[] dates = new Integer[]{0};
         storageQueue.postRunnable(() -> {
             try {
                 int value = 0;
@@ -6996,10 +6998,32 @@ public class MessagesStorage {
                     }
                 }
 
-                value = (value == 0 ? favorite_date : value) > 0 ? 0 : Time.currentMillis();
+                dates[0] = value = (value == 0 ? favorite_date : value) > 0 ? 0 : Time.currentMillis();
 
                 SQLitePreparedStatement state = database.executeFast("UPDATE dialogs SET favorite_date = ? WHERE did = ?");
                 state.bindInteger(1, value);
+                state.bindLong(2, did);
+                state.step();
+                state.dispose();
+                countDownLatch.countDown();
+            } catch (Exception e) {
+                e.printStackTrace();
+                FileLog.e(e);
+            }
+        });
+        try {
+            countDownLatch.await();
+        } catch (Exception e) {
+            FileLog.e(e);
+        }
+        return dates[0];
+    }
+
+    public void updateDialogFavorite(final long did, final int favorite_date) {
+        storageQueue.postRunnable(() -> {
+            try {
+                SQLitePreparedStatement state = database.executeFast("UPDATE dialogs SET favorite_date = ? WHERE did = ?");
+                state.bindInteger(1, favorite_date);
                 state.bindLong(2, did);
                 state.step();
                 state.dispose();
@@ -7008,6 +7032,33 @@ public class MessagesStorage {
                 FileLog.e(e);
             }
         });
+    }
+
+    public int getDialogFavoriteDate(final long did) {
+        final CountDownLatch countDownLatch = new CountDownLatch(1);
+        final Integer[] dates = new Integer[]{0};
+        storageQueue.postRunnable(() -> {
+            SQLiteCursor cursor = null;
+            try {
+                cursor = database.queryFinalized("SELECT favorite_date FROM dialogs WHERE did = " + did);
+                if (cursor.next()) {
+                    dates[0] = cursor.intValue(0);
+                }
+            } catch (Exception e) {
+                FileLog.e(e);
+            } finally {
+                if (cursor != null) {
+                    cursor.dispose();
+                }
+            }
+            countDownLatch.countDown();
+        });
+        try {
+            countDownLatch.await();
+        } catch (Exception e) {
+            FileLog.e(e);
+        }
+        return dates[0];
     }
 
     public void setDialogPinned(final long did, final int pinned) {

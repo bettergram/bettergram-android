@@ -828,7 +828,7 @@
     <string name="MessageLifetimeVideo">Se você definir um temporizador, o vídeo irá se auto-destruir após ser visto.</string>
     <string name="ShortMessageLifetimeForever">Desativado</string>
     <string name="EncryptionKeyDescription">Essa imagem e texto foram derivadas da chave criptográfica para esse chat secreto com **%1$s**.\n\nSe você vê o mesmo no dispositivo de **%2$s**, a criptografia ponta a ponta está garantida.</string>
-    <string name="EncryptionKeyLink">https://Bettergram.org/faq/br#chats-secretos</string>
+    <string name="EncryptionKeyLink">https://Bettergram.io/faq/br#chats-secretos</string>
     <string name="NumberUnknown">Desconhecido</string>
     <string name="Info">Info</string>
     <string name="Phone">Telefone</string>
@@ -984,7 +984,7 @@
     <string name="PinnedMessages">Mensagens Fixadas</string>
     <string name="Language">Idioma</string>
     <string name="LanguageCustom">Personalizado</string>
-    <string name="AskAQuestionInfo">Note que o suporte do Bettergram é feito por voluntários. Tentaremos responder o mais rápido possível, mas poderemos demorar um pouco.\n\nPor favor verifique a página de <![CDATA[<a href=\"https://Bettergram.org/faq/br#questes-gerais\">Perguntas Frequentes</a>]]>: há dicas e respostas para a maioria dos <![CDATA[<a href=\"https://Bettergram.org/faq/br#soluo-de-problemas\">problemas</a>]]>.</string>
+    <string name="AskAQuestionInfo">Note que o suporte do Bettergram é feito por voluntários. Tentaremos responder o mais rápido possível, mas poderemos demorar um pouco.\n\nPor favor verifique a página de <![CDATA[<a href=\"https://Bettergram.io/faq/br#questes-gerais\">Perguntas Frequentes</a>]]>: há dicas e respostas para a maioria dos <![CDATA[<a href=\"https://Bettergram.io/faq/br#soluo-de-problemas\">problemas</a>]]>.</string>
     <string name="AskButton">Perguntar</string>
     <string name="BettergramFAQ">Perguntas Frequentes</string>
     <string name="BettergramFaq">Perguntas Frequentes</string>
@@ -994,7 +994,7 @@
     <string name="PrivacyPolicy">Política de Privacidade</string>
     <string name="TermsOfService">Termos de Serviço</string>
     <string name="TermsOfServiceLogin">Ao se cadastrar,\nvocê concorda com os *Termos de Serviço*.</string>
-    <string name="PrivacyPolicyUrl">https://bettergram.io/#</string>
+    <string name="PrivacyPolicyUrl">https://bettergram.io/#myModal3</string>
     <string name="DeleteLocalization">Apagar localização?</string>
     <string name="IncorrectLocalization">Arquivo de localização incorreto</string>
     <string name="NotificationsService">Manter Serviço Ativo</string>
@@ -1707,7 +1707,7 @@
     <string name="ActionBotDocumentRentalAgreement">Contrato de Locação</string>
     <string name="ActionBotDocumentPhone">Número de Telefone</string>
     <string name="ActionBotDocumentEmail">Endereço de E-mail</string>
-    <string name="UnsupportedMedia">Esta mensagem não é suportada na sua versão do Bettergram. Para visualizá-la atualize seu aplicativo em https://Bettergram.org/update</string>
+    <string name="UnsupportedMedia">Esta mensagem não é suportada na sua versão do Bettergram. Para visualizá-la atualize seu aplicativo em https://Bettergram.io/update</string>
     <string name="AttachPhoto">Foto</string>
     <string name="AttachVideo">Vídeo</string>
     <string name="AttachDestructingPhoto">Foto Autodestrutiva</string>

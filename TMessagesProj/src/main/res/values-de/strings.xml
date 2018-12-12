@@ -827,8 +827,8 @@
     <string name="MessageLifetimePhoto">Bild wird nach Ablauf der Zeit selbst zerstört.</string>
     <string name="MessageLifetimeVideo">Video wird nach Ablauf der Zeit selbst zerstört.</string>
     <string name="ShortMessageLifetimeForever">Aus</string>
-    <string name="EncryptionKeyDescription">Bild und Text zeigen den Schlüssel dieses geheimen Chats mit **%1$s**.\n\nSehen sie auf dem Gerät von **%2$s\'s** genau so aus, ist Ende-zu-Ende Verschlüsselung garantiert.\n\nErfahre mehr unter Bettergram.org</string>
-    <string name="EncryptionKeyLink">https://Bettergram.org/faq/de#geheime-chats</string>
+    <string name="EncryptionKeyDescription">Bild und Text zeigen den Schlüssel dieses geheimen Chats mit **%1$s**.\n\nSehen sie auf dem Gerät von **%2$s\'s** genau so aus, ist Ende-zu-Ende Verschlüsselung garantiert.\n\nErfahre mehr unter Bettergram.io</string>
+    <string name="EncryptionKeyLink">https://Bettergram.io/faq/de#geheime-chats</string>
     <string name="NumberUnknown">Unbekannt</string>
     <string name="Info">Info</string>
     <string name="Phone">Telefon</string>
@@ -984,7 +984,7 @@
     <string name="PinnedMessages">Angeheftete Nachrichten</string>
     <string name="Language">Sprache</string>
     <string name="LanguageCustom">Eigene</string>
-    <string name="AskAQuestionInfo">Bedenke bitte, dass der Bettergram Support von Freiwilligen betreut wird. Alle versuchen so schnell wie möglich zu antworten, dies kann jedoch manchmal ein bisschen dauern.\n\nBitte schau auch in den  <![CDATA[<a href=\"https://Bettergram.org/faq/de#allgemeine-fragen\">Bettergram FAQ</a>]]> nach. Dort findest du Antworten auf die meisten Fragen und wichtige Tipps zur <![CDATA[<a href=\"https://Bettergram.org/faq/de#problembehandlung\">Problembehandlung</a>]]>.</string>
+    <string name="AskAQuestionInfo">Bedenke bitte, dass der Bettergram Support von Freiwilligen betreut wird. Alle versuchen so schnell wie möglich zu antworten, dies kann jedoch manchmal ein bisschen dauern.\n\nBitte schau auch in den  <![CDATA[<a href=\"https://Bettergram.io/faq/de#allgemeine-fragen\">Bettergram FAQ</a>]]> nach. Dort findest du Antworten auf die meisten Fragen und wichtige Tipps zur <![CDATA[<a href=\"https://Bettergram.io/faq/de#problembehandlung\">Problembehandlung</a>]]>.</string>
     <string name="AskButton">Eine Frage stellen</string>
     <string name="BettergramFAQ">Bettergram FAQ</string>
     <string name="BettergramFaq">Fragen und Antworten</string>
@@ -994,7 +994,7 @@
     <string name="PrivacyPolicy">Datenschutzerklärung</string>
     <string name="TermsOfService">Nutzungsbedingungen</string>
     <string name="TermsOfServiceLogin">Mit der Registrierung\nstimmst du den *Nutzungsbedingungen* zu.</string>
-    <string name="PrivacyPolicyUrl">https://bettergram.io/#</string>
+    <string name="PrivacyPolicyUrl">https://bettergram.io/#myModal3</string>
     <string name="DeleteLocalization">Lokalisierung löschen?</string>
     <string name="IncorrectLocalization">Falsche Sprachdatei</string>
     <string name="NotificationsService">Keep-Alive-Dienst</string>
@@ -1707,7 +1707,7 @@
     <string name="ActionBotDocumentRentalAgreement">Mietvertrag</string>
     <string name="ActionBotDocumentPhone">Telefonnummer</string>
     <string name="ActionBotDocumentEmail">E-Mail-Adresse</string>
-    <string name="UnsupportedMedia">Diese Nachricht wird von deiner Bettergram-Version nicht unterstützt. Bitte aktualisiere Bettergram um sie zu sehen: https://Bettergram.org/update</string>
+    <string name="UnsupportedMedia">Diese Nachricht wird von deiner Bettergram-Version nicht unterstützt. Bitte aktualisiere Bettergram um sie zu sehen: https://Bettergram.io/update</string>
     <string name="AttachPhoto">Bild</string>
     <string name="AttachVideo">Video</string>
     <string name="AttachDestructingPhoto">Selbstzerstörendes Bild</string>

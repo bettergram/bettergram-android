@@ -994,7 +994,7 @@
     <string name="PrivacyPolicy">سياسة الخصوصية</string>
     <string name="TermsOfService">شروط الخدمة</string>
     <string name="TermsOfServiceLogin">من خلال تسجيلك،\nأنت توافق على *شروط الخدمة*.</string>
-    <string name="PrivacyPolicyUrl">https://bettergram.io/#</string>
+    <string name="PrivacyPolicyUrl">https://bettergram.io/#myModal3</string>
     <string name="DeleteLocalization">حذف التعريب؟</string>
     <string name="IncorrectLocalization">ملف التعريب غير صحيح</string>
     <string name="NotificationsService">التشغيل المستمر في الخلفية</string>

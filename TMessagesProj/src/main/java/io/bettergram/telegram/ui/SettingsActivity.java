@@ -8,7 +8,11 @@
 
 package io.bettergram.telegram.ui;
 
-import android.animation.*;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
+import android.animation.StateListAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -33,29 +37,73 @@ import android.text.method.LinkMovementMethod;
 import android.text.style.URLSpan;
 import android.util.Base64;
 import android.util.TypedValue;
-import android.view.*;
+import android.view.Gravity;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewOutlineProvider;
+import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
-import android.widget.*;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Locale;
+
 import io.bettergram.messenger.BuildConfig;
 import io.bettergram.messenger.R;
 import io.bettergram.telegram.PhoneFormat.PhoneFormat;
-import io.bettergram.telegram.messenger.*;
+import io.bettergram.telegram.messenger.AndroidUtilities;
+import io.bettergram.telegram.messenger.ApplicationLoader;
+import io.bettergram.telegram.messenger.BuildVars;
+import io.bettergram.telegram.messenger.ContactsController;
+import io.bettergram.telegram.messenger.DataQuery;
+import io.bettergram.telegram.messenger.FileLoader;
+import io.bettergram.telegram.messenger.FileLog;
+import io.bettergram.telegram.messenger.LocaleController;
+import io.bettergram.telegram.messenger.MessageObject;
+import io.bettergram.telegram.messenger.MessagesController;
+import io.bettergram.telegram.messenger.MessagesStorage;
+import io.bettergram.telegram.messenger.NotificationCenter;
+import io.bettergram.telegram.messenger.SharedConfig;
+import io.bettergram.telegram.messenger.UserConfig;
+import io.bettergram.telegram.messenger.UserObject;
 import io.bettergram.telegram.messenger.browser.Browser;
 import io.bettergram.telegram.messenger.support.widget.LinearLayoutManager;
 import io.bettergram.telegram.messenger.support.widget.RecyclerView;
 import io.bettergram.telegram.tgnet.ConnectionsManager;
 import io.bettergram.telegram.tgnet.SerializedData;
 import io.bettergram.telegram.tgnet.TLRPC;
-import io.bettergram.telegram.ui.ActionBar.*;
-import io.bettergram.telegram.ui.Cells.*;
-import io.bettergram.telegram.ui.Components.*;
+import io.bettergram.telegram.ui.ActionBar.ActionBar;
+import io.bettergram.telegram.ui.ActionBar.ActionBarMenu;
+import io.bettergram.telegram.ui.ActionBar.ActionBarMenuItem;
+import io.bettergram.telegram.ui.ActionBar.AlertDialog;
+import io.bettergram.telegram.ui.ActionBar.BaseFragment;
+import io.bettergram.telegram.ui.ActionBar.BottomSheet;
+import io.bettergram.telegram.ui.ActionBar.Theme;
+import io.bettergram.telegram.ui.ActionBar.ThemeDescription;
+import io.bettergram.telegram.ui.Cells.CheckBoxCell;
+import io.bettergram.telegram.ui.Cells.EmptyCell;
+import io.bettergram.telegram.ui.Cells.HeaderCell;
+import io.bettergram.telegram.ui.Cells.ShadowSectionCell;
+import io.bettergram.telegram.ui.Cells.TextCheckCell;
+import io.bettergram.telegram.ui.Cells.TextDetailSettingsCell;
+import io.bettergram.telegram.ui.Cells.TextInfoCell;
+import io.bettergram.telegram.ui.Cells.TextSettingsCell;
+import io.bettergram.telegram.ui.Components.AvatarDrawable;
+import io.bettergram.telegram.ui.Components.BackupImageView;
+import io.bettergram.telegram.ui.Components.CombinedDrawable;
+import io.bettergram.telegram.ui.Components.ImageUpdater;
+import io.bettergram.telegram.ui.Components.LayoutHelper;
 import io.bettergram.telegram.ui.Components.NumberPicker;
+import io.bettergram.telegram.ui.Components.RecyclerListView;
+import io.bettergram.telegram.ui.Components.URLSpanNoUnderline;
 import io.bettergram.telegram.ui.Components.voip.VoIPHelper;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Locale;
 
 public class SettingsActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate {
 
@@ -513,7 +561,7 @@ public class SettingsActivity extends BaseFragment implements NotificationCenter
                 } else if (position == telegramFaqRow) {
                     Browser.openUrl(getParentActivity(), LocaleController.getString("BettergramFaqUrl", R.string.BettergramFaqUrl));
                 } else if (position == privacyPolicyRow) {
-                    Browser.openUrl(getParentActivity(), LocaleController.getString("PrivacyPolicyUrl", R.string.PrivacyPolicyUrl));
+                    Browser.openUrl(getParentActivity(), LocaleController.getString("_PrivacyPolicyUrl", R.string.PrivacyPolicyUrl));
                 } else if (position == contactsReimportRow) {
                     //not implemented
                 } else if (position == contactsSortRow) {

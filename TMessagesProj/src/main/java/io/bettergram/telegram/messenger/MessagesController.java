@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.ListIterator;
 import java.util.Locale;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
@@ -132,6 +133,7 @@ public class MessagesController implements NotificationCenter.NotificationCenter
     private int currentDeletingTaskChannelId;
     private Runnable currentDeleteTaskRunnable;
 
+    private boolean loadedFavoriteDialogs;
     private boolean loadingUnreadDialogs;
     public boolean loadingDialogs;
     private boolean migratingDialogs;
@@ -3399,6 +3401,11 @@ public class MessagesController implements NotificationCenter.NotificationCenter
         });
     }
 
+    public void loadFuckingEverything() {
+        loadedFavoriteDialogs = false;
+        loadDialogs(0, 100, true);
+    }
+
     public void loadDialogs(final int offset, final int count, boolean fromCache) {
         if (loadingDialogs || resetingDialogs) {
             return;
@@ -4286,6 +4293,11 @@ public class MessagesController implements NotificationCenter.NotificationCenter
                     reloadDialogsReadValue(dialogsToReload, 0);
                 }
                 loadUnreadDialogs();
+                loadLocalPinnedDialogs();
+                if (!loadedFavoriteDialogs) {
+                    loadLocalFavoriteDialogs();
+                    loadedFavoriteDialogs = true;
+                }
             });
         });
     }
@@ -6543,9 +6555,22 @@ public class MessagesController implements NotificationCenter.NotificationCenter
     public void favoriteDialog(final long did) {
         TLRPC.TL_dialog dialog = dialogs_dict.get(did);
         if (dialog != null) {
-            MessagesStorage.getInstance(currentAccount).setDialogFavorite(did, dialog.favorite_date);
+            final int fave_date = MessagesStorage.getInstance(currentAccount).setDialogFavorite(did, dialog.favorite_date);
+            dialogs_dict.get(did).favorite_date = fave_date;
+            for (int i = 0, size = dialogs.size(); i < size; i++) {
+                if (dialogs.get(i).id == dialogs_dict.get(did).id) {
+                    dialogs.get(i).favorite_date = dialogs_dict.get(did).favorite_date;
+                }
+            }
+            MigrationController.getInstance(currentAccount).storeFavoriteDialog(did, fave_date);
+            loadedFavoriteDialogs = true;
             loadDialogs(0, 100, true);
+            NotificationCenter.getInstance(currentAccount).postNotificationName(NotificationCenter.dialogsNeedReload);
         }
+    }
+
+    public void updateDialogFavorite(final long did, int favorite_date) {
+        MessagesStorage.getInstance(currentAccount).updateDialogFavorite(did, favorite_date);
     }
 
     public void loadUnreadDialogs() {
@@ -6595,6 +6620,15 @@ public class MessagesController implements NotificationCenter.NotificationCenter
         return MessagesStorage.getInstance(currentAccount).getPinnedCount();
     }
 
+    public int getDialogFavoriteDate(final long did) {
+        for (int i = 0, size = dialogs.size(); i < size; i++) {
+            if (dialogs.get(i).id == did) {
+                return dialogs.get(i).favorite_date;
+            }
+        }
+        return dialogs_dict.get(did).favorite_date;
+    }
+
     public boolean pinDialog(long did, boolean pin, TLRPC.InputPeer peer, long taskId) {
         int lower_id = (int) did;
         TLRPC.TL_dialog dialog = dialogs_dict.get(did);
@@ -6619,7 +6653,7 @@ public class MessagesController implements NotificationCenter.NotificationCenter
         if (!pin && dialogs.get(dialogs.size() - 1) == dialog && !dialogsEndReached) {
             dialogs.remove(dialogs.size() - 1);
         }
-        NotificationCenter.getInstance(currentAccount).postNotificationName(NotificationCenter.dialogsNeedReload);
+//        NotificationCenter.getInstance(currentAccount).postNotificationName(NotificationCenter.dialogsNeedReload);
         if (lower_id != 0) {
             if (taskId != -1) {
 //                TLRPC.TL_messages_toggleDialogPin req = new TLRPC.TL_messages_toggleDialogPin();
@@ -6658,7 +6692,21 @@ public class MessagesController implements NotificationCenter.NotificationCenter
 //                });
             }
         }
+        for (int i = 0, size = dialogs_dict.size(); i < size; i++) {
+            if (dialogs_dict.valueAt(i).id == dialog.id) {
+                dialogs_dict.valueAt(i).pinnedNum = dialog.pinnedNum;
+            }
+        }
+        for (int i = 0, size_i = dialogs_dict.size(); i < size_i; i++) {
+            for (int j = 0, size_j = dialogs.size(); j < size_j; j++) {
+                if (dialogs_dict.valueAt(i).id == dialogs.get(j).id) {
+                    dialogs.get(j).pinnedNum = dialogs_dict.valueAt(i).pinnedNum;
+                }
+            }
+        }
         MessagesStorage.getInstance(currentAccount).setDialogPinned(did, dialog.pinnedNum);
+        MigrationController.getInstance(currentAccount).storePinnedDialog(dialog);
+        NotificationCenter.getInstance(currentAccount).postNotificationName(NotificationCenter.dialogsNeedReload);
         return true;
     }
 
@@ -6672,6 +6720,51 @@ public class MessagesController implements NotificationCenter.NotificationCenter
             Collections.swap(dialogs, index1, index2);
             MessagesStorage.getInstance(currentAccount).swapDialogs(d1.id, d2.id);
         }
+    }
+
+    public void loadLocalPinnedDialogs() {
+        MigrationController.getInstance(currentAccount).migratePinnedDialogs(dialogs);
+        for (int i = 0, size = dialogs_dict.size(); i < size; i++) {
+            TLRPC.TL_dialog dialog = dialogs_dict.valueAt(i);
+            dialogs_dict.valueAt(i).pinnedNum = MigrationController.getInstance(currentAccount).restorePinnedNum(dialog);
+        }
+        for (int a = 0, size_a = dialogs_dict.size(); a < size_a; a++) {
+            for (int b = 0, size_b = dialogs.size(); b < size_b; b++) {
+                if (dialogs_dict.valueAt(a).id == dialogs.get(b).id) {
+                    dialogs.get(b).pinnedNum = dialogs_dict.valueAt(a).pinnedNum;
+                }
+            }
+        }
+        for (int i = 0, size = dialogs.size(); i < size; i++) {
+            TLRPC.TL_dialog dialog = dialogs.get(i);
+            pinDialog(dialog.id, dialog.pinnedNum > 0, null, 0);
+        }
+        sortDialogs(null);
+    }
+
+    public void loadLocalFavoriteDialogs() {
+        MigrationController.getInstance(currentAccount).migrateFavoritedDialogs(dialogs);
+        for (int i = 0, size = dialogs_dict.size(); i < size; i++) {
+            TLRPC.TL_dialog dialog = dialogs_dict.valueAt(i);
+            dialogs_dict.valueAt(i).favorite_date = MigrationController.getInstance(currentAccount).restoreFavoriteDate(dialog);
+        }
+        for (int a = 0, size = dialogs_dict.size(); a < size; a++) {
+            TLRPC.TL_dialog d1 = dialogs_dict.valueAt(a);
+            ListIterator<TLRPC.TL_dialog> iterator = dialogs.listIterator();
+            while (iterator.hasNext()) {
+                TLRPC.TL_dialog d2 = iterator.next();
+                if (d2.id == d1.id) {
+                    iterator.set(d1);
+                }
+            }
+        }
+        for (int i = 0, size = dialogs.size(); i < size; i++) {
+            TLRPC.TL_dialog dialog = dialogs.get(i);
+            if (dialog.favorite_date > 0) {
+                updateDialogFavorite(dialog.id, dialog.favorite_date);
+            }
+        }
+        sortDialogs(null);
     }
 
     public void loadPinnedDialogs(final long newDialogId, final ArrayList<Long> order) {
@@ -8589,7 +8682,7 @@ public class MessagesController implements NotificationCenter.NotificationCenter
                         if (!pinDialog(did, updateDialogPinned.pinned, null, -1)) {
                             UserConfig.getInstance(currentAccount).pinnedDialogsLoaded = false;
                             UserConfig.getInstance(currentAccount).saveConfig(false);
-                            loadPinnedDialogs(did, null);
+                            //loadPinnedDialogs(did, null);
                         }
                     } else if (baseUpdate instanceof TLRPC.TL_updatePinnedDialogs) {
                         TLRPC.TL_updatePinnedDialogs update = (TLRPC.TL_updatePinnedDialogs) baseUpdate;
@@ -8619,7 +8712,7 @@ public class MessagesController implements NotificationCenter.NotificationCenter
                         } else {
                             order = null;
                         }
-                        loadPinnedDialogs(0, order);
+                        //loadPinnedDialogs(0, order);
                     } else if (baseUpdate instanceof TLRPC.TL_updateUserPhoto) {
                         TLRPC.TL_updateUserPhoto update = (TLRPC.TL_updateUserPhoto) baseUpdate;
                         final TLRPC.User currentUser = getUser(update.user_id);

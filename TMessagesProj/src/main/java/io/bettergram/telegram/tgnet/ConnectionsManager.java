@@ -16,6 +16,7 @@ import android.os.SystemClock;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Base64;
+import android.util.Log;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -24,20 +25,6 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import io.bettergram.telegram.messenger.AndroidUtilities;
-import io.bettergram.messenger.BuildConfig;
-import io.bettergram.telegram.messenger.BuildVars;
-import io.bettergram.telegram.messenger.ContactsController;
-import io.bettergram.telegram.messenger.ApplicationLoader;
-import io.bettergram.telegram.messenger.FileLoader;
-import io.bettergram.telegram.messenger.FileLog;
-import io.bettergram.telegram.messenger.KeepAliveJob;
-import io.bettergram.telegram.messenger.LocaleController;
-import io.bettergram.telegram.messenger.MessagesController;
-import io.bettergram.telegram.messenger.NotificationCenter;
-import io.bettergram.telegram.messenger.StatsController;
-import io.bettergram.telegram.messenger.UserConfig;
-import io.bettergram.telegram.messenger.Utilities;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -56,6 +43,21 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import io.bettergram.messenger.BuildConfig;
+import io.bettergram.telegram.messenger.AndroidUtilities;
+import io.bettergram.telegram.messenger.ApplicationLoader;
+import io.bettergram.telegram.messenger.BuildVars;
+import io.bettergram.telegram.messenger.ContactsController;
+import io.bettergram.telegram.messenger.FileLoader;
+import io.bettergram.telegram.messenger.FileLog;
+import io.bettergram.telegram.messenger.KeepAliveJob;
+import io.bettergram.telegram.messenger.LocaleController;
+import io.bettergram.telegram.messenger.MessagesController;
+import io.bettergram.telegram.messenger.NotificationCenter;
+import io.bettergram.telegram.messenger.StatsController;
+import io.bettergram.telegram.messenger.UserConfig;
+import io.bettergram.telegram.messenger.Utilities;
 
 public class ConnectionsManager {
 
@@ -120,6 +122,7 @@ public class ConnectionsManager {
 
     private int currentAccount;
     private static volatile ConnectionsManager[] Instance = new ConnectionsManager[UserConfig.MAX_ACCOUNT_COUNT];
+
     public static ConnectionsManager getInstance(int num) {
         ConnectionsManager localInstance = Instance[num];
         if (localInstance == null) {
@@ -423,11 +426,14 @@ public class ConnectionsManager {
                 if (BuildVars.LOGS_ENABLED) {
                     FileLog.d("java received " + message);
                 }
+                Log.e("test", "the fucking flags: " + ((TLRPC.Updates) message).flags);
                 KeepAliveJob.finishJob();
                 Utilities.stageQueue.postRunnable(new Runnable() {
                     @Override
                     public void run() {
-                        MessagesController.getInstance(currentAccount).processUpdates((TLRPC.Updates) message, false);
+                        if (((TLRPC.Updates) message).flags != 0) {
+                            MessagesController.getInstance(currentAccount).processUpdates((TLRPC.Updates) message, false);
+                        }
                     }
                 });
             }
@@ -663,29 +669,53 @@ public class ConnectionsManager {
     }
 
     public static native void native_switchBackend(int currentAccount);
+
     public static native int native_isTestBackend(int currentAccount);
+
     public static native void native_pauseNetwork(int currentAccount);
+
     public static native void native_setUseIpv6(int currentAccount, boolean value);
+
     public static native void native_updateDcSettings(int currentAccount);
+
     public static native void native_setNetworkAvailable(int currentAccount, boolean value, int networkType, boolean slow);
+
     public static native void native_resumeNetwork(int currentAccount, boolean partial);
+
     public static native long native_getCurrentTimeMillis(int currentAccount);
+
     public static native int native_getCurrentTime(int currentAccount);
+
     public static native int native_getTimeDifference(int currentAccount);
+
     public static native void native_sendRequest(int currentAccount, long object, RequestDelegateInternal onComplete, QuickAckDelegate onQuickAck, WriteToSocketDelegate onWriteToSocket, int flags, int datacenterId, int connetionType, boolean immediate, int requestToken);
+
     public static native void native_cancelRequest(int currentAccount, int token, boolean notifyServer);
+
     public static native void native_cleanUp(int currentAccount, boolean resetKeys);
+
     public static native void native_cancelRequestsForGuid(int currentAccount, int guid);
+
     public static native void native_bindRequestToGuid(int currentAccount, int requestToken, int guid);
+
     public static native void native_applyDatacenterAddress(int currentAccount, int datacenterId, String ipAddress, int port);
+
     public static native int native_getConnectionState(int currentAccount);
+
     public static native void native_setUserId(int currentAccount, int id);
+
     public static native void native_init(int currentAccount, int version, int layer, int apiId, String deviceModel, String systemVersion, String appVersion, String langCode, String systemLangCode, String configPath, String logPath, int userId, boolean enablePushConnection, boolean hasNetwork, int networkType);
+
     public static native void native_setProxySettings(int currentAccount, String address, int port, String username, String password, String secret);
+
     public static native void native_setLangCode(int currentAccount, String langCode);
+
     public static native void native_setJava(boolean useJavaByteBuffers);
+
     public static native void native_setPushConnectionEnabled(int currentAccount, boolean value);
+
     public static native void native_applyDnsConfig(int currentAccount, long address, String phone);
+
     public static native long native_checkProxy(int currentAccount, String address, int port, String username, String password, String secret, RequestTimeDelegate requestTimeDelegate);
 
     public static int generateClassGuid() {

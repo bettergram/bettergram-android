@@ -3,10 +3,10 @@ package io.bettergram.telegram.ui.Components.Indicator;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.support.v4.graphics.drawable.DrawableCompat;
+
 import io.bettergram.telegram.messenger.AndroidUtilities;
 import io.bettergram.telegram.messenger.MessagesController;
 import io.bettergram.telegram.messenger.UserConfig;
-import io.bettergram.telegram.tgnet.TLRPC;
 import io.bettergram.telegram.ui.ActionBar.Theme;
 
 public class FavoriteIndicator {
@@ -43,9 +43,9 @@ public class FavoriteIndicator {
         if (dialog_id == 0) {
             return;
         }
-       
-        TLRPC.TL_dialog dialog = MessagesController.getInstance(currentAccount).dialogs_dict.get(dialog_id);
-        if (dialog != null && dialog.favorite_date > 0) {
+
+        final int favorite_date = MessagesController.getInstance(currentAccount).getDialogFavoriteDate(dialog_id);
+        if (favorite_date > 0) {
             float x0 = offsetX + radius;
             float y0 = offsetY + radius;
             float dx = (float) (x0 + radius * Math.cos(-40 * Math.PI / 180));

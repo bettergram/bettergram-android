@@ -254,10 +254,12 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
 
         if (!dialogsLoaded[currentAccount]) {
             MessagesController.getInstance(currentAccount).loadGlobalNotificationsSettings();
-            MessagesController.getInstance(currentAccount).loadDialogs(0, 100, true);
+            //MessagesController.getInstance(currentAccount).loadDialogs(0, 100, true);
+            MessagesController.getInstance(currentAccount).loadFuckingEverything();
             MessagesController.getInstance(currentAccount).loadHintDialogs();
             ContactsController.getInstance(currentAccount).checkInviteText();
-            MessagesController.getInstance(currentAccount).loadPinnedDialogs(0, null);
+            //MessagesController.getInstance(currentAccount).loadPinnedDialogs(0, null);
+            //MessagesController.getInstance(currentAccount).loadLocalFavoriteDialogs();
             DataQuery.getInstance(currentAccount).loadRecents(DataQuery.TYPE_FAVE, false, true, false);
             DataQuery.getInstance(currentAccount).checkFeaturedStickers();
             dialogsLoaded[currentAccount] = true;
@@ -946,7 +948,6 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 }
 
                 final TLRPC.TL_dialog dialog = _dialog;
-
                 if (dialog == null) {
                     return false;
                 }
@@ -1166,11 +1167,12 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
                 final int position = viewHolder.getAdapterPosition();
                 final TLRPC.TL_dialog dialog = getDialog(position);
-                if (dialog != null && dialog.pinned && MessagesController.getInstance(currentAccount).getPinnedCount() > 1) {
+                final int pinned_highest_pos = MessagesController.getInstance(currentAccount).getPinnedCount() - 1;
+                final int target_position = target.getAdapterPosition();
+                if (dialog != null && dialog.pinned && pinned_highest_pos > 1 && position <= pinned_highest_pos && target_position <= pinned_highest_pos) {
                     if (bottomSheetDialog != null) {
                         bottomSheetDialog.dismiss();
                     }
-                    int target_position = target.getAdapterPosition();
                     MessagesController.getInstance(currentAccount).swapPinnedDialogs(position, target_position);
                     dialogsAdapter.notifyItemMoved(position, target_position);
                     return true;
@@ -1187,10 +1189,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                     viewHolder.itemView.setBackground(draggingDrawable);
                 } else if (actionState == 0) {
                     viewHolder.itemView.setBackground(previousDrawable);
-
                     final int position = viewHolder.getAdapterPosition();
                     final TLRPC.TL_dialog dialog = getDialog(position);
-
                     if (dialog != null && dialog.pinned && bottomSheetDialog != null) {
                         bottomSheetDialog.show();
                     }
@@ -1206,8 +1206,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
                 final int position = viewHolder.getAdapterPosition();
                 final TLRPC.TL_dialog dialog = getDialog(position);
-                if (dialog != null && dialog.pinned && dialogsAdapter.getDialogsArray().size() > 1 && !searching && MessagesController.getInstance(currentAccount).getPinnedCount() > 1) {
-                    return makeFlag(ItemTouchHelper.ACTION_STATE_DRAG, ItemTouchHelper.DOWN | ItemTouchHelper.UP);
+                final int dialogs_size = dialogsAdapter.getDialogsArray().size();
+                final int pinned_highest_pos = MessagesController.getInstance(currentAccount).getPinnedCount();
+                if (dialog != null && dialog.pinned && dialogs_size > 1 && !searching && pinned_highest_pos > 1 && position <= pinned_highest_pos) {
+                    return makeFlag(ItemTouchHelper.ACTION_STATE_DRAG, (position == pinned_highest_pos - 1) ? ItemTouchHelper.UP : ItemTouchHelper.DOWN | ItemTouchHelper.UP);
                 } else {
                     return makeFlag(ItemTouchHelper.ACTION_STATE_IDLE, ItemTouchHelper.ACTION_STATE_IDLE);
                 }
@@ -2045,7 +2047,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             checkUnreadCount(true);
             if (dialogsAdapter != null) {
                 if (dialogsAdapter.isDataSetChanged() || args.length > 0) {
-                    dialogsAdapter.notifyDataSetChanged();
+                    //MessagesController.getInstance(currentAccount).loadLocalPinnedDialogs();
+                    //MessagesController.getInstance(currentAccount).loadLocalFavoriteDialogs();
+                    listView.postAndNotifyAdapter(dialogsAdapter::notifyDataSetChanged);
                 } else {
                     updateVisibleRows(MessagesController.UPDATE_MASK_NEW_MESSAGE);
                 }

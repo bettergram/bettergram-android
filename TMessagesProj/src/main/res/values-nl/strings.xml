@@ -827,8 +827,8 @@
     <string name="MessageLifetimePhoto">Als je een timer instelt vernietigt de foto zichzelf na het bekijken.</string>
     <string name="MessageLifetimeVideo">Als je een timer instelt vernietigt de video zichzelf na het bekijken.</string>
     <string name="ShortMessageLifetimeForever">Uit</string>
-    <string name="EncryptionKeyDescription">Deze afbeelding en tekst zijn afgeleid van de encryptiesleutel voor deze geheime chat met **%1$s**.\n\nAls dit er hetzelfde uitziet op het apparaat van **%2$s**, dan is end-to-end-encryptie gegarandeerd.\n\nLees meer op Bettergram.org</string>
-    <string name="EncryptionKeyLink">https://Bettergram.org/faq#secret-chats</string>
+    <string name="EncryptionKeyDescription">Deze afbeelding en tekst zijn afgeleid van de encryptiesleutel voor deze geheime chat met **%1$s**.\n\nAls dit er hetzelfde uitziet op het apparaat van **%2$s**, dan is end-to-end-encryptie gegarandeerd.\n\nLees meer op Bettergram.io</string>
+    <string name="EncryptionKeyLink">https://Bettergram.io/faq#secret-chats</string>
     <string name="NumberUnknown">Onbekend</string>
     <string name="Info">Info</string>
     <string name="Phone">Telefoon</string>
@@ -984,7 +984,7 @@
     <string name="PinnedMessages">Vastgezette berichten</string>
     <string name="Language">Taal</string>
     <string name="LanguageCustom">Aangepast</string>
-    <string name="AskAQuestionInfo">De ondersteuning van Bettergram wordt gedaan door vrijwilligers. We doen ons best om zo snel mogelijk te antwoorden, maar het kan even duren.\n\nBekijk ook de <![CDATA[<a href=\"https://Bettergram.org/faq#general-questions\">veelgestelde vragen</a>]]>: Hier staan de antwoorden op de meeste vragen en belangrijke tips voor <![CDATA[<a href=\"https://Bettergram.org/faq#troubleshooting\">het oplossen van problemen</a>]]>.</string>
+    <string name="AskAQuestionInfo">De ondersteuning van Bettergram wordt gedaan door vrijwilligers. We doen ons best om zo snel mogelijk te antwoorden, maar het kan even duren.\n\nBekijk ook de <![CDATA[<a href=\"https://Bettergram.io/faq#general-questions\">veelgestelde vragen</a>]]>: Hier staan de antwoorden op de meeste vragen en belangrijke tips voor <![CDATA[<a href=\"https://Bettergram.io/faq#troubleshooting\">het oplossen van problemen</a>]]>.</string>
     <string name="AskButton">Vraag een vrijwilliger</string>
     <string name="BettergramFAQ">Veelgestelde vragen</string>
     <string name="BettergramFaq">Veelgestelde vragen</string>
@@ -994,7 +994,7 @@
     <string name="PrivacyPolicy">Privacybeleid</string>
     <string name="TermsOfService">Gebruiksvoorwaarden</string>
     <string name="TermsOfServiceLogin">Door aan te melden ga je akkoord \nmet onze *Gebruiksvoorwaarden*.</string>
-    <string name="PrivacyPolicyUrl">https://bettergram.io/#</string>
+    <string name="PrivacyPolicyUrl">https://bettergram.io/#myModal3</string>
     <string name="DeleteLocalization">Vertaling verwijderen?</string>
     <string name="IncorrectLocalization">Ongeldig vertalingsbestand</string>
     <string name="NotificationsService">Meldingenservice</string>
@@ -1707,7 +1707,7 @@
     <string name="ActionBotDocumentRentalAgreement">Huurovereenkomst</string>
     <string name="ActionBotDocumentPhone">Telefoonnummer</string>
     <string name="ActionBotDocumentEmail">E-mailadres</string>
-    <string name="UnsupportedMedia">Dit bericht wordt niet ondersteund door jouw versie van Bettergram. Werk Bettergram bij om dit bericht te bekijken: https://Bettergram.org/update</string>
+    <string name="UnsupportedMedia">Dit bericht wordt niet ondersteund door jouw versie van Bettergram. Werk Bettergram bij om dit bericht te bekijken: https://Bettergram.io/update</string>
     <string name="AttachPhoto">Foto</string>
     <string name="AttachVideo">Video</string>
     <string name="AttachDestructingPhoto">Zelfvernietigende foto</string>
