@@ -1559,7 +1559,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 if (cryptoAdapter == null) {
                     cryptoAdapter = new CryptoAdapter(activity);
                 }
-                cryptoAdapter.startService(activity);
+                cryptoAdapter.startService();
                 if (newsAdapter == null) {
                     newsAdapter = new NewsAdapter(activity);
                 }
@@ -1586,6 +1586,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                         ActionBarMenuItem itemSearch = menu.getItem(0);
                         itemSearch.setVisibility(!shouldOpen ? View.GONE : View.VISIBLE);
                         actionBar.closeSearchField();
+                        if (position != 1) {
+                            cryptoAdapter.pauseService();
+                        }
                         switch (position) {
                             case 0:
                                 if (!(listView.getAdapter() instanceof BetterDialogsAdapter)) {
@@ -1596,6 +1599,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                                 if (!(listView.getAdapter() instanceof CryptoAdapter)) {
                                     listView.setAdapter(cryptoAdapter);
                                     ptrLayout.setOnRefreshListener(cryptoAdapter);
+                                    cryptoAdapter.startService();
                                 }
                                 break;
                             case 2:
@@ -1738,7 +1742,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         getAvailableActivity(activity -> {
             if (activity != null) {
                 if (cryptoAdapter != null) {
-                    cryptoAdapter.registerReceiver(activity);
+                    //cryptoAdapter.registerReceiver(activity);
+                    cryptoAdapter.startService();
                 }
                 if (newsAdapter != null) {
                     newsAdapter.registerReceiver(activity);
@@ -1762,7 +1767,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         getAvailableActivity(activity -> {
             if (activity != null) {
                 if (cryptoAdapter != null) {
-                    cryptoAdapter.unregisterReceiver(activity);
+                    //cryptoAdapter.unregisterReceiver(activity);
+                    cryptoAdapter.pauseService();
                 }
                 if (newsAdapter != null) {
                     newsAdapter.unregisterReceiver(activity);

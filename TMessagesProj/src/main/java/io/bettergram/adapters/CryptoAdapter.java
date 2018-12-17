@@ -107,7 +107,7 @@ public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         if (this.ptrLayout == null) {
             this.ptrLayout = ptrLayout;
         }
-        startService(activity);
+        startService();
     }
 
     @Override
@@ -549,10 +549,15 @@ public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         return spanBuilder.build();
     }
 
-    public void startService(Activity activity) {
+    public void startService() {
+        CryptoCurrencyDataService.isCurrentActive = true;
         Intent intent = new Intent(activity, CryptoCurrencyDataService.class);
         intent.putExtra(EXTRA_LIMIT, 100);
         activity.startService(intent);
+    }
+
+    public void pauseService() {
+        CryptoCurrencyDataService.isCurrentActive = false;
     }
 
     /**

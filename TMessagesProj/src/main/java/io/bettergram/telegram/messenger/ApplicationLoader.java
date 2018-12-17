@@ -13,7 +13,11 @@ import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.Application;
 import android.app.PendingIntent;
-import android.content.*;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -21,6 +25,7 @@ import android.content.res.Configuration;
 import android.os.Handler;
 import android.os.PowerManager;
 import android.text.TextUtils;
+
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
@@ -28,6 +33,17 @@ import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.security.ProviderInstaller;
 import com.google.firebase.iid.FirebaseInstanceId;
+
+import java.io.File;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import javax.net.ssl.SSLContext;
+
 import io.bettergram.service.CryptoCurrencyDataService;
 import io.bettergram.service.NewsDataService;
 import io.bettergram.service.ResourcesDataService;
@@ -41,16 +57,8 @@ import okhttp3.ConnectionSpec;
 import okhttp3.OkHttpClient;
 import okhttp3.TlsVersion;
 
-import javax.net.ssl.SSLContext;
-import java.io.File;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
 import static io.bettergram.service.CryptoCurrencyDataService.EXTRA_LIMIT;
+import static io.bettergram.service.CryptoCurrencyDataService.EXTRA_RUN_FROM_START;
 
 public class ApplicationLoader extends Application {
 
@@ -290,6 +298,7 @@ public class ApplicationLoader extends Application {
     public static void warmupBettergramData(Activity activity) {
         Intent intent = new Intent(activity, CryptoCurrencyDataService.class);
         intent.putExtra(EXTRA_LIMIT, 100);
+        intent.putExtra(EXTRA_RUN_FROM_START, true);
         activity.startService(intent);
 
         Intent intent2 = new Intent(activity, NewsDataService.class);

@@ -6626,7 +6626,7 @@ public class MessagesController implements NotificationCenter.NotificationCenter
                 return dialogs.get(i).favorite_date;
             }
         }
-        return dialogs_dict.get(did).favorite_date;
+        return dialogs_dict.get(did) != null ? dialogs_dict.get(did).favorite_date : 0;
     }
 
     public boolean pinDialog(long did, boolean pin, TLRPC.InputPeer peer, long taskId) {
@@ -8665,6 +8665,7 @@ public class MessagesController implements NotificationCenter.NotificationCenter
                         toDbUser.username = update.username;
                         dbUsers.add(toDbUser);
                     } else if (baseUpdate instanceof TLRPC.TL_updateDialogPinned) {
+                        /**
                         TLRPC.TL_updateDialogPinned updateDialogPinned = (TLRPC.TL_updateDialogPinned) baseUpdate;
                         long did;
                         if (updateDialogPinned.peer instanceof TLRPC.TL_dialogPeer) {
@@ -8682,9 +8683,11 @@ public class MessagesController implements NotificationCenter.NotificationCenter
                         if (!pinDialog(did, updateDialogPinned.pinned, null, -1)) {
                             UserConfig.getInstance(currentAccount).pinnedDialogsLoaded = false;
                             UserConfig.getInstance(currentAccount).saveConfig(false);
-                            //loadPinnedDialogs(did, null);
+                            loadPinnedDialogs(did, null);
                         }
+                         **/
                     } else if (baseUpdate instanceof TLRPC.TL_updatePinnedDialogs) {
+                        /*
                         TLRPC.TL_updatePinnedDialogs update = (TLRPC.TL_updatePinnedDialogs) baseUpdate;
                         UserConfig.getInstance(currentAccount).pinnedDialogsLoaded = false;
                         UserConfig.getInstance(currentAccount).saveConfig(false);
@@ -8712,7 +8715,8 @@ public class MessagesController implements NotificationCenter.NotificationCenter
                         } else {
                             order = null;
                         }
-                        //loadPinnedDialogs(0, order);
+                        loadPinnedDialogs(0, order);
+                        */
                     } else if (baseUpdate instanceof TLRPC.TL_updateUserPhoto) {
                         TLRPC.TL_updateUserPhoto update = (TLRPC.TL_updateUserPhoto) baseUpdate;
                         final TLRPC.User currentUser = getUser(update.user_id);

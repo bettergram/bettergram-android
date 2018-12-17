@@ -16,7 +16,6 @@ import android.os.SystemClock;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Base64;
-import android.util.Log;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -426,14 +425,11 @@ public class ConnectionsManager {
                 if (BuildVars.LOGS_ENABLED) {
                     FileLog.d("java received " + message);
                 }
-                Log.e("test", "the fucking flags: " + ((TLRPC.Updates) message).flags);
                 KeepAliveJob.finishJob();
                 Utilities.stageQueue.postRunnable(new Runnable() {
                     @Override
                     public void run() {
-                        if (((TLRPC.Updates) message).flags != 0) {
-                            MessagesController.getInstance(currentAccount).processUpdates((TLRPC.Updates) message, false);
-                        }
+                        MessagesController.getInstance(currentAccount).processUpdates((TLRPC.Updates) message, false);
                     }
                 });
             }
