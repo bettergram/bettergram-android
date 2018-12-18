@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -140,9 +139,7 @@ public class CryptoCurrencyDataService extends BaseDataService {
                 boolean fetchCryptoCurrencies = intent.getBooleanExtra(KEY_CRYPTO_CURRENCIES, false);
                 String savedCryptoJson = preferences.getString(KEY_CRYPTO_CURRENCIES, null);
                 List<CryptoCurrency> currencies = new ArrayList<>();
-                Log.e("test", "Point A");
                 if (fetchCryptoCurrencies || isEmpty(savedCryptoJson)) {
-                    Log.e("test", "Point B");
                     Request request = new Request.Builder().url(CURRENCY_URL).build();
                     try {
                         Response response = okhttp_client().newCall(request).execute();
@@ -169,7 +166,6 @@ public class CryptoCurrencyDataService extends BaseDataService {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                Log.e("test", "Point C");
                 String sortBy = intent.getStringExtra(EXTRA_SORT_BY);
                 String orderBy = intent.getStringExtra(EXTRA_ORDER_BY);
                 int offset = intent.getIntExtra(EXTRA_OFFSET, 0);
