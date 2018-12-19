@@ -324,13 +324,6 @@ public class TabsView extends FrameLayout implements NotificationCenter.Notifica
 
     private void unreadCount() {
         MessagesController messagesController = MessagesController.getInstance(currentAccount);
-        //unreadCount(messagesController.dialogsUnread, positions[8]);
-        //unreadCount(messagesController.dialogsAdmin, positions[7]);
-        //unreadCount(messagesController.dialogsFavs, positions[6]);
-        //unreadCount(messagesController.dialogsBots, positions[5]);
-        //unreadCount(messagesController.dialogsChannels, positions[4]);
-        //unreadCountGroups();
-        //unreadCount(messagesController.dialogsUsers, positions[1]);
         ArrayList<TLRPC.TL_dialog> dialogs = messagesController.dialogs;
         for (int i = 0; i < tabs.size(); i++) {
             force = true;
@@ -338,36 +331,24 @@ public class TabsView extends FrameLayout implements NotificationCenter.Notifica
         }
     }
 
-//    private void unreadCountGroups() {
-//        MessagesController messagesController = MessagesController.getInstance(currentAccount);
-//        if(!Theme.plusHideGroupsTab)unreadCount(!Theme.plusHideSuperGroupsTab ? messagesController.dialogsGroups : messagesController.dialogsGroupsAll, positions[2]);
-//        if(!Theme.plusHideSuperGroupsTab)unreadCount(messagesController.dialogsMegaGroups, positions[3]);
-//    }
-
     private void unreadCount(final ArrayList<TLRPC.TL_dialog> dialogs, int position) {
         if (position == -1) {
             counting = false;
             return;
         }
-        SharedPreferences plusPreferences = ApplicationLoader.applicationContext.getSharedPreferences("plusconfig", Activity.MODE_PRIVATE);
         boolean allMuted = true;
         int unreadCount = 0;
-        int i;
         if (dialogs != null && !dialogs.isEmpty()) {
             for (int a = 0; a < dialogs.size(); a++) {
                 TLRPC.TL_dialog dialg = dialogs.get(a);
                 if (dialg != null && dialg.unread_count > 0) {
-                    //boolean isMuted = MessagesController.getInstance(currentAccount).isDialogMuted(dialg.id);
-                    //if (!isMuted) {
-                    i = dialg.unread_count;
-                    //if (i == 0 && plusPreferences.getInt("unread_" + dialg.id, 0) == 1) i = 1;
-                    //if (i > 0) {
-                    if (position == 0 || (position == 1 && isDirect(dialg)) || (position == 2 && isGroup(dialg)) || (position == 3 && isAnnouncement(dialg)) || (position == 4 & isFavorite(dialg))) {
-                        unreadCount++;
+                    boolean isMuted = MessagesController.getInstance(currentAccount).isDialogMuted(dialg.id);
+                    if (!isMuted) {
+                        if (position == 0 || (position == 1 && isDirect(dialg)) || (position == 2 && isGroup(dialg)) || (position == 3 && isAnnouncement(dialg)) || (position == 4 & isFavorite(dialg))) {
+                            unreadCount++;
+                        }
+                        allMuted = false;
                     }
-                    allMuted = false;
-                    //}
-                    //}
                 }
             }
         }
