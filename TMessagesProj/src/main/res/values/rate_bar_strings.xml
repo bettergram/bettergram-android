@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name" translatable="false">Bettergram</string>
+
+    <string name="rate_dialog_title">Got 2 Minutes?</string>
+    <string name="rate_dialog_message">If you do, we\'d super appreciate a review. It helps us improve Bettergram for users like you!</string>
+    <string name="rate_dialog_action_rate">Rate</string>
+    <string name="rate_dialog_action_never">No, thanks</string>
+    <string name="rate_dialog_action_later">Later</string>
+    <string name="rate_dialog_thank_you">Thank you!</string>
+</resources>

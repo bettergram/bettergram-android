@@ -51,6 +51,7 @@ import io.bettergram.service.YoutubeDataService;
 import io.bettergram.telegram.tgnet.ConnectionsManager;
 import io.bettergram.telegram.tgnet.TLRPC;
 import io.bettergram.telegram.ui.Components.ForegroundDetector;
+import io.bettergram.telegram.ui.Components.Rating.RateDialog;
 import io.fabric.sdk.android.Fabric;
 import okhttp3.CipherSuite;
 import okhttp3.ConnectionSpec;
@@ -326,5 +327,10 @@ public class ApplicationLoader extends Application {
             }
         }
         return okhttp_singleton;
+    }
+
+    public static void initRating(Activity activity) {
+        int daysUntilPrompt = RateDialog.daysUntilPrompt(activity);
+        RateDialog.with(activity, daysUntilPrompt == 0 ? 1 : daysUntilPrompt == 1 ? 3 : daysUntilPrompt == 3 ? 7 : 7, 1);
     }
 }

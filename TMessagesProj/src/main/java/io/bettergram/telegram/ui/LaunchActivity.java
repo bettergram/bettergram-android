@@ -152,6 +152,7 @@ public class LaunchActivity extends Activity implements ActionBarLayout.ActionBa
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ApplicationLoader.initRating(this);
         ApplicationLoader.postInitApplication();
         ApplicationLoader.warmupBettergramData(this);
         AndroidUtilities.checkDisplaySize(this, getResources().getConfiguration());
