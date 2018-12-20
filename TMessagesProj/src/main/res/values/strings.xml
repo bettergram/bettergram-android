@@ -2592,6 +2592,11 @@
     <string name="barItemNews">News</string>
     <string name="barItemVideos">Videos</string>
     <string name="barItemResources">Resources</string>
+    <string name="barTitleChats">All Chats</string>
+    <string name="barTitlePrices">LiveCoinWatch Prices</string>
+    <string name="barTitleNews">News</string>
+    <string name="barTitleVideos">Videos</string>
+    <string name="barTitleResources">Resources</string>
 
     <!-- Setting Social Links Label-->
     <string name="socialTwitter">Twitter</string>

@@ -50,8 +50,14 @@ public class BottomNavigationBar extends LinearLayout implements NotificationCen
             new Pair<>(R.drawable.ic_tab_crypto, R.string.barItemPrices),
             new Pair<>(R.drawable.ic_tab_news, R.string.barItemNews),
             new Pair<>(R.drawable.ic_tab_videos, R.string.barItemVideos),
-            new Pair<>(R.drawable.ic_tab_resources, R.string.barItemResources)
-    );
+            new Pair<>(R.drawable.ic_tab_resources, R.string.barItemResources));
+
+    private static final List<Integer> TITLES = Arrays.asList(
+            R.string.barTitleChats,
+            R.string.barTitlePrices,
+            R.string.barTitleNews,
+            R.string.barTitleVideos,
+            R.string.barTitleResources);
 
     private final List<Tab> tabs = new ArrayList<>(5);
     @ColorInt
@@ -164,9 +170,9 @@ public class BottomNavigationBar extends LinearLayout implements NotificationCen
      */
     public BottomNavigationBar selectTabAndTriggerListener(int position, boolean animate) {
         if (position != selectedPosition) {
-            onSelectListener.onSelect(position, getContext().getString(ITEMS.get(position).second));
+            onSelectListener.onSelect(position, getContext().getString(TITLES.get(position)));
         } else {
-            onReselectListener.onReselect(position, getContext().getString(ITEMS.get(position).second));
+            onReselectListener.onReselect(position, getContext().getString(TITLES.get(position)));
         }
         selectTab(position, animate);
         return this;
@@ -248,11 +254,11 @@ public class BottomNavigationBar extends LinearLayout implements NotificationCen
         Tab tab = new Tab(item, tabView, activeColorId, inactiveColorId);
         tabView.setOnClickListener(v -> {
             if (position == selectedPosition) {
-                onReselectListener.onReselect(position, getContext().getString(ITEMS.get(position).second));
+                onReselectListener.onReselect(position, getContext().getString(TITLES.get(position)));
                 return;
             }
             selectTab(position, true);
-            onSelectListener.onSelect(position, getContext().getString(ITEMS.get(position).second));
+            onSelectListener.onSelect(position, getContext().getString(TITLES.get(position)));
         });
         return tab;
     }
@@ -281,7 +287,7 @@ public class BottomNavigationBar extends LinearLayout implements NotificationCen
         }
         getCurrent().select(false);
         if (shouldTriggerListenerOnLayout) {
-            onSelectListener.onSelect(selectedPosition, getContext().getString(ITEMS.get(selectedPosition).second));
+            onSelectListener.onSelect(selectedPosition, getContext().getString(TITLES.get(selectedPosition)));
         }
     }
 
