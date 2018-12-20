@@ -1072,7 +1072,7 @@ public class Theme {
     public static final String key_calls_ratingStar = "calls_ratingStar";
     public static final String key_calls_ratingStarSelected = "calls_ratingStarSelected";
 
-    public static final String key_bottombar_inactiveColor = "bottombar_inactiveColor";
+    public static final String key_bottombar_inactiveColor = "bottombar_inactiveColor1";
     public static final String key_bottombar_activeColor = "bottombar_activeColor";
     public static final String key_bottombar_backgroundColor = "bottombar_backgroundColor";
 
@@ -1082,7 +1082,7 @@ public class Theme {
 
     public static final String key_panel_backgroundColor = "panel_backgroundColor";
     public static final String key_panel_labelColor = "panel_labelColor";
-    public static final String key_panel_subLabelColor = "panel_subLabelColor";
+    public static final String key_panel_subLabelColor = "panel_subLabelColor1";
 
     public static final String key_dialog_backgroundColor = "dialog_backgroundColor";
 
@@ -1728,7 +1728,7 @@ public class Theme {
         defaultColors.put(key_calls_ratingStar, 0x80000000);
         defaultColors.put(key_calls_ratingStarSelected, 0xFF4a97d6);
 
-        defaultColors.put(key_bottombar_inactiveColor, 0xFFC9C9C9);
+        defaultColors.put(key_bottombar_inactiveColor, 0xFFAFAFAF);
         defaultColors.put(key_bottombar_activeColor, 0xFF1FCD6D);
         defaultColors.put(key_bottombar_backgroundColor, 0xFFFFFFFF);
 
@@ -1738,7 +1738,7 @@ public class Theme {
 
         defaultColors.put(key_panel_backgroundColor, 0xffffffff);
         defaultColors.put(key_panel_labelColor, 0xff000000);
-        defaultColors.put(key_panel_subLabelColor, 0xFFC9C9C9);
+        defaultColors.put(key_panel_subLabelColor, 0xFF707070);
 
         defaultColors.put(key_dialog_backgroundColor, 0xffffffff);
 
@@ -1829,7 +1829,7 @@ public class Theme {
                 }
             }
             saveOtherThemes();
-            preferences.edit().remove("themes").commit();
+            preferences.edit().remove("themes").apply();
         }
 
         sortThemes();
@@ -2403,7 +2403,7 @@ public class Theme {
             }
         }
         editor.putString("themes2", array.toString());
-        editor.commit();
+        editor.apply();
     }
 
     public static HashMap<String, Integer> getDefaultColors() {
