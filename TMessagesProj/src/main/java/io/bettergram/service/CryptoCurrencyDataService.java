@@ -6,8 +6,6 @@ import android.content.SharedPreferences;
 import android.support.annotation.Nullable;
 
 import com.crashlytics.android.Crashlytics;
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParser;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -148,12 +146,16 @@ public class CryptoCurrencyDataService extends BaseDataService {
                     try {
                         Response response = okhttp_client().newCall(request).execute();
                         if (response.isSuccessful() && response.body() != null) {
-                            final JsonParser parser = new JsonFactory().createParser(response.body().byteStream());
-                            currencyData = CryptoCurrencyData__JsonHelper.parseFromJson(parser);
-                            //String fetchedCryptoJson = response.body().string();
-                            String fetchedCryptoJson = CryptoCurrencyData__JsonHelper.serializeToJson(currencyData);
-                            preferences.edit().putString(KEY_CRYPTO_CURRENCIES, fetchedCryptoJson).apply();
-                            savedCryptoJson = fetchedCryptoJson;
+                            //final JsonParser parser = new JsonFactory().createParser(response.body().byteStream());
+                            String fetchedCryptoJson = response.body().string();
+                            currencyData = CryptoCurrencyData__JsonHelper.parseFromJson(fetchedCryptoJson);
+                            if (currencyData != null) {
+                                preferences.edit().putString(KEY_CRYPTO_CURRENCIES, fetchedCryptoJson).apply();
+                                savedCryptoJson = fetchedCryptoJson;
+                            } else {
+                                preferences.edit().putString(KEY_CRYPTO_CURRENCIES, null).apply();
+                                savedCryptoJson = null;
+                            }
                         } else {
                             if (response.code() == 410) {
                                 NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.updateToLatestApiVersion);
@@ -204,26 +206,28 @@ public class CryptoCurrencyDataService extends BaseDataService {
                     public void onResponse(Call call, Response response) throws IOException {
                         try {
                             if (!call.isCanceled() && response != null && response.isSuccessful() && response.body() != null) {
-                                JsonParser parser = new JsonFactory().createParser(response.body().byteStream());
-                                //String fetchedCurrencyJson = response.body().string();
-                                CryptoCurrencyInfoResponse cryptoResponse = CryptoCurrencyInfoResponse__JsonHelper.parseFromJson(parser);
-                                cryptoResponse.data.list = addIcons(cryptoResponse.data.list, currencies);
-                                String savedFaveCryptoJson = preferences.getString(KEY_CRYPTO_CURRENCIES_FAVORITE, null);
-                                if (!isEmpty(savedFaveCryptoJson)) {
-                                    CryptoCurrencyInfoData data = CryptoCurrencyInfoData__JsonHelper.parseFromJson(savedFaveCryptoJson);
-                                    if (data != null && data.list != null && !data.list.isEmpty()) {
-                                        for (int i = 0, size = cryptoResponse.data.list.size(); i < size; i++) {
-                                            final int index = i;
-                                            CryptoCurrencyInfo inf = CollectionUtil.find(data.list,
-                                                    item -> cryptoResponse.data.list
-                                                            .get(index).code.equals(item.code));
-                                            cryptoResponse.data.list.get(index).favorite = inf != null;
+                                //JsonParser parser = new JsonFactory().createParser(response.body().byteStream());
+                                String fetchedCurrencyJson = response.body().string();
+                                CryptoCurrencyInfoResponse cryptoResponse = CryptoCurrencyInfoResponse__JsonHelper.parseFromJson(fetchedCurrencyJson);
+                                if (cryptoResponse != null) {
+                                    cryptoResponse.data.list = addIcons(cryptoResponse.data.list, currencies);
+                                    String savedFaveCryptoJson = preferences.getString(KEY_CRYPTO_CURRENCIES_FAVORITE, null);
+                                    if (!isEmpty(savedFaveCryptoJson)) {
+                                        CryptoCurrencyInfoData data = CryptoCurrencyInfoData__JsonHelper.parseFromJson(savedFaveCryptoJson);
+                                        if (data != null && data.list != null && !data.list.isEmpty()) {
+                                            for (int i = 0, size = cryptoResponse.data.list.size(); i < size; i++) {
+                                                final int index = i;
+                                                CryptoCurrencyInfo inf = CollectionUtil.find(data.list,
+                                                        item -> cryptoResponse.data.list
+                                                                .get(index).code.equals(item.code));
+                                                cryptoResponse.data.list.get(index).favorite = inf != null;
+                                            }
                                         }
                                     }
+                                    String json = CryptoCurrencyInfoResponse__JsonHelper.serializeToJson(cryptoResponse);
+                                    preferences.edit().putString(KEY_CRYPTO_CURRENCIES_SAVED, json).apply();
+                                    NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.updateCurrencyData, json);
                                 }
-                                String json = CryptoCurrencyInfoResponse__JsonHelper.serializeToJson(cryptoResponse);
-                                preferences.edit().putString(KEY_CRYPTO_CURRENCIES_SAVED, json).apply();
-                                NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.updateCurrencyData, json);
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
