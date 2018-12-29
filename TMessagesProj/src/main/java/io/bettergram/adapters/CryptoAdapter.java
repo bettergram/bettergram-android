@@ -11,6 +11,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
@@ -165,6 +166,7 @@ public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             imageCrypto = itemView.findViewWithTag("imageCrypto");
             textCryptoName = itemView.findViewWithTag("textCryptoName");
             textCryptoPrice = itemView.findViewWithTag("textCryptoPrice");
+            textCryptoPrice.setOnClickListener(this);
             textDayDelta = itemView.findViewWithTag("textDayDelta");
 
             cryptoPhoto = new ImageReceiver(imageCrypto);
@@ -195,10 +197,19 @@ public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
         @Override
         public void onClick(View v) {
-            if (!star.isChecked()) {
-                star.setChecked(true, true);
-            } else {
-                star.setChecked(false, true);
+            final Object tag = v.getTag();
+            if (tag != null) {
+                if ("starLayout".equals(tag)) {
+                    if (!star.isChecked()) {
+                        star.setChecked(true, true);
+                    } else {
+                        star.setChecked(false, true);
+                    }
+                } else if ("textCryptoPrice".equals(tag)) {
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW);
+                    browserIntent.setData(Uri.parse("https://www.livecoinwatch.com/"));
+                    v.getContext().startActivity(browserIntent);
+                }
             }
         }
 

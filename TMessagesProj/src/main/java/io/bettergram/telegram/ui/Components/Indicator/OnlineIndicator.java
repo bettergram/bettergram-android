@@ -1,7 +1,9 @@
 package io.bettergram.telegram.ui.Components.Indicator;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PorterDuff;
 
 import io.bettergram.telegram.messenger.AndroidUtilities;
 import io.bettergram.telegram.ui.ActionBar.Theme;

@@ -37,6 +37,13 @@ public class MigrationController {
     public void storePinnedDialog(TLRPC.TL_dialog d) {
         Set<String> string_set = restorePinnedDialogsStringSet();
         Set<String> string_set_copy = new HashSet<>(string_set);
+        for (String s : string_set_copy) {
+            String[] parts = s.split(",", 2);
+            long did = Long.valueOf(parts[0]);
+            if (d.id == did) {
+                string_set_copy.remove(s);
+            }
+        }
         string_set_copy.add(String.valueOf(d.id) + "," + String.valueOf(d.pinnedNum));
         SharedPreferences.Editor editor = dialogsPreferences.edit();
         editor.putStringSet("stored_pinned_dialog_set", string_set_copy);

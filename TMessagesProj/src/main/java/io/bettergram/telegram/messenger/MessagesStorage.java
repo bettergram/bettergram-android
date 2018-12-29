@@ -11,6 +11,7 @@ package io.bettergram.telegram.messenger;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
 import android.util.LongSparseArray;
+import android.util.Pair;
 import android.util.SparseArray;
 import android.util.SparseIntArray;
 
@@ -6978,6 +6979,33 @@ public class MessagesStorage {
         return count[0];
     }
 
+    public int getPinnedNum(final long did) {
+        final CountDownLatch countDownLatch = new CountDownLatch(1);
+        final int[] nums = new int[1];
+        storageQueue.postRunnable(() -> {
+            SQLiteCursor cursor = null;
+            try {
+                cursor = database.queryFinalized("SELECT pinned FROM dialogs WHERE did = " + did);
+                if (cursor.next()) {
+                    nums[0] = cursor.intValue(0);
+                }
+            } catch (Exception e) {
+                FileLog.e(e);
+            } finally {
+                if (cursor != null) {
+                    cursor.dispose();
+                }
+            }
+            countDownLatch.countDown();
+        });
+        try {
+            countDownLatch.await();
+        } catch (Exception e) {
+            FileLog.e(e);
+        }
+        return nums[0];
+    }
+
     public int setDialogFavorite(final long did, final int favorite_date) {
         final CountDownLatch countDownLatch = new CountDownLatch(1);
         final Integer[] dates = new Integer[]{0};
@@ -7075,22 +7103,31 @@ public class MessagesStorage {
         });
     }
 
-    public void swapDialogs(final long did1, final long did2) {
+    public ArrayList<Pair<Long, Integer>> pinDialogsInternal(ArrayList<Pair<Long, Integer>> dialogs) {
+        final CountDownLatch countDownLatch = new CountDownLatch(1);
         storageQueue.postRunnable(() -> {
             try {
-                SQLitePreparedStatement state = database.executeFast("UPDATE dialogs SET pinned = CASE did WHEN ? THEN (SELECT pinned FROM dialogs WHERE did = ?) WHEN ? THEN (SELECT pinned FROM dialogs WHERE did = ?) END WHERE did IN (?, ?)");
-                state.bindLong(1, did1);
-                state.bindLong(2, did2);
-                state.bindLong(3, did2);
-                state.bindLong(4, did1);
-                state.bindLong(5, did1);
-                state.bindLong(6, did2);
-                state.step();
+                SQLitePreparedStatement state = database.executeFast("UPDATE dialogs SET pinned = ? WHERE did = ?");
+                for (int a = 0; a < dialogs.size(); a++) {
+                    Pair<Long, Integer> d = dialogs.get(a);
+                    state.requery();
+                    state.bindInteger(1, d.second);
+                    state.bindLong(2, d.first);
+                    state.step();
+                }
                 state.dispose();
             } catch (Exception e) {
                 FileLog.e(e);
+                e.printStackTrace();
             }
+            countDownLatch.countDown();
         });
+        try {
+            countDownLatch.await();
+        } catch (Exception e) {
+            FileLog.e(e);
+        }
+        return dialogs;
     }
 
     public void putDialogs(final TLRPC.messages_Dialogs dialogs, final int check) {

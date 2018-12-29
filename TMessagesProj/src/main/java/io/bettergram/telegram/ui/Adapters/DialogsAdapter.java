@@ -19,11 +19,14 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import io.bettergram.messenger.R;
 import io.bettergram.telegram.messenger.AndroidUtilities;
 import io.bettergram.telegram.messenger.ContactsController;
 import io.bettergram.telegram.messenger.LocaleController;
 import io.bettergram.telegram.messenger.MessagesController;
-import io.bettergram.messenger.R;
 import io.bettergram.telegram.messenger.UserConfig;
 import io.bettergram.telegram.messenger.support.widget.RecyclerView;
 import io.bettergram.telegram.tgnet.TLObject;
@@ -39,9 +42,6 @@ import io.bettergram.telegram.ui.Cells.UserCell;
 import io.bettergram.telegram.ui.Components.CombinedDrawable;
 import io.bettergram.telegram.ui.Components.LayoutHelper;
 import io.bettergram.telegram.ui.Components.RecyclerListView;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class DialogsAdapter extends RecyclerListView.SelectionAdapter {
 
@@ -136,7 +136,7 @@ public class DialogsAdapter extends RecyclerListView.SelectionAdapter {
         return count;
     }
 
-    public TLObject getItem(int i) {
+    public TLObject getItem(int i, List<TLRPC.TL_dialog> arrayList) {
         if (showContacts) {
             i -= 3;
             if (i < 0 || i >= ContactsController.getInstance(currentAccount).contacts.size()) {
@@ -144,7 +144,7 @@ public class DialogsAdapter extends RecyclerListView.SelectionAdapter {
             }
             return MessagesController.getInstance(currentAccount).getUser(ContactsController.getInstance(currentAccount).contacts.get(i).user_id);
         }
-        List<TLRPC.TL_dialog> arrayList = getDialogsArray();
+
         if (hasHints) {
             int count = MessagesController.getInstance(currentAccount).hintDialogs.size();
             if (i < 2 + count) {
@@ -254,7 +254,7 @@ public class DialogsAdapter extends RecyclerListView.SelectionAdapter {
         switch (holder.getItemViewType()) {
             case 0: {
                 DialogCell cell = (DialogCell) holder.itemView;
-                TLRPC.TL_dialog dialog = (TLRPC.TL_dialog) getItem(i);
+                TLRPC.TL_dialog dialog = (TLRPC.TL_dialog) getItem(i, getDialogsArray());
                 if (hasHints) {
                     i -= 2 + MessagesController.getInstance(currentAccount).hintDialogs.size();
                 }
@@ -277,7 +277,7 @@ public class DialogsAdapter extends RecyclerListView.SelectionAdapter {
             }
             case 4: {
                 DialogMeUrlCell cell = (DialogMeUrlCell) holder.itemView;
-                cell.setRecentMeUrl((TLRPC.RecentMeUrl) getItem(i));
+                cell.setRecentMeUrl((TLRPC.RecentMeUrl) getItem(i, getDialogsArray()));
                 break;
             }
             case 6: {

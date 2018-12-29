@@ -30,6 +30,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.view.ViewCompat;
 import android.text.TextUtils;
+import android.util.Pair;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
@@ -1152,7 +1153,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         });
 
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN, ItemTouchHelper.UP | ItemTouchHelper.DOWN) {
-
+            List<TLRPC.TL_dialog> dialogs_copy;
+            int dragFrom = -1;
+            int dragTo = -1;
             private Drawable previousDrawable;
 
             TLRPC.TL_dialog getDialog(int position) {
@@ -1163,20 +1166,50 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 return dialogs.get(position);
             }
 
+            private void reallyMoved(int fromPosition, int toPosition) {
+                if (listView.getAdapter() instanceof BetterDialogsAdapter && dialogsAdapter != null) {
+                    if (fromPosition > toPosition) {
+                        final ArrayList<Pair<Long, Integer>> swappedPinnedDialogs = new ArrayList<>();
+                        for (int current_index = toPosition, last_index = fromPosition; current_index <= last_index; current_index++) {
+                            TLRPC.TL_dialog dialog_1 = dialogs_copy.get(current_index);
+                            TLRPC.TL_dialog dialog_2 = dialogs_copy.get(current_index == last_index ? toPosition : current_index + 1);
+                            swappedPinnedDialogs.add(new Pair<>(dialog_1.id, dialog_2.pinnedNum));
+                        }
+                        MessagesController.getInstance(currentAccount).pinDialogInternal(swappedPinnedDialogs);
+                    } else if (fromPosition < toPosition) {
+                        final ArrayList<Pair<Long, Integer>> swappedPinnedDialogs = new ArrayList<>();
+                        for (int current_index = toPosition, last_index = fromPosition; current_index >= last_index; current_index--) {
+                            TLRPC.TL_dialog dialog_1 = dialogs_copy.get(current_index);
+                            TLRPC.TL_dialog dialog_2 = dialogs_copy.get(current_index == last_index ? toPosition : current_index - 1);
+                            swappedPinnedDialogs.add(new Pair<>(dialog_1.id, dialog_2.pinnedNum));
+                        }
+                        MessagesController.getInstance(currentAccount).pinDialogInternal(swappedPinnedDialogs);
+                    }
+                    AndroidUtilities.runOnUIThread(() -> {
+                        dialogsAdapter.notifyDataSetChanged();
+                        NotificationCenter.getInstance(currentAccount).postNotificationName(NotificationCenter.dialogsNeedReload);
+                    }, 1000);
+                }
+            }
+
             @Override
             public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-                final int position = viewHolder.getAdapterPosition();
-                final TLRPC.TL_dialog dialog = getDialog(position);
+                int fromPosition = viewHolder.getAdapterPosition();
+                int toPosition = target.getAdapterPosition();
+
+
+                if (dragFrom == -1) {
+                    dragFrom = fromPosition;
+                }
+                dragTo = toPosition;
+
                 final int pinned_highest_pos = MessagesController.getInstance(currentAccount).getPinnedCount() - 1;
-                final int target_position = target.getAdapterPosition();
-                if (dialog != null && dialog.pinned && pinned_highest_pos > 1 && position <= pinned_highest_pos && target_position <= pinned_highest_pos) {
-                    if (bottomSheetDialog != null) {
-                        bottomSheetDialog.dismiss();
-                    }
-                    MessagesController.getInstance(currentAccount).swapPinnedDialogs(position, target_position);
-                    dialogsAdapter.notifyItemMoved(position, target_position);
+                final TLRPC.TL_dialog dialog = getDialog(fromPosition);
+                if (dialog != null && dialog.pinned && pinned_highest_pos > 1 && fromPosition <= pinned_highest_pos && toPosition <= pinned_highest_pos) {
+                    dialogsAdapter.onItemMove(fromPosition, toPosition);
                     return true;
                 }
+
                 return false;
             }
 
@@ -1184,6 +1217,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             public void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState) {
                 super.onSelectedChanged(viewHolder, actionState);
                 if (actionState == 2) {
+                    dialogs_copy = dialogsAdapter.getDialogsArray();
                     final Drawable draggingDrawable = listView.getBackground();
                     previousDrawable = viewHolder.itemView.getBackground();
                     viewHolder.itemView.setBackground(draggingDrawable);
@@ -1214,6 +1248,28 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                     return makeFlag(ItemTouchHelper.ACTION_STATE_IDLE, ItemTouchHelper.ACTION_STATE_IDLE);
                 }
             }
+
+            @Override
+            public boolean isLongPressDragEnabled() {
+                return true;
+            }
+
+            @Override
+            public boolean isItemViewSwipeEnabled() {
+                return false;
+            }
+
+            @Override
+            public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+                super.clearView(recyclerView, viewHolder);
+
+                if (dragFrom != -1 && dragTo != -1 && dragFrom != dragTo) {
+                    reallyMoved(dragFrom, dragTo);
+                }
+
+                dragFrom = dragTo = -1;
+            }
+
         }).attachToRecyclerView(listView);
 
         searchEmptyView = new EmptyTextProgressView(context);
@@ -1722,7 +1778,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                     if (UserConfig.getInstance(currentAccount).syncContacts && activity.shouldShowRequestPermissionRationale(Manifest.permission.READ_CONTACTS)) {
                         AlertDialog.Builder builder = AlertsCreator.createContactsPermissionDialog(activity, param -> {
                             askAboutContacts = param != 0;
-                            MessagesController.getGlobalNotificationsSettings().edit().putBoolean("askAboutContacts", askAboutContacts).commit();
+                            MessagesController.getGlobalNotificationsSettings().edit().putBoolean("askAboutContacts", askAboutContacts).apply();
                             askForPermissions(false);
                         });
                         showDialog(permissionDialog = builder.create());
@@ -2053,8 +2109,6 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             checkUnreadCount(true);
             if (dialogsAdapter != null) {
                 if (dialogsAdapter.isDataSetChanged() || args.length > 0) {
-                    //MessagesController.getInstance(currentAccount).loadLocalPinnedDialogs();
-                    //MessagesController.getInstance(currentAccount).loadLocalFavoriteDialogs();
                     listView.postAndNotifyAdapter(dialogsAdapter::notifyDataSetChanged);
                 } else {
                     updateVisibleRows(MessagesController.UPDATE_MASK_NEW_MESSAGE);
