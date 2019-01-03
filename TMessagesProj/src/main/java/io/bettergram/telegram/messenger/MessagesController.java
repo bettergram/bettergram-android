@@ -258,7 +258,7 @@ public class MessagesController implements NotificationCenter.NotificationCenter
         public TLRPC.SendMessageAction action;
     }
 
-    private final Comparator<TLRPC.TL_dialog> dialogComparator = new Comparator<TLRPC.TL_dialog>() {
+    public final Comparator<TLRPC.TL_dialog> dialogComparator = new Comparator<TLRPC.TL_dialog>() {
         @Override
         public int compare(TLRPC.TL_dialog dialog1, TLRPC.TL_dialog dialog2) {
             if (!dialog1.pinned && dialog2.pinned) {

@@ -11,7 +11,11 @@ package io.bettergram.telegram.ui.Components;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.*;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Path;
+import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
 import android.os.Build;
@@ -20,7 +24,18 @@ import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.util.SparseIntArray;
 import android.util.StateSet;
-import android.view.*;
+import android.view.GestureDetector;
+import android.view.HapticFeedbackConstants;
+import android.view.MotionEvent;
+import android.view.SoundEffectConstants;
+import android.view.View;
+import android.view.ViewConfiguration;
+import android.view.ViewGroup;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+
 import io.bettergram.telegram.messenger.AndroidUtilities;
 import io.bettergram.telegram.messenger.FileLog;
 import io.bettergram.telegram.messenger.LocaleController;
@@ -28,16 +43,13 @@ import io.bettergram.telegram.messenger.support.widget.LinearLayoutManager;
 import io.bettergram.telegram.messenger.support.widget.RecyclerView;
 import io.bettergram.telegram.ui.ActionBar.Theme;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-
 public class RecyclerListView extends RecyclerView {
 
     private OnItemClickListener onItemClickListener;
     private OnItemClickListenerExtended onItemClickListenerExtended;
     private OnItemLongClickListener onItemLongClickListener;
     private OnItemLongClickListenerExtended onItemLongClickListenerExtended;
+    private RecyclerListViewItemClickListener onListItemClickListener;
     private boolean longPressCalled;
     private OnScrollListener onScrollListener;
     private OnInterceptTouchListener onInterceptTouchListener;
@@ -544,6 +556,11 @@ public class RecyclerListView extends RecyclerView {
             });
         }
 
+        public void resetLatestChild() {
+            currentChildView = null;
+            currentChildPosition = -1;
+        }
+
         @Override
         public boolean onInterceptTouchEvent(RecyclerView view, MotionEvent event) {
             int action = event.getActionMasked();
@@ -925,7 +942,8 @@ public class RecyclerListView extends RecyclerView {
                 }
             }
         });
-        addOnItemTouchListener(new RecyclerListViewItemClickListener(context));
+        onListItemClickListener = new RecyclerListViewItemClickListener(context);
+        addOnItemTouchListener(onListItemClickListener);
     }
 
     @Override
@@ -1180,6 +1198,10 @@ public class RecyclerListView extends RecyclerView {
             parent = (ViewGroup) getParent();
             parent.addView(fastScroll);
         }
+    }
+
+    public void cleanupTouch() {
+        onListItemClickListener.resetLatestChild();
     }
 
     @Override

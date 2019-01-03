@@ -123,6 +123,9 @@ import io.bettergram.telegram.ui.Components.SizeNotifierFrameLayout;
 import io.bettergram.telegram.ui.Components.StickersAlert;
 import io.bettergram.telegram.ui.Components.TabsView;
 
+import static io.bettergram.telegram.messenger.support.widget.helper.ItemTouchHelper.ACTION_STATE_DRAG;
+import static io.bettergram.telegram.messenger.support.widget.helper.ItemTouchHelper.ACTION_STATE_IDLE;
+
 public class DialogsActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate {
 
     private RecyclerListView listView;
@@ -1168,60 +1171,66 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
 
             private void reallyMoved(int fromPosition, int toPosition) {
                 if (listView.getAdapter() instanceof BetterDialogsAdapter && dialogsAdapter != null) {
-                    if (fromPosition > toPosition) {
-                        final ArrayList<Pair<Long, Integer>> swappedPinnedDialogs = new ArrayList<>();
-                        for (int current_index = toPosition, last_index = fromPosition; current_index <= last_index; current_index++) {
-                            TLRPC.TL_dialog dialog_1 = dialogs_copy.get(current_index);
-                            TLRPC.TL_dialog dialog_2 = dialogs_copy.get(current_index == last_index ? toPosition : current_index + 1);
-                            swappedPinnedDialogs.add(new Pair<>(dialog_1.id, dialog_2.pinnedNum));
+                    final int pinned_highest_pos = MessagesController.getInstance(currentAccount).getPinnedCount() - 1;
+                    if (pinned_highest_pos >= 1 && fromPosition <= pinned_highest_pos && toPosition <= pinned_highest_pos) {
+                        if (fromPosition > toPosition) {
+                            final ArrayList<Pair<Long, Integer>> swappedPinnedDialogs = new ArrayList<>();
+                            for (int current_index = toPosition, last_index = fromPosition; current_index <= last_index; current_index++) {
+                                TLRPC.TL_dialog dialog_1 = dialogs_copy.get(current_index);
+                                TLRPC.TL_dialog dialog_2 = dialogs_copy.get(current_index == last_index ? toPosition : current_index + 1);
+                                swappedPinnedDialogs.add(new Pair<>(dialog_1.id, dialog_2.pinnedNum));
+                            }
+                            MessagesController.getInstance(currentAccount).pinDialogInternal(swappedPinnedDialogs);
+                        } else if (fromPosition < toPosition) {
+                            final ArrayList<Pair<Long, Integer>> swappedPinnedDialogs = new ArrayList<>();
+                            for (int current_index = toPosition, last_index = fromPosition; current_index >= last_index; current_index--) {
+                                TLRPC.TL_dialog dialog_1 = dialogs_copy.get(current_index);
+                                TLRPC.TL_dialog dialog_2 = dialogs_copy.get(current_index == last_index ? toPosition : current_index - 1);
+                                swappedPinnedDialogs.add(new Pair<>(dialog_1.id, dialog_2.pinnedNum));
+                            }
+                            MessagesController.getInstance(currentAccount).pinDialogInternal(swappedPinnedDialogs);
                         }
-                        MessagesController.getInstance(currentAccount).pinDialogInternal(swappedPinnedDialogs);
-                    } else if (fromPosition < toPosition) {
-                        final ArrayList<Pair<Long, Integer>> swappedPinnedDialogs = new ArrayList<>();
-                        for (int current_index = toPosition, last_index = fromPosition; current_index >= last_index; current_index--) {
-                            TLRPC.TL_dialog dialog_1 = dialogs_copy.get(current_index);
-                            TLRPC.TL_dialog dialog_2 = dialogs_copy.get(current_index == last_index ? toPosition : current_index - 1);
-                            swappedPinnedDialogs.add(new Pair<>(dialog_1.id, dialog_2.pinnedNum));
-                        }
-                        MessagesController.getInstance(currentAccount).pinDialogInternal(swappedPinnedDialogs);
+                    } else {
+                        reallyMoved(fromPosition, toPosition - 1);
                     }
                     AndroidUtilities.runOnUIThread(() -> {
+                        listView.cleanupTouch();
                         dialogsAdapter.notifyDataSetChanged();
-                        NotificationCenter.getInstance(currentAccount).postNotificationName(NotificationCenter.dialogsNeedReload);
-                    }, 1000);
+                    });
                 }
             }
 
             @Override
             public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-                int fromPosition = viewHolder.getAdapterPosition();
-                int toPosition = target.getAdapterPosition();
+                if (listView.getAdapter() instanceof BetterDialogsAdapter && dialogsAdapter != null) {
+                    int fromPosition = viewHolder.getAdapterPosition();
+                    int toPosition = target.getAdapterPosition();
 
 
-                if (dragFrom == -1) {
-                    dragFrom = fromPosition;
+                    if (dragFrom == -1) {
+                        dragFrom = fromPosition;
+                    }
+                    dragTo = toPosition;
+
+                    final int pinned_highest_pos = MessagesController.getInstance(currentAccount).getPinnedCount() - 1;
+                    final TLRPC.TL_dialog dialog = getDialog(fromPosition);
+                    if (dialog != null && dialog.pinned && pinned_highest_pos >= 1 && dragFrom <= pinned_highest_pos && dragTo <= pinned_highest_pos) {
+                        dialogsAdapter.onItemMove(fromPosition, toPosition);
+                        return true;
+                    }
                 }
-                dragTo = toPosition;
-
-                final int pinned_highest_pos = MessagesController.getInstance(currentAccount).getPinnedCount() - 1;
-                final TLRPC.TL_dialog dialog = getDialog(fromPosition);
-                if (dialog != null && dialog.pinned && pinned_highest_pos > 1 && fromPosition <= pinned_highest_pos && toPosition <= pinned_highest_pos) {
-                    dialogsAdapter.onItemMove(fromPosition, toPosition);
-                    return true;
-                }
-
                 return false;
             }
 
             @Override
             public void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState) {
                 super.onSelectedChanged(viewHolder, actionState);
-                if (actionState == 2) {
+                if (actionState == ACTION_STATE_DRAG) {
                     dialogs_copy = dialogsAdapter.getDialogsArray();
                     final Drawable draggingDrawable = listView.getBackground();
                     previousDrawable = viewHolder.itemView.getBackground();
                     viewHolder.itemView.setBackground(draggingDrawable);
-                } else if (actionState == 0) {
+                } else if (actionState == ACTION_STATE_IDLE) {
                     viewHolder.itemView.setBackground(previousDrawable);
                     final int position = viewHolder.getAdapterPosition();
                     final TLRPC.TL_dialog dialog = getDialog(position);
@@ -1233,6 +1242,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
 
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                if (listView.getAdapter() instanceof BetterDialogsAdapter && dialogsAdapter != null) {
+                    dialogsAdapter.notifyItemChanged(viewHolder.getAdapterPosition());
+                }
             }
 
             //defines the enabled move directions in each state (idle, swiping, dragging).
@@ -1241,11 +1253,11 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 final int position = viewHolder.getAdapterPosition();
                 final TLRPC.TL_dialog dialog = getDialog(position);
                 final int dialogs_size = dialogsAdapter.getDialogsArray().size();
-                final int pinned_highest_pos = MessagesController.getInstance(currentAccount).getPinnedCount();
-                if (dialog != null && dialog.pinned && dialogs_size > 1 && !searching && pinned_highest_pos > 1 && position <= pinned_highest_pos) {
-                    return makeFlag(ItemTouchHelper.ACTION_STATE_DRAG, (position == pinned_highest_pos - 1) ? ItemTouchHelper.UP : ItemTouchHelper.DOWN | ItemTouchHelper.UP);
+                final int pinned_highest_pos = MessagesController.getInstance(currentAccount).getPinnedCount() - 1;
+                if (dialog != null && dialog.pinned && dialogs_size >= 1 && !searching && pinned_highest_pos >= 1 && position <= pinned_highest_pos) {
+                    return makeFlag(ACTION_STATE_DRAG, (position == 0) ? ItemTouchHelper.DOWN : (position == pinned_highest_pos) ? ItemTouchHelper.UP : ItemTouchHelper.DOWN | ItemTouchHelper.UP);
                 } else {
-                    return makeFlag(ItemTouchHelper.ACTION_STATE_IDLE, ItemTouchHelper.ACTION_STATE_IDLE);
+                    return makeFlag(ACTION_STATE_IDLE, ACTION_STATE_IDLE);
                 }
             }
 
