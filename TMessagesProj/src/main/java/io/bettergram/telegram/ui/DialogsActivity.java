@@ -861,6 +861,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                     return false;
                 }
 
+                listView.cleanupTouch();
+
                 if (!AndroidUtilities.isTablet() && !onlySelect && view instanceof DialogCell) {
                     DialogCell cell = (DialogCell) view;
                     if (cell.isPointInsideAvatar(x, y)) {
@@ -1255,7 +1257,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 final int dialogs_size = dialogsAdapter.getDialogsArray().size();
                 final int pinned_highest_pos = MessagesController.getInstance(currentAccount).getPinnedCount() - 1;
                 if (dialog != null && dialog.pinned && dialogs_size >= 1 && !searching && pinned_highest_pos >= 1 && position <= pinned_highest_pos) {
-                    return makeFlag(ACTION_STATE_DRAG, (position == 0) ? ItemTouchHelper.DOWN : (position == pinned_highest_pos) ? ItemTouchHelper.UP : ItemTouchHelper.DOWN | ItemTouchHelper.UP);
+                    return makeFlag(ACTION_STATE_DRAG, (position == 0 && dragTo > -1) ? ItemTouchHelper.DOWN : (position == pinned_highest_pos) ? ItemTouchHelper.UP : ItemTouchHelper.DOWN | ItemTouchHelper.UP);
                 } else {
                     return makeFlag(ACTION_STATE_IDLE, ACTION_STATE_IDLE);
                 }
