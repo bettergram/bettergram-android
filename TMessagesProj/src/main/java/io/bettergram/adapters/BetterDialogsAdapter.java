@@ -2,9 +2,9 @@ package io.bettergram.adapters;
 
 import android.content.Context;
 
+import java.util.Collections;
 import java.util.List;
 
-import io.bettergram.telegram.messenger.AndroidUtilities;
 import io.bettergram.telegram.messenger.MessagesController;
 import io.bettergram.telegram.messenger.UserConfig;
 import io.bettergram.telegram.tgnet.TLObject;
@@ -48,16 +48,23 @@ public class BetterDialogsAdapter extends DialogsAdapter {
                 cache = ListUtil.filter(MessagesController.getInstance(currentAccount).dialogs, filterMapper.get(dialogsType).get());
             }
         }
-        return cache;
+        return sort(cache);
     }
 
     private List<TLRPC.TL_dialog> getActualDialogsArray() {
+        List<TLRPC.TL_dialog> dialogs;
         int dialogsType = getDialogsType();
         if (dialogsType < 100) {
-            return super.getDialogsArray();
+            dialogs = super.getDialogsArray();
         } else {
-            return ListUtil.filter(MessagesController.getInstance(currentAccount).dialogs, filterMapper.get(dialogsType).get());
+            dialogs = ListUtil.filter(MessagesController.getInstance(currentAccount).dialogs, filterMapper.get(dialogsType).get());
         }
+        return sort(dialogs);
+    }
+
+    private List<TLRPC.TL_dialog> sort(List<TLRPC.TL_dialog> dialogs) {
+        Collections.sort(dialogs, MessagesController.getInstance(currentAccount).dialogComparator);
+        return dialogs;
     }
 
     public void onItemMove(int fromPosition, int toPosition) {
