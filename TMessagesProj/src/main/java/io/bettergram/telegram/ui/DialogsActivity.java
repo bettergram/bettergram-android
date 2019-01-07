@@ -30,7 +30,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.view.ViewCompat;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.Pair;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -1649,7 +1648,6 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                         currentBottomTabPosition = position;
                         actionBar.setTitle(position == 0 ? newTabsView.getCurrentTab().getTitle() : title);
                         final boolean isChat = position == 0;
-                        Log.e("test", "Point X, position: " + position);
                         floatingButton.post(() -> hideFloatingButton(!isChat, true));
                         newTabsView.post(() -> newTabsView.hide(!isChat));
                         ptrLayout.setRefreshing(false);
@@ -1785,8 +1783,6 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             });
             appVersionTask.execute();
         });
-
-        videoAdapter.setActivity(getParentActivity());
 
         if (checkPermission && !onlySelect && Build.VERSION.SDK_INT >= 23) {
             Activity activity = getParentActivity();

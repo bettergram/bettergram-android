@@ -144,10 +144,6 @@ public class YouTubePlayerAdapter extends
         }
     }
 
-    public void setActivity(Activity activity) {
-        this.activity = activity;
-    }
-
     public void setVideos(List<Video> videos) {
         if (ptrLayout != null) {
             ptrLayout.setRefreshing(false);
