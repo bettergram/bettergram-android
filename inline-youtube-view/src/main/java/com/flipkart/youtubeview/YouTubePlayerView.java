@@ -19,6 +19,7 @@
 package com.flipkart.youtubeview;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
@@ -267,6 +268,13 @@ public class YouTubePlayerView extends FrameLayout {
         if (playerContainer.getId() == R.id.youtubeFragmentContainer) {
             removeCurrentYouTubeFragment();
         }
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        Activity activity = (Activity) getContext();
+        this.fragmentManger = activity.getFragmentManager();
     }
 
     @Override
