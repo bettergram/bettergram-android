@@ -19,103 +19,111 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:layout_marginTop="66dp"
         android:orientation="vertical">
 
-        <ImageView
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginBottom="16dp"
-            android:adjustViewBounds="true"
-            android:src="@drawable/img_logo"
-            tools:ignore="ContentDescription" />
-
         <LinearLayout
-            android:id="@+id/layout01"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:orientation="vertical"
-            android:visibility="gone">
+            android:layout_gravity="center|top"
+            android:orientation="vertical">
 
-            <EditText
-                android:id="@+id/emailEdit"
+            <ImageView
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="16dp"
+                android:adjustViewBounds="true"
+                android:src="@drawable/img_logo"
+                tools:ignore="ContentDescription" />
+
+            <LinearLayout
+                android:id="@+id/layout01"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginStart="42dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="42dp"
-                android:layout_marginBottom="8dp"
-                android:background="@drawable/bettergram_edittext_bg"
-                android:hint="@string/enter_your_email"
-                android:inputType="textEmailAddress"
-                android:paddingStart="8dp"
-                android:paddingTop="8dp"
-                android:paddingEnd="8dp"
-                android:paddingBottom="8dp"
-                android:textColor="@android:color/black"
-                android:textColorHint="@android:color/darker_gray"
-                tools:ignore="Autofill" />
+                android:orientation="vertical"
+                android:visibility="gone">
 
-            <Button
-                android:id="@+id/signUpButton"
-                android:layout_width="120dp"
-                android:layout_height="48dp"
-                android:layout_gravity="center"
-                android:background="@drawable/bettergram_button_bg"
-                android:text="@string/sign_up"
-                android:textAllCaps="true" />
+                <EditText
+                    android:id="@+id/emailEdit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="42dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="42dp"
+                    android:layout_marginBottom="8dp"
+                    android:background="@drawable/bettergram_edittext_bg"
+                    android:hint="@string/enter_your_email"
+                    android:inputType="textEmailAddress"
+                    android:paddingStart="8dp"
+                    android:paddingTop="8dp"
+                    android:paddingEnd="8dp"
+                    android:paddingBottom="8dp"
+                    android:textColor="@android:color/black"
+                    android:textColorHint="@android:color/darker_gray"
+                    tools:ignore="Autofill" />
 
+                <Button
+                    android:id="@+id/signUpButton"
+                    android:layout_width="120dp"
+                    android:layout_height="48dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/bettergram_button_bg"
+                    android:text="@string/sign_up"
+                    android:textAllCaps="true" />
+
+            </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/layout02"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|center"
-        android:orientation="vertical"
-        android:visibility="gone">
 
         <LinearLayout
+            android:id="@+id/layout02"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_gravity="center|top"
+            android:layout_marginTop="20dp"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <CheckBox
+                    android:id="@+id/termsCheckbox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:buttonTint="@android:color/white"
+                    android:checked="true" />
+
+                <TextView
+                    android:id="@+id/textTerms"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:text="@string/i_agree_to_the_terms"
+                    android:textColor="@android:color/white" />
+
+            </LinearLayout>
 
             <CheckBox
-                android:id="@+id/termsCheckbox"
+                android:id="@+id/newsletterCheckbox"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:buttonTint="@android:color/white"
-                android:checked="true" />
+                android:text="@string/free_crypto_newsletter" />
 
             <TextView
-                android:id="@+id/textTerms"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:clickable="true"
-                android:focusable="true"
-                android:text="@string/i_agree_to_the_terms"
+                android:layout_marginTop="18dp"
+                android:layout_marginBottom="8dp"
+                android:text="@string/you_must_accept_terms"
                 android:textColor="@android:color/white" />
-
         </LinearLayout>
 
-        <CheckBox
-            android:id="@+id/newsletterCheckbox"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:buttonTint="@android:color/white"
-            android:text="@string/free_crypto_newsletter" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="18dp"
-            android:layout_marginBottom="8dp"
-            android:text="@string/you_must_accept_terms"
-            android:textColor="@android:color/white" />
     </LinearLayout>
-
 </FrameLayout>

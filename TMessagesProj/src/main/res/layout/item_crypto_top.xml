@@ -15,7 +15,7 @@
         android:layout_gravity="center"
         android:layout_weight="0.45"
         android:gravity="center"
-        android:text="@string/code"
+        android:text="@string/coin"
         android:textColor="@color/grey3d"
         android:textSize="14sp"
         android:textStyle="bold" />

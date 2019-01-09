@@ -2604,7 +2604,7 @@
     <string name="socialTelegram">Telegram</string>
 
     <!-- Crypto -->
-    <string name="code">CODE</string>
+    <string name="coin">COIN</string>
     <string name="price">PRICE</string>
     <string name="_24h">24H</string>
     <string name="enter_your_email">Enter your email</string>
