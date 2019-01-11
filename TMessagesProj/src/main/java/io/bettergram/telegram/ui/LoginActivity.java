@@ -48,25 +48,38 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import io.bettergram.Global;
+import io.bettergram.messenger.R;
 import io.bettergram.telegram.PhoneFormat.PhoneFormat;
 import io.bettergram.telegram.messenger.AndroidUtilities;
+import io.bettergram.telegram.messenger.ApplicationLoader;
+import io.bettergram.telegram.messenger.BuildVars;
 import io.bettergram.telegram.messenger.ContactsController;
+import io.bettergram.telegram.messenger.FileLog;
+import io.bettergram.telegram.messenger.LocaleController;
 import io.bettergram.telegram.messenger.MessageObject;
 import io.bettergram.telegram.messenger.MessagesController;
 import io.bettergram.telegram.messenger.MessagesStorage;
+import io.bettergram.telegram.messenger.MigrationController;
 import io.bettergram.telegram.messenger.NotificationCenter;
-import io.bettergram.telegram.messenger.ApplicationLoader;
-import io.bettergram.telegram.messenger.BuildVars;
-import io.bettergram.telegram.messenger.FileLog;
-import io.bettergram.telegram.messenger.LocaleController;
-import io.bettergram.messenger.R;
 import io.bettergram.telegram.messenger.SRPHelper;
+import io.bettergram.telegram.messenger.UserConfig;
+import io.bettergram.telegram.messenger.Utilities;
 import io.bettergram.telegram.tgnet.ConnectionsManager;
 import io.bettergram.telegram.tgnet.RequestDelegate;
 import io.bettergram.telegram.tgnet.SerializedData;
 import io.bettergram.telegram.tgnet.TLRPC;
-import io.bettergram.telegram.messenger.UserConfig;
-import io.bettergram.telegram.messenger.Utilities;
 import io.bettergram.telegram.ui.ActionBar.ActionBar;
 import io.bettergram.telegram.ui.ActionBar.ActionBarMenu;
 import io.bettergram.telegram.ui.ActionBar.AlertDialog;
@@ -79,17 +92,6 @@ import io.bettergram.telegram.ui.Components.EditTextBoldCursor;
 import io.bettergram.telegram.ui.Components.HintEditText;
 import io.bettergram.telegram.ui.Components.LayoutHelper;
 import io.bettergram.telegram.ui.Components.SlideView;
-
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
 
 @SuppressLint("HardwareIds")
 public class LoginActivity extends BaseFragment {
@@ -589,6 +591,8 @@ public class LoginActivity extends BaseFragment {
     }
 
     private void onAuthSuccess(TLRPC.TL_auth_authorization res) {
+        Global.getInstance().setUserId(res.user.id);
+        MigrationController.getInstance().resetFirstRun();
         ConnectionsManager.getInstance(currentAccount).setUserId(res.user.id);
         UserConfig.getInstance(currentAccount).clearConfig();
         MessagesController.getInstance(currentAccount).cleanup();

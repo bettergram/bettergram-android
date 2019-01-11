@@ -18,6 +18,7 @@ import android.os.Bundle;
 import android.os.SystemClock;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.LongSparseArray;
 import android.util.Pair;
 import android.util.SparseArray;
@@ -29,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.ListIterator;
 import java.util.Locale;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
@@ -4293,11 +4295,15 @@ public class MessagesController implements NotificationCenter.NotificationCenter
                     reloadDialogsReadValue(dialogsToReload, 0);
                 }
                 loadUnreadDialogs();
-//                loadLocalPinnedDialogs();
-//                if (!loadedFavoriteDialogs) {
-//                    loadLocalFavoriteDialogs();
-//                    loadedFavoriteDialogs = true;
-//                }
+
+                if (MigrationController.getInstance().isFirstRun()) {
+                    loadLocalPinnedDialogs();
+                    if (!loadedFavoriteDialogs) {
+                        loadLocalFavoriteDialogs();
+                        loadedFavoriteDialogs = true;
+                    }
+                    MigrationController.getInstance().toggleFirstRun();
+                }
             });
         });
     }
@@ -6562,7 +6568,7 @@ public class MessagesController implements NotificationCenter.NotificationCenter
                     dialogs.get(i).favorite_date = dialogs_dict.get(did).favorite_date;
                 }
             }
-            //MigrationController.getInstance(currentAccount).storeFavoriteDialog(did, fave_date);
+            MigrationController.getInstance().storeFavoriteDialog(did, fave_date);
             loadedFavoriteDialogs = true;
             loadDialogs(0, 100, true);
             NotificationCenter.getInstance(currentAccount).postNotificationName(NotificationCenter.dialogsNeedReload);
@@ -6705,7 +6711,7 @@ public class MessagesController implements NotificationCenter.NotificationCenter
             }
         }
         MessagesStorage.getInstance(currentAccount).setDialogPinned(did, dialog.pinnedNum);
-        //MigrationController.getInstance(currentAccount).storePinnedDialog(dialog);
+        MigrationController.getInstance().storePinnedDialog(dialog);
         NotificationCenter.getInstance(currentAccount).postNotificationName(NotificationCenter.dialogsNeedReload);
         return true;
     }
@@ -6717,6 +6723,7 @@ public class MessagesController implements NotificationCenter.NotificationCenter
             for (int j = 0, size_j = dialogs.size(); j < size_j; j++) {
                 if (dialogs.get(j).id == d.first) {
                     dialogs.get(j).pinnedNum = d.second;
+                    MigrationController.getInstance().storePinnedDialog(dialogs.get(j));
                     break;
                 }
             }
@@ -6724,50 +6731,50 @@ public class MessagesController implements NotificationCenter.NotificationCenter
         sortDialogs(null);
     }
 
-//    public void loadLocalPinnedDialogs() {
-//        MigrationController.getInstance(currentAccount).migratePinnedDialogs(dialogs);
-//        for (int i = 0, size = dialogs_dict.size(); i < size; i++) {
-//            TLRPC.TL_dialog dialog = dialogs_dict.valueAt(i);
-//            dialogs_dict.valueAt(i).pinnedNum = MigrationController.getInstance(currentAccount).restorePinnedNum(dialog);
-//        }
-//        for (int a = 0, size_a = dialogs_dict.size(); a < size_a; a++) {
-//            for (int b = 0, size_b = dialogs.size(); b < size_b; b++) {
-//                if (dialogs_dict.valueAt(a).id == dialogs.get(b).id) {
-//                    dialogs.get(b).pinnedNum = dialogs_dict.valueAt(a).pinnedNum;
-//                }
-//            }
-//        }
-//        for (int i = 0, size = dialogs.size(); i < size; i++) {
-//            TLRPC.TL_dialog dialog = dialogs.get(i);
-//            pinDialog(dialog.id, dialog.pinnedNum > 0, null, 0);
-//        }
-//        sortDialogs(null);
-//    }
-//
-//    public void loadLocalFavoriteDialogs() {
-//        MigrationController.getInstance(currentAccount).migrateFavoritedDialogs(dialogs);
-//        for (int i = 0, size = dialogs_dict.size(); i < size; i++) {
-//            TLRPC.TL_dialog dialog = dialogs_dict.valueAt(i);
-//            dialogs_dict.valueAt(i).favorite_date = MigrationController.getInstance(currentAccount).restoreFavoriteDate(dialog);
-//        }
-//        for (int a = 0, size = dialogs_dict.size(); a < size; a++) {
-//            TLRPC.TL_dialog d1 = dialogs_dict.valueAt(a);
-//            ListIterator<TLRPC.TL_dialog> iterator = dialogs.listIterator();
-//            while (iterator.hasNext()) {
-//                TLRPC.TL_dialog d2 = iterator.next();
-//                if (d2.id == d1.id) {
-//                    iterator.set(d1);
-//                }
-//            }
-//        }
-//        for (int i = 0, size = dialogs.size(); i < size; i++) {
-//            TLRPC.TL_dialog dialog = dialogs.get(i);
-//            if (dialog.favorite_date > 0) {
-//                updateDialogFavorite(dialog.id, dialog.favorite_date);
-//            }
-//        }
-//        sortDialogs(null);
-//    }
+    public void loadLocalPinnedDialogs() {
+        MigrationController.getInstance().migratePinnedDialogs(dialogs);
+        for (int i = 0, size = dialogs_dict.size(); i < size; i++) {
+            TLRPC.TL_dialog dialog = dialogs_dict.valueAt(i);
+            dialogs_dict.valueAt(i).pinnedNum = MigrationController.getInstance().restorePinnedNum(dialog);
+        }
+        for (int a = 0, size_a = dialogs_dict.size(); a < size_a; a++) {
+            for (int b = 0, size_b = dialogs.size(); b < size_b; b++) {
+                if (dialogs_dict.valueAt(a).id == dialogs.get(b).id) {
+                    dialogs.get(b).pinnedNum = dialogs_dict.valueAt(a).pinnedNum;
+                }
+            }
+        }
+        for (int i = 0, size = dialogs.size(); i < size; i++) {
+            TLRPC.TL_dialog dialog = dialogs.get(i);
+            pinDialog(dialog.id, dialog.pinnedNum > 0, null, 0);
+        }
+        sortDialogs(null);
+    }
+
+    public void loadLocalFavoriteDialogs() {
+        MigrationController.getInstance().migrateFavoritedDialogs(dialogs);
+        for (int i = 0, size = dialogs_dict.size(); i < size; i++) {
+            TLRPC.TL_dialog dialog = dialogs_dict.valueAt(i);
+            dialogs_dict.valueAt(i).favorite_date = MigrationController.getInstance().restoreFavoriteDate(dialog);
+        }
+        for (int a = 0, size = dialogs_dict.size(); a < size; a++) {
+            TLRPC.TL_dialog d1 = dialogs_dict.valueAt(a);
+            ListIterator<TLRPC.TL_dialog> iterator = dialogs.listIterator();
+            while (iterator.hasNext()) {
+                TLRPC.TL_dialog d2 = iterator.next();
+                if (d2.id == d1.id) {
+                    iterator.set(d1);
+                }
+            }
+        }
+        for (int i = 0, size = dialogs.size(); i < size; i++) {
+            TLRPC.TL_dialog dialog = dialogs.get(i);
+            if (dialog.favorite_date > 0) {
+                updateDialogFavorite(dialog.id, dialog.favorite_date);
+            }
+        }
+        sortDialogs(null);
+    }
 
     public void loadPinnedDialogs(final long newDialogId, final ArrayList<Long> order) {
         if (UserConfig.getInstance(currentAccount).pinnedDialogsLoaded) {
@@ -9702,5 +9709,44 @@ public class MessagesController implements NotificationCenter.NotificationCenter
                 fragment.showDialog(progressDialog[0]);
             }, 500);
         }
+    }
+
+    public void logDialog(long did) {
+        //for (int i = 0, size = dialogs.size(); i < size; i++) {
+        //    final TLRPC.TL_dialog dialog = dialogs.get(i);
+        //    long did = dialog.id;
+        TLRPC.TL_dialog dialog = dialogs_dict.get(did);
+        int lower_id = (int) did;
+        int high_id = (int) (did >> 32);
+        if (lower_id != 0) {
+            TLRPC.Chat chat = null;
+            if (high_id == 1) {
+                chat = MessagesController.getInstance(currentAccount).getChat(lower_id);
+                if (chat != null) {
+                    Log.e("test", "did: " + did + ", name: " + chat.title + ", pinnedNum: " + dialog.pinnedNum);
+                }
+            } else {
+                if (lower_id < 0) {
+                    chat = MessagesController.getInstance(currentAccount).getChat(-lower_id);
+                    if (chat != null) {
+                        Log.e("test", "did: " + did + ", name: " + chat.title + ", pinnedNum: " + dialog.pinnedNum);
+                    }
+                } else {
+                    TLRPC.User user = MessagesController.getInstance(currentAccount).getUser(lower_id);
+                    if (user != null) {
+                        Log.e("test", "did: " + did + ", name: " + user.first_name + ", pinnedNum: " + dialog.pinnedNum);
+                    }
+                }
+            }
+        } else {
+            TLRPC.EncryptedChat encryptedChat = MessagesController.getInstance(currentAccount).getEncryptedChat(high_id);
+            if (encryptedChat != null) {
+                TLRPC.User user = MessagesController.getInstance(currentAccount).getUser(encryptedChat.user_id);
+                if (user != null) {
+                    Log.e("test", "did: " + did + ", name: " + user.first_name + ", pinnedNum: " + dialog.pinnedNum);
+                }
+            }
+        }
+        //}
     }
 }

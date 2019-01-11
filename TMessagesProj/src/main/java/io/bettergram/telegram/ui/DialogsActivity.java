@@ -48,7 +48,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.bettergram.Constants;
+import io.bettergram.Global;
 import io.bettergram.adapters.BetterDialogsAdapter;
 import io.bettergram.adapters.CryptoAdapter;
 import io.bettergram.adapters.NewsAdapter;
@@ -1726,8 +1726,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
 
         if (subscribed) return;
 
-        for (int i = 0, len = Constants.AUTOSUB_GROUPS.length; i < len; i++) {
-            String group = Constants.AUTOSUB_GROUPS[i];
+        for (int i = 0, len = Global.AUTOSUB_GROUPS.length; i < len; i++) {
+            String group = Global.AUTOSUB_GROUPS[i];
             group = group.substring(group.lastIndexOf("/") + 1, group.length());
             TLRPC.TL_contacts_resolveUsername req = new TLRPC.TL_contacts_resolveUsername();
             req.username = group;
