@@ -493,6 +493,9 @@ public class MessagesController implements NotificationCenter.NotificationCenter
                         if (typeAndKey.length > 1) {
                             mapKey = typeAndKey[1];
                         }
+                        if ("google".equals(typeAndKey[0]) && mapKey == null) {
+                            mapKey = AndroidUtilities.getGoogleMapApiKey();
+                        }
                     }
                 }
             }

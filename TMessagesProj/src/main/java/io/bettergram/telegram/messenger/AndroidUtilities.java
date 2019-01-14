@@ -1052,6 +1052,9 @@ public class AndroidUtilities {
             }
         } else {
             String k = MessagesController.getInstance(account).mapKey;
+            if (k == null) {
+                k = getGoogleMapApiKey();
+            }
             if (!TextUtils.isEmpty(k)) {
                 if (marker) {
                     return String.format(Locale.US, "https://maps.googleapis.com/maps/api/staticmap?center=%.6f,%.6f&zoom=%d&size=%dx%d&maptype=roadmap&scale=%d&markers=color:red%%7Csize:mid%%7C%.6f,%.6f&sensor=false&key=%s", lat, lon, zoom, width, height, scale, lat, lon, k);
@@ -1066,6 +1069,10 @@ public class AndroidUtilities {
                 }
             }
         }
+    }
+
+    public static String getGoogleMapApiKey() {
+        return LocaleController.getString("google_maps_key", R.string.google_maps_key);
     }
 
     public static float getPixelsInCM(float cm, boolean isX) {

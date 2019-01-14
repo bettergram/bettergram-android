@@ -50,9 +50,7 @@ import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
-
 import com.google.android.gms.maps.MapsInitializer;
-import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
@@ -60,14 +58,23 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
+import io.bettergram.messenger.R;
 import io.bettergram.telegram.messenger.AndroidUtilities;
+import io.bettergram.telegram.messenger.ApplicationLoader;
 import io.bettergram.telegram.messenger.ChatObject;
 import io.bettergram.telegram.messenger.FileLoader;
-import io.bettergram.telegram.messenger.LocationController;
-import io.bettergram.telegram.messenger.MessagesStorage;
-import io.bettergram.telegram.messenger.ApplicationLoader;
 import io.bettergram.telegram.messenger.FileLog;
 import io.bettergram.telegram.messenger.LocaleController;
+import io.bettergram.telegram.messenger.LocationController;
+import io.bettergram.telegram.messenger.MessageObject;
+import io.bettergram.telegram.messenger.MessagesController;
+import io.bettergram.telegram.messenger.MessagesStorage;
+import io.bettergram.telegram.messenger.NotificationCenter;
 import io.bettergram.telegram.messenger.UserConfig;
 import io.bettergram.telegram.messenger.support.widget.LinearLayoutManager;
 import io.bettergram.telegram.messenger.support.widget.RecyclerView;
@@ -75,14 +82,11 @@ import io.bettergram.telegram.tgnet.ConnectionsManager;
 import io.bettergram.telegram.tgnet.RequestDelegate;
 import io.bettergram.telegram.tgnet.TLObject;
 import io.bettergram.telegram.tgnet.TLRPC;
-import io.bettergram.telegram.messenger.MessageObject;
-import io.bettergram.telegram.messenger.MessagesController;
-import io.bettergram.telegram.messenger.NotificationCenter;
-import io.bettergram.messenger.R;
 import io.bettergram.telegram.ui.ActionBar.ActionBar;
 import io.bettergram.telegram.ui.ActionBar.ActionBarMenu;
 import io.bettergram.telegram.ui.ActionBar.ActionBarMenuItem;
 import io.bettergram.telegram.ui.ActionBar.AlertDialog;
+import io.bettergram.telegram.ui.ActionBar.BaseFragment;
 import io.bettergram.telegram.ui.ActionBar.Theme;
 import io.bettergram.telegram.ui.ActionBar.ThemeDescription;
 import io.bettergram.telegram.ui.Adapters.BaseLocationAdapter;
@@ -95,17 +99,13 @@ import io.bettergram.telegram.ui.Cells.LocationPoweredCell;
 import io.bettergram.telegram.ui.Cells.SendLocationCell;
 import io.bettergram.telegram.ui.Components.AlertsCreator;
 import io.bettergram.telegram.ui.Components.AvatarDrawable;
-import io.bettergram.telegram.ui.ActionBar.BaseFragment;
 import io.bettergram.telegram.ui.Components.CombinedDrawable;
 import io.bettergram.telegram.ui.Components.EmptyTextProgressView;
 import io.bettergram.telegram.ui.Components.LayoutHelper;
 import io.bettergram.telegram.ui.Components.MapPlaceholderDrawable;
 import io.bettergram.telegram.ui.Components.RecyclerListView;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
+import static io.bettergram.telegram.messenger.AndroidUtilities.runOnUIThread;
 
 public class LocationActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate {
 
@@ -535,40 +535,33 @@ public class LocationActivity extends BaseFragment implements NotificationCenter
             }
         };
         final MapView map = mapView;
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    map.onCreate(null);
-                } catch (Exception e) {
-                    //this will cause exception, but will preload google maps?
-                }
-                AndroidUtilities.runOnUIThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (mapView != null && getParentActivity() != null) {
-                            try {
-                                map.onCreate(null);
-                                MapsInitializer.initialize(ApplicationLoader.applicationContext);
-                                mapView.getMapAsync(new OnMapReadyCallback() {
-                                    @Override
-                                    public void onMapReady(GoogleMap map) {
-                                        googleMap = map;
-                                        googleMap.setPadding(AndroidUtilities.dp(70), 0, AndroidUtilities.dp(70), AndroidUtilities.dp(10));
-                                        onMapInit();
-                                    }
-                                });
-                                mapsInitialized = true;
-                                if (onResumeCalled) {
-                                    mapView.onResume();
-                                }
-                            } catch (Exception e) {
-                                FileLog.e(e);
-                            }
-                        }
-                    }
-                });
+        new Thread(() -> {
+            try {
+                runOnUIThread(() -> map.onCreate(null));
+            } catch (Exception e) {
+                e.printStackTrace();
+                //this will cause exception, but will preload google maps?
             }
+            runOnUIThread(() -> {
+                if (mapView != null && getParentActivity() != null) {
+                    try {
+                        map.onCreate(null);
+                        MapsInitializer.initialize(ApplicationLoader.applicationContext);
+                        mapView.getMapAsync(map1 -> {
+                            googleMap = map1;
+                            googleMap.setPadding(AndroidUtilities.dp(70), 0, AndroidUtilities.dp(70), AndroidUtilities.dp(10));
+                            onMapInit();
+                        });
+                        mapsInitialized = true;
+                        if (onResumeCalled) {
+                            mapView.onResume();
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        FileLog.e(e);
+                    }
+                }
+            });
         }).start();
 
         View shadow = new View(context);
