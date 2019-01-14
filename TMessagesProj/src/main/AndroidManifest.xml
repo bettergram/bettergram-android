@@ -350,6 +350,11 @@
         <service
                 android:name="io.bettergram.telegram.messenger.NotificationsService"
                 android:enabled="true"/>
+
+        <service
+                android:name="io.bettergram.telegram.messenger.OreoNotificationsService"
+                android:permission="android.permission.BIND_JOB_SERVICE"/>
+
         <service
                 android:name="io.bettergram.telegram.messenger.NotificationRepeat"
                 android:exported="false"/>

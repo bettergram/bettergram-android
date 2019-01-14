@@ -22,6 +22,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.os.Build;
 import android.os.Handler;
 import android.os.PowerManager;
 import android.text.TextUtils;
@@ -196,7 +197,11 @@ public class ApplicationLoader extends Application {
         SharedPreferences preferences = MessagesController.getGlobalNotificationsSettings();
         if (preferences.getBoolean("pushService", true)) {
             try {
-                applicationContext.startService(new Intent(applicationContext, NotificationsService.class));
+                if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    OreoNotificationsService.enqueueWork(applicationContext, new Intent());
+                } else {
+                    applicationContext.startService(new Intent(applicationContext, NotificationsService.class));
+                }
             } catch (Throwable ignore) {
 
             }
