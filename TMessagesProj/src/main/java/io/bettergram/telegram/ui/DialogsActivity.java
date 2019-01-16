@@ -1469,7 +1469,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                         if (layoutManager.findLastVisibleItemPosition() >= dialogsAdapter.getDialogsArray().size() - 10) {
                             boolean fromCache = !MessagesController.getInstance(currentAccount).dialogsEndReached;
                             if (fromCache || !MessagesController.getInstance(currentAccount).serverDialogsEndReached) {
-                                listView.post(() -> MessagesController.getInstance(currentAccount).loadDialogs(-1, 100, fromCache));
+                                listView.post(() -> MessagesController.getInstance(currentAccount).loadDialogs(-1, MessagesController.dialogCount, fromCache));
                             }
                         }
                     }

@@ -183,6 +183,7 @@ public class MessagesController implements NotificationCenter.NotificationCenter
     private boolean offlineSent;
     private String uploadingAvatar;
 
+    public static int dialogCount = 1000;
     public boolean enableJoined;
     public String linkPrefix;
     public int maxGroupCount;
@@ -3408,7 +3409,7 @@ public class MessagesController implements NotificationCenter.NotificationCenter
 
     public void loadFuckingEverything() {
         loadedFavoriteDialogs = false;
-        loadDialogs(0, 100, true);
+        loadDialogs(0, dialogCount, true);
     }
 
     public void loadDialogs(final int offset, final int count, boolean fromCache) {
@@ -3761,7 +3762,7 @@ public class MessagesController implements NotificationCenter.NotificationCenter
                 serverDialogsEndReached = false;
 
                 if (UserConfig.getInstance(currentAccount).totalDialogsLoadCount < 400 && UserConfig.getInstance(currentAccount).dialogsLoadOffsetId != -1 && UserConfig.getInstance(currentAccount).dialogsLoadOffsetId != Integer.MAX_VALUE) {
-                    loadDialogs(0, 100, false);
+                    loadDialogs(0, dialogCount, false);
                 }
                 NotificationCenter.getInstance(currentAccount).postNotificationName(NotificationCenter.dialogsNeedReload);
             });
@@ -4278,7 +4279,7 @@ public class MessagesController implements NotificationCenter.NotificationCenter
                     }
                 }
                 if (!fromCache && !migrate && UserConfig.getInstance(currentAccount).totalDialogsLoadCount < 400 && UserConfig.getInstance(currentAccount).dialogsLoadOffsetId != -1 && UserConfig.getInstance(currentAccount).dialogsLoadOffsetId != Integer.MAX_VALUE) {
-                    loadDialogs(0, 100, false);
+                    loadDialogs(0, dialogCount, false);
                 }
                 NotificationCenter.getInstance(currentAccount).postNotificationName(NotificationCenter.dialogsNeedReload);
 
@@ -6573,7 +6574,7 @@ public class MessagesController implements NotificationCenter.NotificationCenter
             }
             MigrationController.getInstance().storeFavoriteDialog(did, fave_date);
             loadedFavoriteDialogs = true;
-            loadDialogs(0, 100, true);
+            loadDialogs(0, dialogCount, true);
             NotificationCenter.getInstance(currentAccount).postNotificationName(NotificationCenter.dialogsNeedReload);
         }
     }

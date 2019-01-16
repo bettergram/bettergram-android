@@ -442,7 +442,7 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
         updateSelectedCount();
 
         if (!DialogsActivity.dialogsLoaded[currentAccount]) {
-            MessagesController.getInstance(currentAccount).loadDialogs(0, 100, true);
+            MessagesController.getInstance(currentAccount).loadDialogs(0, MessagesController.dialogCount, true);
             ContactsController.getInstance(currentAccount).checkInviteText();
             DialogsActivity.dialogsLoaded[currentAccount] = true;
         }

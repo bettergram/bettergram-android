@@ -2004,7 +2004,7 @@
     <string name="ActionBotDocumentPhone">Phone Number</string>
     <string name="ActionBotDocumentEmail">Email Address</string>
     <string name="UnsupportedMedia">This message is not supported on your version of Bettergram. Update the app to view:
-        https://telegram.org/update
+        https://bettergram.io
     </string>
     <string name="AttachPhoto">Photo</string>
     <string name="AttachVideo">Video</string>
