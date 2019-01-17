@@ -8,11 +8,13 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.Charset;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import io.bettergram.messenger.R;
+import io.bettergram.telegram.messenger.LocaleController;
+import io.bettergram.utils.HttpDate;
 import io.bettergram.utils.Time;
 import io.bettergram.utils.io.IOUtils;
 
@@ -21,8 +23,8 @@ public class NewsApi {
     //@formatter:off
     @SuppressLint("SimpleDateFormat")
     public static final SimpleDateFormat FROM_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:SS'Z'");
-    @SuppressLint("SimpleDateFormat")
-    public static final SimpleDateFormat FROM_FORMAT2 = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z");
+    //@SuppressLint("SimpleDateFormat")
+    //public static final SimpleDateFormat FROM_FORMAT2 = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z");
     //@formatter:on
     @SuppressLint("SimpleDateFormat")
     public static final SimpleDateFormat TO_FORMAT = new SimpleDateFormat("MMM dd");
@@ -49,9 +51,10 @@ public class NewsApi {
      */
     public static String formatDate(String unformattedDate) {
         try {
-            Date date = FROM_FORMAT2.parse(unformattedDate);
+            //Date date = FROM_FORMAT2.parse(unformattedDate);
+            Date date = HttpDate.parse(unformattedDate);
             return TO_FORMAT.format(date);
-        } catch (ParseException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return "";
         }
@@ -60,7 +63,8 @@ public class NewsApi {
     @SuppressLint("SimpleDateFormat")
     public static String formatToYesterdayOrToday(String date) {
         try {
-            Date dateTime = FROM_FORMAT2.parse(date);
+            //Date dateTime = FROM_FORMAT2.parse(date);
+            Date dateTime = HttpDate.parse(date);
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(dateTime);
             Calendar today = Calendar.getInstance();
@@ -70,7 +74,7 @@ public class NewsApi {
             if (calendar.get(Calendar.YEAR) == today.get(Calendar.YEAR) && calendar.get(Calendar.DAY_OF_YEAR) == today.get(Calendar.DAY_OF_YEAR)) {
                 return Time.getTimeAgo(dateTime);
             } else if (calendar.get(Calendar.YEAR) == yesterday.get(Calendar.YEAR) && calendar.get(Calendar.DAY_OF_YEAR) == yesterday.get(Calendar.DAY_OF_YEAR)) {
-                return "Yesterday";
+                return LocaleController.getString("NewsYesterday", R.string.NewsYesterday);
             } else {
                 return formatDate(date);
             }

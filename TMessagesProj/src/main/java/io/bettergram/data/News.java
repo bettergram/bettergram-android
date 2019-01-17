@@ -3,10 +3,9 @@ package io.bettergram.data;
 import com.instagram.common.json.annotation.JsonField;
 import com.instagram.common.json.annotation.JsonType;
 
-import java.text.ParseException;
 import java.util.Date;
 
-import static io.bettergram.service.api.NewsApi.FROM_FORMAT2;
+import io.bettergram.utils.HttpDate;
 
 @JsonType
 public class News {
@@ -28,8 +27,9 @@ public class News {
 
     public Date getPublishedAt() {
         try {
-            return FROM_FORMAT2.parse(publishedAt);
-        } catch (ParseException e) {
+            //return FROM_FORMAT2.parse(publishedAt);
+            return HttpDate.parse(publishedAt);
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }

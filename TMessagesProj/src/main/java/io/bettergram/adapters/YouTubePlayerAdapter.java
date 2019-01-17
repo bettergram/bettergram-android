@@ -29,6 +29,7 @@ import io.bettergram.messenger.R;
 import io.bettergram.service.YoutubeDataService;
 import io.bettergram.telegram.messenger.AndroidUtilities;
 import io.bettergram.telegram.messenger.ImageReceiver;
+import io.bettergram.telegram.messenger.LocaleController;
 import io.bettergram.telegram.messenger.support.widget.RecyclerView;
 import io.bettergram.telegram.ui.ActionBar.Theme;
 import io.bettergram.telegram.ui.Components.CardView.CardView;
@@ -189,7 +190,7 @@ public class YouTubePlayerAdapter extends
         holder.textTitle.setText(title);
         holder.textAccount.setText(channelTitle);
         holder.textDatePosted.setText("\u0020\u0020\u2022\u0020\u0020" + formatToYesterdayOrToday(publishedAt));
-        holder.textViewCount.setText("\u0020\u0020\u2022\u0020\u0020" + String.format("%s views", viewCount));
+        holder.textViewCount.setText("\u0020\u0020\u2022\u0020\u0020" + String.format(LocaleController.getString("videoViews", R.string.videoViews), viewCount));
 
         if (!playerView.initted) {
             playerView.initPlayer(

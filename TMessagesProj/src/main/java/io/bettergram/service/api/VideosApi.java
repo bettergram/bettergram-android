@@ -4,8 +4,7 @@ import android.annotation.SuppressLint;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import io.bettergram.utils.Counter;
-import io.bettergram.utils.io.IOUtils;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -19,6 +18,11 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
+import io.bettergram.messenger.R;
+import io.bettergram.telegram.messenger.LocaleController;
+import io.bettergram.utils.Counter;
+import io.bettergram.utils.io.IOUtils;
 
 public class VideosApi {
 
@@ -144,9 +148,9 @@ public class VideosApi {
             yesterday.add(Calendar.DATE, -1);
 
             if (calendar.get(Calendar.YEAR) == today.get(Calendar.YEAR) && calendar.get(Calendar.DAY_OF_YEAR) == today.get(Calendar.DAY_OF_YEAR)) {
-                return "Today";
+                return LocaleController.getString("VideoToday", R.string.VideoToday);
             } else if (calendar.get(Calendar.YEAR) == yesterday.get(Calendar.YEAR) && calendar.get(Calendar.DAY_OF_YEAR) == yesterday.get(Calendar.DAY_OF_YEAR)) {
-                return "Yesterday";
+                return LocaleController.getString("VideoYesterday", R.string.VideoYesterday);
             } else {
                 return formatDate(date);
             }

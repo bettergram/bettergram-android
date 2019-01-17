@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="AppName">تيليجرام</string>
-    <string name="AppNameBeta">تيليجرام</string>
+    <string name="AppName">Bettergram</string>
+    <string name="AppNameBeta">Bettergram Beta</string>
     <string name="LanguageName">العربية</string>
     <string name="English">الإنجليزية</string>
     <string name="LanguageNameInEnglish">Arabic</string>
@@ -2180,4 +2180,78 @@
     <string name="formatterDay24H">HH:mm</string>
     <string name="formatterDay12H">h:mm a</string>
     <string name="formatDateAtTime">%1$s الساعة %2$s</string>
+
+    <!-- Additional Option -->
+    <string name="Favorite">مفضل</string>
+    <string name="Unfavorite">إزالة من المفضلة</string>
+
+    <!--Better-->
+    <string name="tabsAll">كل الدردشات</string>
+    <string name="tabsDirect">رسالة مباشرة</string>
+    <string name="tabsGroups">المجموعات</string>
+    <string name="tabsAnnouncements">الإعلانات</string>
+    <string name="tabsFavorites">المفضلة</string>
+    <string name="tabsCrypto">عملة معماة</string>
+
+    <string name="All">الكل</string>
+    <string name="Favorites">المفضلة</string>
+
+    <!-- Bottom Bar -->
+    <string name="barItemChats">كل الدردشات</string>
+    <string name="barItemPrices">الأسعار</string>
+    <string name="barItemNews">أخبار</string>
+    <string name="barItemVideos">أشرطة فيديو</string>
+    <string name="barItemResources">مصادر</string>
+    <string name="barTitleChats">كل الدردشات</string>
+    <string name="barTitlePrices">أسعار حية كوين ووتش</string>
+    <string name="barTitleNews">أخبار</string>
+    <string name="barTitleVideos">أشرطة فيديو</string>
+    <string name="barTitleResources">مصادر</string>
+
+    <!-- Setting Social Links Label-->
+    <string name="socialTwitter">تغريد</string>
+    <string name="socialGithub">جيثب</string>
+    <string name="socialTelegram">تيليجرام</string>
+
+    <!-- Crypto -->
+    <string name="coin">عملة</string>
+    <string name="price">السعر</string>
+    <string name="_24h">24H</string>
+    <string name="enter_your_email">أدخل بريدك الإلكتروني</string>
+    <string name="sign_up">سجل</string>
+    <string name="i_agree_to_the_terms">أوافق على شروط الخدمة</string>
+    <string name="free_crypto_newsletter">احصل على نشرة إخبارية مجانية</string>
+    <string name="you_must_accept_terms">* يجب عليك قبول شروط لاستخدام Bettergram</string>
+    <string name="invalid_email">بريد إلكتروني خاطئ</string>
+    <string name="invalid_email_msg">عنوان البريد الإلكتروني الخاص بك غير صالحة.</string>
+    <string name="please_wait">ارجوك انتظر…</string>
+    <string name="success">نجاح!</string>
+    <string name="please_check_email">يرجى التحقق من بريدك الالكتروني لتأكيد اشتراكك</string>
+
+    <string name="UpdateAlertButton">تحديث</string>
+    <string name="UpdateAlert">هناك إصدار أحدث متاح للتنزيل. يرجى تحديث التطبيق من خلال زيارة Google.</string>
+    <string name="OutdatedAlert">هذه النسخة من Bettergram قديمة جدا. يرجى تحديث التطبيق</string>
+
+    <string name="videoViews">%s الآراء</string>
+    <string name="marketCap">القيمة السوقية($)</string>
+    <string name="btcDominance">هيمنة BTC</string>
+    <string name="_24hVolume">حجم 24H($)</string>
+
+    <string name="VideoToday">اليوم</string>
+    <string name="VideoYesterday">في الامس</string>
+
+    <string name="NewsMomentsAgo">منذ لحظات</string>
+    <string name="NewsMinuteAgo">قبل دقيقة</string>
+    <string name="NewsMinutesAgo">%d دقائق مضت</string>
+    <string name="NewsAnHourAgo">منذ ساعة</string>
+    <string name="NewsHoursAgo">%d منذ ساعات</string>
+    <string name="NewsYesterday">في الامس</string>
+    <string name="NewsDaysAgo">%d أيام مضت</string>
+
+    <string name="rate_dialog_title">هل تحب بيترترام؟</string>
+    <string name="rate_dialog_message">إذا قمت بذلك ، هل يمكن أن تعطينا مراجعة؟ إنه يساعدنا في تحسين التطبيق للمستخدمين مثلك!</string>
+    <string name="rate_dialog_action_rate">معدل</string>
+    <string name="rate_dialog_action_never">لا شكرا</string>
+    <string name="rate_dialog_action_later">في وقت لاحق</string>
+    <string name="rate_dialog_thank_you">شكرا لكم!</string>
 </resources>

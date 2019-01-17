@@ -2180,4 +2180,78 @@
     <string name="formatterDay24H">HH:mm</string>
     <string name="formatterDay12H">h:mm a</string>
     <string name="formatDateAtTime">%1$s alle %2$s</string>
+
+    <!-- Additional Option -->
+    <string name="Favorite">Preferito</string>
+    <string name="Unfavorite">Unfavorite</string>
+
+    <!--Better-->
+    <string name="tabsAll">Tutte le chat</string>
+    <string name="tabsDirect">Messaggi diretti</string>
+    <string name="tabsGroups">Gruppi</string>
+    <string name="tabsAnnouncements">Annunci</string>
+    <string name="tabsFavorites">Preferiti</string>
+    <string name="tabsCrypto">Criptovaluta</string>
+
+    <string name="All">Tutti</string>
+    <string name="Favorites">Preferiti</string>
+
+    <!-- Bottom Bar -->
+    <string name="barItemChats">Tutte le chat</string>
+    <string name="barItemPrices">Prezzi</string>
+    <string name="barItemNews">Notizia</string>
+    <string name="barItemVideos">Videos</string>
+    <string name="barItemResources">Risorse</string>
+    <string name="barTitleChats">Tutte le chat</string>
+    <string name="barTitlePrices">Moneta dal vivo Guarda i prezzi</string>
+    <string name="barTitleNews">Notizia</string>
+    <string name="barTitleVideos">Videos</string>
+    <string name="barTitleResources">Risorse</string>
+
+    <!-- Setting Social Links Label-->
+    <string name="socialTwitter">Cinguettio</string>
+    <string name="socialGithub">Github</string>
+    <string name="socialTelegram">Telegram</string>
+
+    <!-- Crypto -->
+    <string name="coin">MONETA</string>
+    <string name="price">PREZZO</string>
+    <string name="_24h">24H</string>
+    <string name="enter_your_email">Inserisci il tuo indirizzo email</string>
+    <string name="sign_up">Iscriviti</string>
+    <string name="i_agree_to_the_terms">Accetto i Termini del servizio</string>
+    <string name="free_crypto_newsletter">Ricevi la nostra newsletter criptata gratuita</string>
+    <string name="you_must_accept_terms">* Devi accettare i termini per utilizzare Bettergram</string>
+    <string name="invalid_email">E-mail non valido</string>
+    <string name="invalid_email_msg">Il tuo indirizzo email non è valido.</string>
+    <string name="please_wait">Attendere prego…</string>
+    <string name="success">Successo!</string>
+    <string name="please_check_email">Controlla la tua email per confermare la registrazione</string>
+
+    <string name="UpdateAlertButton">Aggiornare</string>
+    <string name="UpdateAlert">È disponibile una versione più recente per il download. Si prega di aggiornare l\'app visitando Google.</string>
+    <string name="OutdatedAlert">Questa versione di Bettergram è troppo vecchia. Si prega di aggiornare l\'applicazione</string>
+
+    <string name="videoViews">%s visualizzazioni</string>
+    <string name="marketCap">Capitalizzazione di mercato($)</string>
+    <string name="btcDominance">Dominanza BTC</string>
+    <string name="_24hVolume">Volume di 24 ore($)</string>
+
+    <string name="VideoToday">Oggi</string>
+    <string name="VideoYesterday">Ieri</string>
+
+    <string name="NewsMomentsAgo">momenti fa</string>
+    <string name="NewsMinuteAgo">Un minuto fa</string>
+    <string name="NewsMinutesAgo">%d minuti fa</string>
+    <string name="NewsAnHourAgo">Un\'ora fa</string>
+    <string name="NewsHoursAgo">%d ore fa</string>
+    <string name="NewsYesterday">Ieri</string>
+    <string name="NewsDaysAgo">%d giorni fa</string>
+
+    <string name="rate_dialog_title">Ti piace Bettergram?</string>
+    <string name="rate_dialog_message">Se lo fai, puoi darci una recensione? Ci aiuta a migliorare l\'app per utenti come te!</string>
+    <string name="rate_dialog_action_rate">Vota</string>
+    <string name="rate_dialog_action_never">No grazie</string>
+    <string name="rate_dialog_action_later">Dopo</string>
+    <string name="rate_dialog_thank_you">Grazie!</string>
 </resources>

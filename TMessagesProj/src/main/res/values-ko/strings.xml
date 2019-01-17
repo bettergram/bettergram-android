@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="AppName">텔레그램</string>
+    <string name="AppName">더 나은 기록</string>
     <string name="AppNameBeta">텔레그램</string>
     <string name="LanguageName">한국어</string>
     <string name="English">한국어</string>
@@ -2180,4 +2180,78 @@
     <string name="formatterDay24H">HH:mm</string>
     <string name="formatterDay12H">a h:mm</string>
     <string name="formatDateAtTime">%1$s %2$s</string>
+
+    <!-- Additional Option -->
+    <string name="Favorite">인기 있는 말</string>
+    <string name="Unfavorite">마음에 들지 않는</string>
+
+    <!--Better-->
+    <string name="tabsAll">모든 채팅</string>
+    <string name="tabsDirect">직접 메시지</string>
+    <string name="tabsGroups">여러 떼</string>
+    <string name="tabsAnnouncements">공지 사항</string>
+    <string name="tabsFavorites">즐겨 찾기</string>
+    <string name="tabsCrypto">암호 해독 성</string>
+
+    <string name="All">모든</string>
+    <string name="Favorites">즐겨 찾기</string>
+
+    <!-- Bottom Bar -->
+    <string name="barItemChats">모든 채팅</string>
+    <string name="barItemPrices">물가</string>
+    <string name="barItemNews">뉴스</string>
+    <string name="barItemVideos">비디오</string>
+    <string name="barItemResources">자원</string>
+    <string name="barTitleChats">모든 채팅</string>
+    <string name="barTitlePrices">라이브 코인 시계 가격</string>
+    <string name="barTitleNews">뉴스</string>
+    <string name="barTitleVideos">비디오</string>
+    <string name="barTitleResources">자원</string>
+
+    <!-- Setting Social Links Label-->
+    <string name="socialTwitter">지저귀다</string>
+    <string name="socialGithub">기생충</string>
+    <string name="socialTelegram">텔레그램</string>
+
+    <!-- Crypto -->
+    <string name="coin">동전</string>
+    <string name="price">가격</string>
+    <string name="_24h">24H</string>
+    <string name="enter_your_email">이메일을 입력하십시오.</string>
+    <string name="sign_up">가입하기</string>
+    <string name="i_agree_to_the_terms">서비스 약관에 동의합니다.</string>
+    <string name="free_crypto_newsletter">무료 암호 발행 회보 받기</string>
+    <string name="you_must_accept_terms">* Bettergram을 사용하려면 약관에 동의해야합니다.</string>
+    <string name="invalid_email">잘못된 이메일</string>
+    <string name="invalid_email_msg">귀하의 이메일 주소가 유효하지 않습니다.</string>
+    <string name="please_wait">잠시만 기다려주십시오 …</string>
+    <string name="success">성공!</string>
+    <string name="please_check_email">가입 확인을 위해 이메일을 확인하십시오.</string>
+
+    <string name="UpdateAlertButton">최신 정보</string>
+    <string name="UpdateAlert">최신 버전을 다운로드 할 수 있습니다. Google을 방문하여 앱을 업데이트하십시오.</string>
+    <string name="OutdatedAlert">이 Bettergram 버전은 너무 오래되었습니다. 신청서를 업데이트하십시오.</string>
+
+    <string name="videoViews">%s 조회수</string>
+    <string name="marketCap">시가 총액($)</string>
+    <string name="btcDominance">BTC 우성</string>
+    <string name="_24hVolume">24 시간 볼륨($)</string>
+
+    <string name="VideoToday">오늘</string>
+    <string name="VideoYesterday">어제</string>
+
+    <string name="NewsMomentsAgo">순간 전</string>
+    <string name="NewsMinuteAgo">1 분 전</string>
+    <string name="NewsMinutesAgo">%d 분 전</string>
+    <string name="NewsAnHourAgo">한 시간 전에</string>
+    <string name="NewsHoursAgo">%d 시간 전</string>
+    <string name="NewsYesterday">어제</string>
+    <string name="NewsDaysAgo">%d 일 전</string>
+
+    <string name="rate_dialog_title">Bettergram을 좋아합니까?</string>
+    <string name="rate_dialog_message">그렇게한다면, 우리에게 리뷰를 주시겠습니까? 귀하를 좋아하는 사용자를 위해 앱을 개선하는 데 도움이됩니다.</string>
+    <string name="rate_dialog_action_rate">율</string>
+    <string name="rate_dialog_action_never">괜찮습니다</string>
+    <string name="rate_dialog_action_later">후에</string>
+    <string name="rate_dialog_thank_you">고맙습니다!</string>
 </resources>

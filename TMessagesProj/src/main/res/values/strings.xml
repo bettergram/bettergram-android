@@ -204,8 +204,6 @@
     <string name="PreviewFeedback">Leave feedback about this preview</string>
     <string name="SendStickerPreview">Send Sticker</string>
     <string name="ViewPackPreview">View Pack</string>
-    <string name="Favorite">Favorite</string>
-    <string name="Unfavorite">Unfavorite</string>
     <string name="PinToTop">Pin to top</string>
     <string name="UnpinFromTop">Unpin from top</string>
     <string name="MarkAsUnread">Mark as unread</string>
@@ -2577,6 +2575,9 @@
     <string name="formatterDay12H">h:mm a</string>
     <string name="formatDateAtTime">%1$s at %2$s</string>
 
+    <!-- Additional Option -->
+    <string name="Favorite">Favorite</string>
+    <string name="Unfavorite">Unfavorite</string>
 
     <!--Better-->
     <string name="tabsAll">All Chats</string>
@@ -2585,6 +2586,9 @@
     <string name="tabsAnnouncements">Announcements</string>
     <string name="tabsFavorites">Favorites</string>
     <string name="tabsCrypto">Crypto</string>
+
+    <string name="All">All</string>
+    <string name="Favorites">Favorites</string>
 
     <!-- Bottom Bar -->
     <string name="barItemChats">All Chats</string>
@@ -2621,4 +2625,27 @@
     <string name="UpdateAlertButton">Update</string>
     <string name="UpdateAlert">There is a newer version available for download. Please update the app by visiting the Play Store.</string>
     <string name="OutdatedAlert">This version of Bettergram is too old. Please update the application</string>
+
+    <string name="videoViews">%s views</string>
+    <string name="marketCap">MARKET CAP($)</string>
+    <string name="btcDominance">BTC DOM.</string>
+    <string name="_24hVolume">24H VOL($)</string>
+
+    <string name="VideoToday">Today</string>
+    <string name="VideoYesterday">Yesterday</string>
+
+    <string name="NewsMomentsAgo">moments ago</string>
+    <string name="NewsMinuteAgo">a minute ago</string>
+    <string name="NewsMinutesAgo">%d minutes ago</string>
+    <string name="NewsAnHourAgo">An hour ago</string>
+    <string name="NewsHoursAgo">%d hours ago</string>
+    <string name="NewsYesterday">Yesterday</string>
+    <string name="NewsDaysAgo">%d days ago</string>
+
+    <string name="rate_dialog_title">Got 2 Minutes?</string>
+    <string name="rate_dialog_message">If you do, we\'d super appreciate a review. It helps us improve Bettergram for users like you!</string>
+    <string name="rate_dialog_action_rate">Rate</string>
+    <string name="rate_dialog_action_never">No, thanks</string>
+    <string name="rate_dialog_action_later">Later</string>
+    <string name="rate_dialog_thank_you">Thank you!</string>
 </resources>

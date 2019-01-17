@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="AppName">Bettergram</string>
+    <string name="AppNameBeta">Bettergram Beta</string>
+
+    <!-- Additional Option -->
+    <string name="Favorite">Добавить в Избранное</string>
+    <string name="Unfavorite">Удалить из Избранного</string>
+
+    <!--Better-->
+    <string name="tabsAll">Все Чаты</string>
+    <string name="tabsDirect">Личные Сообщения</string>
+    <string name="tabsGroups">Группы</string>
+    <string name="tabsAnnouncements">Каналы</string>
+    <string name="tabsFavorites">Избранное</string>
+    <string name="tabsCrypto">Криптовалюта</string>
+
+    <string name="All">Все</string>
+    <string name="Favorites">Избранное</string>
+
+    <!-- Bottom Bar -->
+    <string name="barItemChats">Все Чаты</string>
+    <string name="barItemPrices">Цены</string>
+    <string name="barItemNews">Новости</string>
+    <string name="barItemVideos">Видео</string>
+    <string name="barItemResources">Ресурсы</string>
+    <string name="barTitleChats">Все Чаты</string>
+    <string name="barTitlePrices">Курсы Live Coin Watch</string>
+    <string name="barTitleNews">Новости</string>
+    <string name="barTitleVideos">Видео</string>
+    <string name="barTitleResources">Ресурсы</string>
+
+    <!-- Setting Social Links Label-->
+    <string name="socialTwitter">Twitter</string>
+    <string name="socialGithub">Github</string>
+    <string name="socialTelegram">Telegram</string>
+
+    <!-- Crypto -->
+    <string name="coin">МОНЕТА</string>
+    <string name="price">ЦЕНА</string>
+    <string name="_24h">24Ч</string>
+    <string name="enter_your_email">Введите адрес электронной почты</string>
+    <string name="sign_up">Подписаться</string>
+    <string name="i_agree_to_the_terms">Я согласен с условиями предоставления сервиса</string>
+    <string name="free_crypto_newsletter">Получать нашу бесплатную крипто рассылку</string>
+    <string name="you_must_accept_terms">* Для использования Bettergram Вы должны принять условия</string>
+    <string name="invalid_email">Неверный адрес электронной почты</string>
+    <string name="invalid_email_msg">Ваш адрес электронной почты недействителен</string>
+    <string name="please_wait">Пожалуйста, подождите…</string>
+    <string name="success">Успех!</string>
+    <string name="please_check_email">Пожалуйста, проверьте свою электронную почту, чтобы подтвердить регистрацию</string>
+
+    <string name="UpdateAlertButton">Обновить</string>
+    <string name="UpdateAlert">Для скачивания доступна более новая версия. Пожалуйста, обновите приложение, посетив Play Store.</string>
+    <string name="OutdatedAlert">Эта версия Bettergram устарела. Пожалуйста, обновите приложение</string>
+
+    <string name="videoViews">%s просмотров</string>
+    <string name="marketCap">Рыночная капитализация($)</string>
+    <string name="btcDominance">Доминирование BTC</string>
+    <string name="_24hVolume">Суточный объем($)</string>
+
+    <string name="VideoToday">Сегодня</string>
+    <string name="VideoYesterday">Вчера</string>
+
+    <string name="NewsMomentsAgo">моменты назад</string>
+    <string name="NewsMinuteAgo">минуту назад</string>
+    <string name="NewsMinutesAgo">%d минут назад</string>
+    <string name="NewsAnHourAgo">Час назад</string>
+    <string name="NewsHoursAgo">%d часов назад</string>
+    <string name="NewsYesterday">Вчера</string>
+    <string name="NewsDaysAgo">%d дней назад</string>
+
+    <string name="rate_dialog_title">Есть пара минут?</string>
+    <string name="rate_dialog_message">Если да, пожалуйста, оставьте отзыв, мы будем Вам очень благодарны! Это поможет нам улучшить приложение для таких пользователей, как Вы!</string>
+    <string name="rate_dialog_action_rate">Оценить</string>
+    <string name="rate_dialog_action_never">Нет, спасибо</string>
+    <string name="rate_dialog_action_later">Позже</string>
+    <string name="rate_dialog_thank_you">Спасибо!</string>
+</resources>

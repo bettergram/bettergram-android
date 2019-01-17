@@ -45,11 +45,11 @@ public class TabsView extends FrameLayout implements NotificationCenter.Notifica
     //TODO: move to controller
     private static int selectedTab = 0;
     private static final List<Tab> tabs = Arrays.asList(
-            new Tab(LocaleController.getString("tabsAll", R.string.tabsAll), R.drawable.tab_all, 0),
-            new Tab(LocaleController.getString("tabsDirect", R.string.tabsDirect), R.drawable.tab_user, 101),
-            new Tab(LocaleController.getString("tabsGroups", R.string.tabsGroups), R.drawable.tab_group, 102),
-            new Tab(LocaleController.getString("tabsAnnouncements", R.string.tabsAnnouncements), R.drawable.tab_channel, 103),
-            new Tab(LocaleController.getString("tabsFavorites", R.string.tabsFavorites), R.drawable.tab_favs, 104)
+            new Tab(new Title("tabsAll", R.string.tabsAll), R.drawable.tab_all, 0),
+            new Tab(new Title("tabsDirect", R.string.tabsDirect), R.drawable.tab_user, 101),
+            new Tab(new Title("tabsGroups", R.string.tabsGroups), R.drawable.tab_group, 102),
+            new Tab(new Title("tabsAnnouncements", R.string.tabsAnnouncements), R.drawable.tab_channel, 103),
+            new Tab(new Title("tabsFavorites", R.string.tabsFavorites), R.drawable.tab_favs, 104)
             //new Tab(LocaleController.getString("tabsCrypto", R.string.tabsCrypto), R.drawable.tab_bot, 105)
     );
 
@@ -61,18 +61,28 @@ public class TabsView extends FrameLayout implements NotificationCenter.Notifica
 
     private boolean counting = false;
 
+    private static class Title {
+        final String key;
+        final int res;
+
+        Title(String key, int res) {
+            this.key = key;
+            this.res = res;
+        }
+    }
+
     public static class Tab {
-        private final String title;
+        private final Title title;
         private final int res;
         private final int type;
         private int position; //0:All 1:Users 2:Groups 3:SuperGroups 4:Channels 5:Bots 6:Favs(8) 7:Groups+SuperGroups(9) 8:Creator(10) 9:Unread(11)
         private int unread;
 
-        Tab(String title, int res, int type) {
+        Tab(Title title, int res, int type) {
             this(title, res, type, -1);
         }
 
-        Tab(String title, int res, int type, int position) {
+        Tab(Title title, int res, int type, int position) {
             this.title = title;
             this.res = res;
             this.type = type;
@@ -81,7 +91,8 @@ public class TabsView extends FrameLayout implements NotificationCenter.Notifica
         }
 
         public String getTitle() {
-            return this.title;
+            String title = LocaleController.getString(this.title.key, this.title.res);
+            return title;
         }
 
         public int getRes() {

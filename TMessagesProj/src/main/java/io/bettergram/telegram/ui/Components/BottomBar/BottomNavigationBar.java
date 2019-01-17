@@ -28,6 +28,7 @@ import java.util.List;
 import io.bettergram.messenger.R;
 import io.bettergram.telegram.messenger.AndroidUtilities;
 import io.bettergram.telegram.messenger.ApplicationLoader;
+import io.bettergram.telegram.messenger.LocaleController;
 import io.bettergram.telegram.messenger.NotificationCenter;
 import io.bettergram.telegram.messenger.Strings;
 import io.bettergram.telegram.ui.ActionBar.Theme;
@@ -52,12 +53,12 @@ public class BottomNavigationBar extends LinearLayout implements NotificationCen
             new Pair<>(R.drawable.ic_tab_videos, R.string.barItemVideos),
             new Pair<>(R.drawable.ic_tab_resources, R.string.barItemResources));
 
-    private static final List<Integer> TITLES = Arrays.asList(
-            R.string.barTitleChats,
-            R.string.barTitlePrices,
-            R.string.barTitleNews,
-            R.string.barTitleVideos,
-            R.string.barTitleResources);
+    private static final List<Title> TITLES = Arrays.asList(
+            new Title("barTitleChats", R.string.barTitleChats),
+            new Title("barTitlePrices", R.string.barTitlePrices),
+            new Title("barTitleNews", R.string.barTitleNews),
+            new Title("barTitleVideos", R.string.barTitleVideos),
+            new Title("barTitleResources", R.string.barTitleResources));
 
     private final List<Tab> tabs = new ArrayList<>(5);
     @ColorInt
@@ -67,6 +68,16 @@ public class BottomNavigationBar extends LinearLayout implements NotificationCen
     private int selectedPosition;
     private boolean shouldTriggerListenerOnLayout;
     private int tabItemBgRes;
+
+    private static class Title {
+        final String name;
+        final int res;
+
+        Title(String name, int res) {
+            this.name = name;
+            this.res = res;
+        }
+    }
 
     private OnSelectListener onSelectListener = (position, title) -> {
 
@@ -169,10 +180,12 @@ public class BottomNavigationBar extends LinearLayout implements NotificationCen
      * @param animate  indicates wheter selection should  be animated
      */
     public BottomNavigationBar selectTabAndTriggerListener(int position, boolean animate) {
+        final Title title = TITLES.get(position);
+        final String titleString = LocaleController.getString(title.name, title.res);
         if (position != selectedPosition) {
-            onSelectListener.onSelect(position, getContext().getString(TITLES.get(position)));
+            onSelectListener.onSelect(position, titleString);
         } else {
-            onReselectListener.onReselect(position, getContext().getString(TITLES.get(position)));
+            onReselectListener.onReselect(position, titleString);
         }
         selectTab(position, animate);
         return this;
@@ -252,13 +265,15 @@ public class BottomNavigationBar extends LinearLayout implements NotificationCen
     @NonNull
     private Tab createTab(@NonNull BottomBarItem item, @NonNull View tabView, final int position) {
         Tab tab = new Tab(item, tabView, activeColorId, inactiveColorId);
+        final Title title = TITLES.get(position);
+        final String titleString = LocaleController.getString(title.name, title.res);
         tabView.setOnClickListener(v -> {
             if (position == selectedPosition) {
-                onReselectListener.onReselect(position, getContext().getString(TITLES.get(position)));
+                onReselectListener.onReselect(position, titleString);
                 return;
             }
             selectTab(position, true);
-            onSelectListener.onSelect(position, getContext().getString(TITLES.get(position)));
+            onSelectListener.onSelect(position, titleString);
         });
         return tab;
     }
@@ -287,7 +302,9 @@ public class BottomNavigationBar extends LinearLayout implements NotificationCen
         }
         getCurrent().select(false);
         if (shouldTriggerListenerOnLayout) {
-            onSelectListener.onSelect(selectedPosition, getContext().getString(TITLES.get(selectedPosition)));
+            final Title title = TITLES.get(selectedPosition);
+            final String titleString = LocaleController.getString(title.name, title.res);
+            onSelectListener.onSelect(selectedPosition, titleString);
         }
     }
 

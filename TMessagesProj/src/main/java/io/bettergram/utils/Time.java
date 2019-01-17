@@ -3,6 +3,9 @@ package io.bettergram.utils;
 import java.util.Calendar;
 import java.util.Date;
 
+import io.bettergram.messenger.R;
+import io.bettergram.telegram.messenger.LocaleController;
+
 public class Time {
     private static final int SECOND_MILLIS = 1000;
     private static final int MINUTE_MILLIS = 60 * SECOND_MILLIS;
@@ -21,25 +24,22 @@ public class Time {
         }
 
         long now = currentDate().getTime();
-        if (time > now || time <= 0) {
-            return "in the future";
-        }
 
         final long diff = now - time;
         if (diff < MINUTE_MILLIS) {
-            return "moments ago";
+            return LocaleController.getString("NewsMomentsAgo", R.string.NewsMomentsAgo);
         } else if (diff < 2 * MINUTE_MILLIS) {
-            return "a minute ago";
+            return LocaleController.getString("NewsMinuteAgo", R.string.NewsMinuteAgo);
         } else if (diff < 60 * MINUTE_MILLIS) {
-            return diff / MINUTE_MILLIS + " minutes ago";
+            return String.format(LocaleController.getString("NewsMinutesAgo", R.string.NewsMinutesAgo), (diff / MINUTE_MILLIS));
         } else if (diff < 2 * HOUR_MILLIS) {
-            return "An hour ago";
+            return LocaleController.getString("NewsAnHourAgo", R.string.NewsAnHourAgo);
         } else if (diff < 24 * HOUR_MILLIS) {
-            return diff / HOUR_MILLIS + " hours ago";
+            return String.format(LocaleController.getString("NewsHoursAgo", R.string.NewsHoursAgo), (diff / HOUR_MILLIS));
         } else if (diff < 48 * HOUR_MILLIS) {
-            return "yesterday";
+            return LocaleController.getString("NewsYesterday", R.string.NewsYesterday);
         } else {
-            return diff / DAY_MILLIS + " days ago";
+            return String.format(LocaleController.getString("NewsDaysAgo", R.string.NewsDaysAgo), (diff / DAY_MILLIS));
         }
     }
 

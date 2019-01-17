@@ -49,6 +49,7 @@ import io.bettergram.service.CryptoCurrencyDataService;
 import io.bettergram.telegram.messenger.AndroidUtilities;
 import io.bettergram.telegram.messenger.FileLog;
 import io.bettergram.telegram.messenger.ImageReceiver;
+import io.bettergram.telegram.messenger.LocaleController;
 import io.bettergram.telegram.messenger.NotificationCenter;
 import io.bettergram.telegram.messenger.support.widget.RecyclerView;
 import io.bettergram.telegram.ui.ActionBar.Theme;
@@ -478,11 +479,11 @@ public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             HeaderViewHolder header = (HeaderViewHolder) holder;
             holder.itemView.setVisibility(searchMode ? View.GONE : View.VISIBLE);
             double cap = cryptoData != null ? cryptoData.cap : 0.0f;
-            header.textCap.setText(formatHeaderValue(context, "MARKET CAP($)", Number.truncateNumber(cap)));
+            header.textCap.setText(formatHeaderValue(context, LocaleController.getString("marketCap", R.string.marketCap), Number.truncateNumber(cap)));
             double dom = cryptoData != null ? cryptoData.btcDominance : 0.0f;
-            header.textDom.setText(formatHeaderValue(context, "BTC DOM.", String.format("%.2f%%", (dom * 100))));
+            header.textDom.setText(formatHeaderValue(context, LocaleController.getString("btcDominance", R.string.btcDominance), String.format("%.2f%%", (dom * 100))));
             double vol = cryptoData != null ? cryptoData.volume : 0.0f;
-            header.textVol.setText(formatHeaderValue(context, "24H VOL($)", Number.truncateNumber(vol)));
+            header.textVol.setText(formatHeaderValue(context, LocaleController.getString("_24hVolume", R.string._24hVolume), Number.truncateNumber(vol)));
         } else if (holder instanceof MainViewHolder) {
 
             int real_position = position - (searchMode ? 0 : 3);
@@ -591,7 +592,7 @@ public class CryptoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     class TabsPagerAdapter extends PagerAdapter {
 
-        final String[] ITEMS = {"All", "Favorites"};
+        final String[] ITEMS = {LocaleController.getString("All", R.string.All), LocaleController.getString("Favorites", R.string.Favorites)};
 
         /**
          * @return the number of pages to display

@@ -2180,4 +2180,78 @@
     <string name="formatterDay24H">HH:mm</string>
     <string name="formatterDay12H">h:mm a</string>
     <string name="formatDateAtTime">%1$s om %2$s</string>
+
+    <!-- Additional Option -->
+    <string name="Favorite">Favoriete</string>
+    <string name="Unfavorite">Niet favoriet</string>
+
+    <!--Better-->
+    <string name="tabsAll">Alle chats</string>
+    <string name="tabsDirect">Directe berichten</string>
+    <string name="tabsGroups">Groepen</string>
+    <string name="tabsAnnouncements">Mededelingen</string>
+    <string name="tabsFavorites">Favorieten</string>
+    <string name="tabsCrypto">Cryptogeld</string>
+
+    <string name="All">Allemaal</string>
+    <string name="Favorites">Favorieten</string>
+
+    <!-- Bottom Bar -->
+    <string name="barItemChats">Alle chats</string>
+    <string name="barItemPrices">Prijzen</string>
+    <string name="barItemNews">Nieuws</string>
+    <string name="barItemVideos">Videos</string>
+    <string name="barItemResources">Middelen</string>
+    <string name="barTitleChats">Alle chats</string>
+    <string name="barTitlePrices">Live Coin Bekijk prijzen</string>
+    <string name="barTitleNews">Nieuws</string>
+    <string name="barTitleVideos">Videos</string>
+    <string name="barTitleResources">Middelen</string>
+
+    <!-- Setting Social Links Label-->
+    <string name="socialTwitter">Tjilpen</string>
+    <string name="socialGithub">Github</string>
+    <string name="socialTelegram">Telegram</string>
+
+    <!-- Crypto -->
+    <string name="coin">MUNT</string>
+    <string name="price">PRIJS</string>
+    <string name="_24h">24H</string>
+    <string name="enter_your_email">Voer je e-mailadres in</string>
+    <string name="sign_up">Inschrijven</string>
+    <string name="i_agree_to_the_terms">Ik ga akkoord met de Algemene Voorwaarden</string>
+    <string name="free_crypto_newsletter">Ontvang onze gratis crypto-nieuwsbrief</string>
+    <string name="you_must_accept_terms">* U moet voorwaarden accepteren om Bettergram te gebruiken</string>
+    <string name="invalid_email">Ongeldig e-mail</string>
+    <string name="invalid_email_msg">Uw e-mailadres is ongeldig.</string>
+    <string name="please_wait">Even geduld aub…</string>
+    <string name="success">Succes!</string>
+    <string name="please_check_email">Controleer uw e-mail om uw aanmelding te bevestigen</string>
+
+    <string name="UpdateAlertButton">Bijwerken</string>
+    <string name="UpdateAlert">Er is een nieuwere versie beschikbaar om te downloaden. Werk de app bij door naar Google te gaan.</string>
+    <string name="OutdatedAlert">Deze versie van Bettergram is te oud. Werk de applicatie bij</string>
+
+    <string name="videoViews">%s keer bekeken</string>
+    <string name="marketCap">Marktkapitalisatie($)</string>
+    <string name="btcDominance">BTC-dominantie</string>
+    <string name="_24hVolume">24H VOL($)</string>
+
+    <string name="VideoToday">Vandaag</string>
+    <string name="VideoYesterday">Gisteren</string>
+
+    <string name="NewsMomentsAgo">momenten geleden</string>
+    <string name="NewsMinuteAgo">een minuut geleden</string>
+    <string name="NewsMinutesAgo">%d minuten geleden</string>
+    <string name="NewsAnHourAgo">Een uur geleden</string>
+    <string name="NewsHoursAgo">%d uur geleden</string>
+    <string name="NewsYesterday">Gisteren</string>
+    <string name="NewsDaysAgo">%d dagen geleden</string>
+
+    <string name="rate_dialog_title">Houd je van Bettergram?</string>
+    <string name="rate_dialog_message">Als u dat doet, kunt u ons dan een beoordeling geven? Het helpt ons de app te verbeteren voor gebruikers zoals jij!</string>
+    <string name="rate_dialog_action_rate">Tarief</string>
+    <string name="rate_dialog_action_never">Nee bedankt</string>
+    <string name="rate_dialog_action_later">Later</string>
+    <string name="rate_dialog_thank_you">Dank je!</string>
 </resources>
