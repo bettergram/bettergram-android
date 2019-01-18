@@ -661,6 +661,15 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         listView.setTag(4);
         layoutManager = new LinearLayoutManager(context) {
             @Override
+            public void onLayoutChildren(RecyclerView.Recycler recycler, RecyclerView.State state) {
+                try {
+                    super.onLayoutChildren(recycler, state);
+                } catch (IndexOutOfBoundsException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
             public boolean supportsPredictiveItemAnimations() {
                 return false;
             }
