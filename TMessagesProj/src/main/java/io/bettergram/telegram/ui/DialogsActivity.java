@@ -1236,17 +1236,19 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             @Override
             public void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState) {
                 super.onSelectedChanged(viewHolder, actionState);
-                if (actionState == ACTION_STATE_DRAG) {
-                    dialogs_copy = dialogsAdapter.getDialogsArray();
-                    final Drawable draggingDrawable = listView.getBackground();
-                    previousDrawable = viewHolder.itemView.getBackground();
-                    viewHolder.itemView.setBackground(draggingDrawable);
-                } else if (actionState == ACTION_STATE_IDLE) {
-                    viewHolder.itemView.setBackground(previousDrawable);
-                    final int position = viewHolder.getAdapterPosition();
-                    final TLRPC.TL_dialog dialog = getDialog(position);
-                    if (dialog != null && dialog.pinned && bottomSheetDialog != null) {
-                        bottomSheetDialog.show();
+                if (viewHolder != null) {
+                    if (actionState == ACTION_STATE_DRAG) {
+                        dialogs_copy = dialogsAdapter.getDialogsArray();
+                        final Drawable draggingDrawable = listView.getBackground();
+                        previousDrawable = viewHolder.itemView.getBackground();
+                        viewHolder.itemView.setBackground(draggingDrawable);
+                    } else if (actionState == ACTION_STATE_IDLE) {
+                        viewHolder.itemView.setBackground(previousDrawable);
+                        final int position = viewHolder.getAdapterPosition();
+                        final TLRPC.TL_dialog dialog = getDialog(position);
+                        if (dialog != null && dialog.pinned && bottomSheetDialog != null) {
+                            bottomSheetDialog.show();
+                        }
                     }
                 }
             }
