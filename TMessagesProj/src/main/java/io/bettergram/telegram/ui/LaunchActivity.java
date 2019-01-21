@@ -2263,7 +2263,12 @@ public class LaunchActivity extends Activity implements ActionBarLayout.ActionBa
 
     @Override
     protected void onResume() {
-        super.onResume();
+        try {
+            super.onResume();
+        } catch (Exception e) {
+            FileLog.e(e);
+            e.printStackTrace();
+        }
         MediaController.getInstance().setFeedbackView(actionBarLayout, true);
         showLanguageAlert(false);
         ApplicationLoader.mainInterfacePaused = false;
